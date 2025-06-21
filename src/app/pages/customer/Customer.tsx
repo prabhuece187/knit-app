@@ -1,11 +1,12 @@
 import Header from "@/app/custom/Header";
 import { DataTable } from "@/app/layout/components/ui/data-table";
 import { DataTableColumnHeader } from "@/app/layout/table/DataTableColumnHeader";
+import { DataTableRowActions } from "@/app/layout/table/DataTableRowAction";
+import type { customerSchema } from "@/app/layout/table/schema/customer-schema";
 import { useGetCustomerQuery } from "@/app/service/CustomerApi";
-import type { CustomerType } from "@/app/layout/table/types/customer-type";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export const columns: ColumnDef<CustomerType>[]= [
+export const columns: ColumnDef<customerSchema>[]= [
     {
         accessorKey: "id",
          header: ({ column }) => (
@@ -48,6 +49,11 @@ export const columns: ColumnDef<CustomerType>[]= [
             <DataTableColumnHeader column={column} title="Address" />
         ),
     },
+    {
+    id: "actions",
+          cell: ({ row }) => <DataTableRowActions row={row} />,
+    },
+    
 ]
 
 

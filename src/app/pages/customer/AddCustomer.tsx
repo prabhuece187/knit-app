@@ -16,27 +16,15 @@ import {
 } from "@/app/layout/components/ui/select";
 import type { RootState } from "@/app/store/Store";
 import { Textarea } from "@/app/layout/components/ui/textarea";
-
-const formSchema = z.object({
-  customer_name: z.string().min(2, {
-    message: "Please Enter the Customer Name.",
-  }),
-  customer_state: z.string().min(1, { message: 'Please Enter the State Name.' }), 
-  customer_state_code: z.string().min(1, { message: 'Please Enter the State Name.' }), 
-  user_id: z.number().min(1, { message: 'Please Enter the State Code.' }), 
-  customer_gst_no: z.string().min(15, { message: 'Please Enter the Gst Number.' }),
-  customer_mobile: z.string().optional(),
-  customer_email: z.string().email("Please Enter the Valid email").optional(),
-  customer_address: z.string().optional(),
-})
+import  { customerSchema } from "@/app/layout/table/schema/customer-schema";
 
 export default function AddCustomer(){
     
     const {states} = useSelector((state: RootState)=>state.StateCode);
     const [postCustomer] = usePostCustomerMutation();
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof customerSchema>>({
+        resolver: zodResolver(customerSchema),
         defaultValues: {
             customer_name: "",
             customer_state: "Tamil Nadu",
@@ -49,7 +37,7 @@ export default function AddCustomer(){
         },
     })
  
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    function onSubmit(values: z.infer<typeof customerSchema>) {
         postCustomer(values);
     }
 
