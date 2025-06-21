@@ -11,17 +11,12 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "./ui/sidebar"
+import { NavMain } from "./nav-main"
+import { NavProjects } from "./nav-projects"
+import { NavUser } from "./nav-user"
+import { TeamSwitcher } from "./team-switcher"
 
-import { NavMain } from "@/components/nav-main"
-import { NavProjects } from "@/components/nav-projects"
-import { NavUser } from "@/components/nav-user"
-import { TeamSwitcher } from "@/components/team-switcher"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-} from "@/components/ui/sidebar"
 
 // This is sample data.
 const data = {
@@ -32,9 +27,9 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Sequence",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Knit-app",
     },
     {
       name: "Acme Corp.",
@@ -49,22 +44,26 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
+      title: "Masters",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
-          url: "/welcome",
+          title: "Customers",
+          url: "/customers",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Items",
+          url: "/items",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Mills",
+          url: "/mills",
+        },
+        {
+          title: "Yarn Types",
+          url: "/yarn-types",
         },
       ],
     },
@@ -134,7 +133,7 @@ const data = {
       ],
     },
   ],
-  projects: [
+  Reports: [
     {
       name: "Design Engineering",
       url: "#",
@@ -161,7 +160,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavProjects projects={data.Reports} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

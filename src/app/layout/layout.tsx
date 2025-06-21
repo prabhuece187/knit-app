@@ -1,10 +1,9 @@
 
-import { AppSidebar } from "@/components/app-sidebar"
-import { ModeToggle } from "@/components/mode-toggle"
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@radix-ui/react-separator"
 import { Outlet } from "react-router-dom"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "./components/ui/sidebar"
+import { AppSidebar } from "./components/app-sidebar"
+import { ModeToggle } from "../theme/mode-toggle"
 
 export default function Layout() {
   return (
@@ -14,34 +13,22 @@ export default function Layout() {
 
         <AppSidebar />
 
-        {/* Main Content */}
-      <main className="flex-1 overflow-auto p-4">
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear justify-between w-full px-4 group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
-          <div className="flex items-center gap-2 px-6">
-            <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-3">
+            <div className="flex w-full items-center justify-between">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger />
+                <Separator orientation="vertical" className="h-4" />
+              </div>
+              <ModeToggle />
+            </div>
+          </header>
+          <div className="flex flex-1 flex-col gap-4 p-4">
+            <Outlet />
           </div>
-          <ModeToggle />
-        </header>
-          <Outlet /> {/* Shows Welcome or other routed pages */}
-      </main>
+        </SidebarInset>
       </div>
     </SidebarProvider>
   )
 }
+

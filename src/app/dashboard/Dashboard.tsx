@@ -1,10 +1,6 @@
+import { SidebarInset, SidebarProvider } from "../layout/components/ui/sidebar";
 
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar"
-
-export default function Page() {
+export default function Dashboard() {
   return (
     <SidebarProvider>
       {/* <AppSidebar /> */}
