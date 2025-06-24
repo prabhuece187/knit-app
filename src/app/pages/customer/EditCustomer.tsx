@@ -2,35 +2,23 @@ import { useEffect } from "react";
 import {  useForm  } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/layout/components/ui/form";
-import { Input } from "@/app/layout/components/ui/input";
-import { Button } from "@/app/layout/components/ui/button";
+import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/app/components/ui/form"
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button";
 import { useParams } from "react-router-dom";
-import { useGetCustomerByIdQuery, usePutCustomerMutation } from "@/app/service/CustomerApi";
+import { useGetCustomerByIdQuery, usePutCustomerMutation } from "@/app/api/CustomerApi";
 import {     
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue 
-} from "@/app/layout/components/ui/select";
+} from "@/app/components/ui/select";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store/Store";
-import { Textarea } from "@/app/layout/components/ui/textarea";
+import { Textarea } from "@/app/components/ui/textarea";
+import { customerSchema } from "@/app/schema-types/master-schema";
 
-const formSchema = z.object({
-  customer_name: z.string().min(2, {
-    message: "Please Enter the Customer Name.",
-  }),
-  id: z.number().min(1, { message: 'Please Add Customer.' }), 
-  customer_state: z.string().min(1, { message: 'Please Enter the State Name.' }), 
-  customer_state_code: z.string().min(1, { message: 'Please Enter the State Code.' }), 
-  user_id: z.number().min(1, { message: 'Please Enter the State Code.' }), 
-  customer_gst_no: z.string().min(15, { message: 'Please Enter the Gst Number.' }),
-  customer_mobile: z.string().optional(),
-  customer_email: z.string().email("Please Enter the Valid email").optional(),
-  customer_address: z.string().optional(),
-})
 
 export default function EditCustomer(){
     
@@ -49,8 +37,8 @@ export default function EditCustomer(){
     });
 
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
+    const form = useForm<z.infer<typeof customerSchema>>({
+        resolver: zodResolver(customerSchema),
         defaultValues: {
             customer_name: "",
             customer_state: "Tamil Nadu",
@@ -81,7 +69,7 @@ export default function EditCustomer(){
     }, [isSuccess, member, form]);
 
 
-     function onSubmit(values: z.infer<typeof formSchema>) {
+     function onSubmit(values: z.infer<typeof customerSchema>) {
         putCustomer(values);
      }
 

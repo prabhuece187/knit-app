@@ -2,10 +2,9 @@
 import {  useForm  } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/app/layout/components/ui/form";
-import { Input } from "@/app/layout/components/ui/input";
-import { Button } from "@/app/layout/components/ui/button";
-import { usePostCustomerMutation } from "@/app/service/CustomerApi";
+import { Input } from "@/app/components/ui/input";
+import { Button } from "@/app/components/ui/button";
+import { usePostCustomerMutation } from "@/app/api/CustomerApi";
 import { useSelector } from "react-redux";
 import { 
     Select,
@@ -13,10 +12,11 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue
-} from "@/app/layout/components/ui/select";
+} from "@/app/components/ui/select";
 import type { RootState } from "@/app/store/Store";
-import { Textarea } from "@/app/layout/components/ui/textarea";
-import  { customerSchema } from "@/app/layout/table/schema/customer-schema";
+import { Textarea } from "@/app/components/ui/textarea";
+import  { customerSchema } from "@/app/schema-types/master-schema";
+import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/app/components/ui/form";
 
 export default function AddCustomer(){
     

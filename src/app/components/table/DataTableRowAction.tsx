@@ -9,11 +9,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger, 
-} from "../components/ui/dropdown-menu"
-import { Button } from "../components/ui/button"
-import type { customerSchema } from "./schema/customer-schema"
+} from "../ui/dropdown-menu"
 import type { Row } from "@tanstack/react-table"
 import { Link } from "react-router-dom"
+import type { customerSchema } from "@/app/schema-types/master-schema"
+import { Button } from "../ui/button"
 
 interface DataTableRowActionsProps {
   row: Row<customerSchema>
@@ -41,7 +41,7 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         <DropdownMenuSeparator />
         <DropdownMenuItem>
           Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+        <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

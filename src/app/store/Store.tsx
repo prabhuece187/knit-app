@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { CustomerApi } from "../service/CustomerApi";
+import { CustomerApi } from "../api/CustomerApi";
 import { StateSlice } from "../features/state-slice";
 
 

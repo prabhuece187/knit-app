@@ -1,10 +1,10 @@
 import Header from "@/app/custom/Header";
-import { DataTable } from "@/app/layout/components/ui/data-table";
-import { DataTableColumnHeader } from "@/app/layout/table/DataTableColumnHeader";
-import { DataTableRowActions } from "@/app/layout/table/DataTableRowAction";
-import type { customerSchema } from "@/app/layout/table/schema/customer-schema";
-import { useGetCustomerQuery } from "@/app/service/CustomerApi";
+import { DataTable } from "@/app/components/ui/data-table";
+import { useGetCustomerQuery } from "@/app/api/CustomerApi";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { customerSchema } from "@/app/schema-types/master-schema";
+import { DataTableRowActions } from "@/app/components/table/DataTableRowAction";
+import { DataTableColumnHeader } from "@/app/components/table/DataTableColumnHeader";
 
 export const columns: ColumnDef<customerSchema>[]= [
     {

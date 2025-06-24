@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Button } from "../layout/components/ui/button";
+import { Button } from "../components/ui/button";
 
 export default function Header({ name }: { name: string }){
     return (
