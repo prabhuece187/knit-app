@@ -11,18 +11,20 @@ export default function Layout() {
       <div className="flex h-screen w-full">
         {/* Sidebar (includes both mobile & desktop behavior internally) */}
 
-        <AppSidebar />
+        <AppSidebar  />
 
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-3">
-            <div className="flex w-full items-center justify-between">
-              <div className="flex items-center gap-2">
-                <SidebarTrigger />
-                <Separator orientation="vertical" className="h-4" />
+        <SidebarInset >
+          <div className="sticky top-0 z-50 flex flex-col">
+            <header className="bg-background/50 flex h-16 shrink-0 items-center gap-2 px-3 backdrop-blur-xl lg:h-[60px]">
+              <div className="flex w-full items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <SidebarTrigger />
+                  <Separator orientation="vertical" className="h-4" />
+                </div>
+                <ModeToggle />
               </div>
-              <ModeToggle />
-            </div>
-          </header>
+            </header>
+          </div>
           <div className="flex flex-1 flex-col gap-4 p-4">
             <Outlet />
           </div>

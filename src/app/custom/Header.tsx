@@ -5,8 +5,8 @@ export default function Header({ name }: { name: string }){
     return (
         <>
             {/* <div className="flex flex-1 flex-col"> */}
-                <div className="bg-muted/50 aspect-video h-12 w-full rounded-lg">
-                    <div className="flex w-full items-center justify-between">
+                <div className="h-12 w-full rounded-lg px-4">
+                    <div className="flex w-full items-center justify-between bg-muted/50 rounded-lg">
                         <div className="flex items-center gap-2 p-2">
                             <h1> {name} </h1>
                         </div>

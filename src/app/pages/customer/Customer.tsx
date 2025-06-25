@@ -2,9 +2,10 @@ import Header from "@/app/custom/Header";
 import { DataTable } from "@/app/components/ui/data-table";
 import { useGetCustomerQuery } from "@/app/api/CustomerApi";
 import type { ColumnDef } from "@tanstack/react-table";
-import type { customerSchema } from "@/app/schema-types/master-schema";
+import  { customerSchema } from "@/app/schema-types/master-schema";
 import { DataTableRowActions } from "@/app/components/table/DataTableRowAction";
 import { DataTableColumnHeader } from "@/app/components/table/DataTableColumnHeader";
+import type z from "zod";
 
 export const columns: ColumnDef<customerSchema>[]= [
     {
@@ -56,6 +57,10 @@ export const columns: ColumnDef<customerSchema>[]= [
     
 ]
 
+type Customer = z.infer<typeof customerSchema>
+
+const searchColumns = customerSchema.keyof().options as (keyof Customer)[]
+
 
 export default function Customer(){
 
@@ -83,18 +88,18 @@ export default function Customer(){
 
     return (
         <>
-           <Header name={"customer"} />
-
-            <div className="p-4">
-                {customerLoading ? (
-                <div>Loading...</div>
-                ) : isError ? (
-                <div className="text-red-500">Failed to load data</div>
-                ) : (
-                <DataTable columns={columns} data={customerData} />
-                )}
-            </div>
-
+            <div className="bg-card text-card-foreground flex flex-col rounded-xl border py-6 shadow-sm @container/card">
+              <Header name={"customer"} />
+                <div className="p-4">
+                    {customerLoading ? (
+                    <div>Loading...</div>
+                    ) : isError ? (
+                    <div className="text-red-500">Failed to load data</div>
+                    ) : (
+                    <DataTable columns={columns} data={customerData} searchColumns={searchColumns} />
+                    )}
+                </div>
+            </div >
         </>
     );
 }
