@@ -87,7 +87,7 @@ export default function Customer(){
 
     return (
         <>
-          <div className="px-4 lg:px-6">
+          <div className="px-2 lg:px-6">
              <ListCard 
                 name={"Customer"}
                 columns={columns} 
