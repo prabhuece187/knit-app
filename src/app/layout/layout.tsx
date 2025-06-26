@@ -14,7 +14,7 @@ export default function Layout() {
         <AppSidebar  />
 
         <SidebarInset >
-          <div className="sticky top-0 z-50 flex flex-col">
+          <div className="sticky top-0 z-50 flex flex-col px-6">
             <header className="bg-background/50 flex h-16 shrink-0 items-center gap-2 px-3 backdrop-blur-xl lg:h-[60px]">
               <div className="flex w-full items-center justify-between">
                 <div className="flex items-center gap-2">

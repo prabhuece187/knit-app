@@ -1,11 +1,10 @@
-import Header from "@/app/custom/Header";
-import { DataTable } from "@/app/components/ui/data-table";
 import { useGetCustomerQuery } from "@/app/api/CustomerApi";
 import type { ColumnDef } from "@tanstack/react-table";
 import  { customerSchema } from "@/app/schema-types/master-schema";
 import { DataTableRowActions } from "@/app/components/table/DataTableRowAction";
 import { DataTableColumnHeader } from "@/app/components/table/DataTableColumnHeader";
 import type z from "zod";
+import ListCard from "@/app/custom/ListCard";
 
 export const columns: ColumnDef<customerSchema>[]= [
     {
@@ -88,18 +87,16 @@ export default function Customer(){
 
     return (
         <>
-            <div className="bg-card text-card-foreground flex flex-col rounded-xl border py-6 shadow-sm @container/card">
-              <Header name={"customer"} />
-                <div className="p-4">
-                    {customerLoading ? (
-                    <div>Loading...</div>
-                    ) : isError ? (
-                    <div className="text-red-500">Failed to load data</div>
-                    ) : (
-                    <DataTable columns={columns} data={customerData} searchColumns={searchColumns} />
-                    )}
-                </div>
-            </div >
+          <div className="px-4 lg:px-6">
+             <ListCard 
+                name={"Customer"}
+                columns={columns} 
+                data={customerData} 
+                searchColumns={searchColumns}
+                loading={customerLoading}
+                isError={isError}
+             />
+          </div>
         </>
     );
 }
