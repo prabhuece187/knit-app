@@ -1,7 +1,7 @@
 import z from "zod"
 
 export const customerSchema = z.object({
-  id: z.number(),
+  id: z.number().optional(),
   customer_name: z.string().min(2, {
     message: "Please Enter the Customer Name.",
   }),

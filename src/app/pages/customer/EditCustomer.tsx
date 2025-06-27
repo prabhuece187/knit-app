@@ -2,9 +2,8 @@ import { useEffect } from "react";
 import {  useForm  } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/app/components/ui/form"
-import { Input } from "@/app/components/ui/input";
-import { Button } from "@/app/components/ui/button";
+import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/components/ui/form"
+import { Input } from "@/components/ui/input";
 import { useParams } from "react-router-dom";
 import { useGetCustomerByIdQuery, usePutCustomerMutation } from "@/app/api/CustomerApi";
 import {     
@@ -13,13 +12,13 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue 
-} from "@/app/components/ui/select";
+} from "@/components/ui/select";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/app/store/Store";
-import { Textarea } from "@/app/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import { customerSchema } from "@/app/schema-types/master-schema";
 import AddUpdateCard from "@/app/custom/AddUpdateCard";
-import { Card, CardContent } from "@/app/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useRef } from "react";
 
 export default function EditCustomer(){
@@ -55,19 +54,19 @@ export default function EditCustomer(){
     })
 
     useEffect(() => {
-    if (isSuccess && member) {
-        form.reset({
-        customer_name: member.customer_name ?? "",
-        id: member.id ?? "",
-        customer_state: member.customer_state ?? "",
-        customer_state_code:  member.customer_state_code ?? "32",
-        user_id: member.user_id ?? 1,
-        customer_gst_no: member.customer_gst_no ?? "",
-        customer_mobile: member.customer_mobile ?? "",
-        customer_email: member.customer_email ?? "",
-        customer_address: member.customer_address ?? "",
-        });
-    }
+        if (isSuccess && member) {
+            form.reset({
+            customer_name: member.customer_name ?? "",
+            id: member.id ?? "",
+            customer_state: member.customer_state ?? "",
+            customer_state_code:  member.customer_state_code ?? "32",
+            user_id: member.user_id ?? 1,
+            customer_gst_no: member.customer_gst_no ?? "",
+            customer_mobile: member.customer_mobile ?? "",
+            customer_email: member.customer_email ?? "",
+            customer_address: member.customer_address ?? "",
+            });
+        }
     }, [isSuccess, member, form]);
 
 
@@ -80,8 +79,7 @@ export default function EditCustomer(){
         <>
             <div className="px-4 lg:px-6">
                 <AddUpdateCard name="Edit Customer" 
-                         onSave={() => formRef.current?.requestSubmit()}
-                         onCancel={() => console.log("cancelled")}>
+                         onSave={() => formRef.current?.requestSubmit()}>
                    
                    <div className="grid grid-cols-12 px-4 py-8">
                         <div className="col-span-12 md:col-start-4 md:col-span-6">
@@ -210,13 +208,6 @@ export default function EditCustomer(){
                                                     />
                                                 </div>
                                             </div>
-                                            <div className="grid grid-cols-12 gap-4">
-                                                <div className="col-span-12 flex justify-end">
-                                                    <Button type="submit" className="m-2">Cancel</Button>
-                                                    <Button type="submit" className="m-2">Submit</Button>
-                                                </div>
-                                            </div>
-
                                         </form>
                                     </Form>
                                 </CardContent>

@@ -9,11 +9,11 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger, 
-} from "../ui/dropdown-menu"
+} from "../../../components/ui/dropdown-menu"
 import type { Row } from "@tanstack/react-table"
 import { Link } from "react-router-dom"
 import type { customerSchema } from "@/app/schema-types/master-schema"
-import { Button } from "../ui/button"
+import { Button } from "../../../components/ui/button"
 
 interface DataTableRowActionsProps {
   row: Row<customerSchema>

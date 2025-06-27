@@ -2,7 +2,7 @@
 import {  useForm  } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Input } from "@/app/components/ui/input";
+import { Input } from "@/components/ui/input";
 import { usePostCustomerMutation } from "@/app/api/CustomerApi";
 import { useSelector } from "react-redux";
 import { 
@@ -11,12 +11,12 @@ import {
     SelectItem,
     SelectTrigger,
     SelectValue
-} from "@/app/components/ui/select";
+} from "@/components/ui/select";
 import type { RootState } from "@/app/store/Store";
-import { Textarea } from "@/app/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 import  { customerSchema } from "@/app/schema-types/master-schema";
-import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/app/components/ui/form";
-import { Card, CardContent } from "@/app/components/ui/card";
+import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/components/ui/form";
+import { Card, CardContent } from "@/components/ui/card";
 
 import { useRef } from "react";
 import AddUpdateCard from "@/app/custom/AddUpdateCard";
@@ -49,10 +49,9 @@ export default function AddCustomer(){
 
             <div className="px-4 lg:px-6">
                 <AddUpdateCard name="Add Customer" 
-                         onSave={() => formRef.current?.requestSubmit()}
-                         onCancel={() => console.log("cancelled")}>
+                         onSave={() => formRef.current?.requestSubmit()}>
                    
-                   <div className="grid grid-cols-12 px-4 py-8">
+                   <div className="grid grid-cols-12 px-4 py-4">
                         <div className="col-span-12 md:col-start-4 md:col-span-6">
                             <Card className="rounded-2xl shadow-xl border border-border ">
                                 <CardContent>

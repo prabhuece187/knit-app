@@ -11,11 +11,12 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-react"
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "./ui/sidebar"
+// import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "./ui/sidebar"
 import { NavMain } from "./nav-main"
 import { NavProjects } from "./nav-projects"
 import { NavUser } from "./nav-user"
 import { TeamSwitcher } from "./team-switcher"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader  } from "@/components/ui/sidebar"
 
 
 // This is sample data.

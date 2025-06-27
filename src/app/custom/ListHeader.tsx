@@ -1,7 +1,6 @@
-import { Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
 
-export default function ListHeader({ name }: { name: string }){
+
+export default function ListHeader({ name, trigger }: { name: string,trigger?: React.ReactNode }){
     return (
         <>
             <div className="h-12 w-full rounded-lg mb-2">
@@ -10,9 +9,7 @@ export default function ListHeader({ name }: { name: string }){
                         <h1> {name} </h1>
                     </div>
                     <div className="flex items-center gap-2 p-2">
-                        <Button variant="outline" size="sm">
-                                <Link to={`/add-${name}`}> Add {name} </Link>
-                        </Button>
+                        {trigger}
                     </div>
                 </div>
             </div>

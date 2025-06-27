@@ -1,5 +1,6 @@
-import { Card, CardContent } from "../components/ui/card";
-import { DataTable } from "../components/ui/data-table";
+import type React from "react";
+import { Card, CardContent } from "../../components/ui/card";
+import { DataTable } from "../../components/ui/data-table";
 import ListHeader from "./ListHeader";
 import type { ColumnDef } from "@tanstack/react-table";
 
@@ -10,12 +11,13 @@ interface ListCardProps<T> {
   columns: ColumnDef<T>[];
   data: T[];
   searchColumns: (keyof T)[];
+  trigger?:React.ReactNode;
 }
 
  function ListCard<T>(props: ListCardProps<T>){
    return (
         <>
-        <ListHeader name={props.name} />
+        <ListHeader name={props.name} trigger={props.trigger} />
         <Card className="@container/card">
             <CardContent>
                     {props.loading ? (

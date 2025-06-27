@@ -20,7 +20,7 @@ import {
 } from "./table"
 
 import { Input } from "./input"
-import { DataTablePagination } from "../table/DataTablePagination"
+import { DataTablePagination } from "../../app/components/table/DataTablePagination"
 
 interface DataTableProps<TData,TValue> {
   columns: ColumnDef<TData, TValue>[]
