@@ -8,8 +8,8 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger, 
-} from "../../../components/ui/dropdown-menu"
-import { Button } from "../../../components/ui/button"
+} from "../ui/dropdown-menu"
+import { Button } from "../ui/button"
 
 
 interface DataTableColumnHeaderProps<TData, TValue>

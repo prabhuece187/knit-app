@@ -3,7 +3,7 @@ import {  useForm  } from "react-hook-form";
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Input } from "@/components/ui/input";
-import { usePostCustomerMutation } from "@/app/api/CustomerApi";
+import { usePostCustomerMutation } from "@/api/CustomerApi";
 import { useSelector } from "react-redux";
 import { 
     Select,
@@ -12,14 +12,14 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import type { RootState } from "@/app/store/Store";
+import type { RootState } from "@/store/Store";
 import { Textarea } from "@/components/ui/textarea";
-import  { customerSchema } from "@/app/schema-types/master-schema";
+import  { customerSchema } from "@/schema-types/master-schema";
 import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/components/ui/form";
 import { Card, CardContent } from "@/components/ui/card";
 
 import { useRef } from "react";
-import AddUpdateCard from "@/app/custom/AddUpdateCard";
+import AddUpdateCard from "@/components/custom/AddUpdateCard";
 
 export default function AddCustomer(){
     const formRef = useRef<HTMLFormElement>(null); 

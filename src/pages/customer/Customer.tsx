@@ -1,15 +1,15 @@
-import { useGetCustomerByIdQuery, useGetCustomerQuery, usePutCustomerMutation } from "@/app/api/CustomerApi";
+import { useGetCustomerByIdQuery, useGetCustomerQuery, usePutCustomerMutation } from "@/api/CustomerApi";
 import type { ColumnDef } from "@tanstack/react-table";
-import  { customerSchema } from "@/app/schema-types/master-schema";
-import { DataTableRowActions } from "@/app/components/table/DataTableRowAction";
-import { DataTableColumnHeader } from "@/app/components/table/DataTableColumnHeader";
+import  { customerSchema } from "@/schema-types/master-schema";
+import { DataTableRowActions } from "@/components/common/DataTableRowAction";
+import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import type z from "zod";
-import ListCard from "@/app/custom/ListCard";
+import ListCard from "@/components/custom/ListCard";
 import { AlertDialog, AlertDialogContent,} from "@/components/ui/alert-dialog";
 import {  Form, FormControl, FormField, FormItem, FormLabel, FormMessage  } from "@/components/ui/form";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import type { RootState } from "@/app/store/Store";
+import type { RootState } from "@/store/Store";
 import { 
     Select,
     SelectContent,
@@ -19,10 +19,10 @@ import {
 } from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { usePostCustomerMutation } from "@/app/api/CustomerApi";
+import { usePostCustomerMutation } from "@/api/CustomerApi";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import AddUpdateHeader from "@/app/custom/AddUpdateHeader";
+import AddUpdateHeader from "@/components/custom/AddUpdateHeader";
 import { useParams } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

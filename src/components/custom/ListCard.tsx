@@ -1,6 +1,6 @@
 import type React from "react";
-import { Card, CardContent } from "../../components/ui/card";
-import { DataTable } from "../../components/ui/data-table";
+import { Card, CardContent } from "../ui/card";
+import { DataTable } from "../ui/data-table";
 import ListHeader from "./ListHeader";
 import type { ColumnDef } from "@tanstack/react-table";
 

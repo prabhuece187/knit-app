@@ -1,4 +1,4 @@
-import { Button } from "../../components/ui/button";
+import { Button } from "../ui/button";
 
 
 export default function AddUpdateHeader({
@@ -17,10 +17,10 @@ export default function AddUpdateHeader({
           <h1>{name}</h1>
         </div>
         <div className="flex items-center gap-2 p-2">
-          <Button type="button" onClick={onCancel} variant="outline" size="sm">
+          <Button type="button" onClick={onCancel}  size="sm">
             Cancel
           </Button>
-          <Button type="button" onClick={onSave} variant="outline" size="sm">
+          <Button type="button" onClick={onSave}  size="sm">
             Save
           </Button>
         </div>
