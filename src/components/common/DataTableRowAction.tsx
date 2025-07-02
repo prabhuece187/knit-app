@@ -11,15 +11,16 @@ import {
     DropdownMenuTrigger, 
 } from "../ui/dropdown-menu"
 import type { Row } from "@tanstack/react-table"
-import { Link } from "react-router-dom"
 import type { customerSchema } from "@/schema-types/master-schema"
 import { Button } from "../ui/button"
 
 interface DataTableRowActionsProps {
-  row: Row<customerSchema>
+  row: Row<customerSchema>;
+  setOpen: (open: boolean) => void;
+  setSelectedCustomerId: (id: number) => void;
 }
 
-export function DataTableRowActions({ row }: DataTableRowActionsProps) {
+export function DataTableRowActions({ row,setOpen, setSelectedCustomerId  }: DataTableRowActionsProps) {
   const customer = row.original
   return (
     <DropdownMenu>
@@ -33,9 +34,10 @@ export function DataTableRowActions({ row }: DataTableRowActionsProps) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <Link to={`/edit-customer/${customer.id}`}>
-          <DropdownMenuItem>Edit</DropdownMenuItem>
-        </Link>
+          <DropdownMenuItem onClick={() => {
+            setSelectedCustomerId(Number(customer.id));
+            setOpen(true);
+          }}>Edit</DropdownMenuItem>
         <DropdownMenuItem>Make a copy</DropdownMenuItem>
         <DropdownMenuItem>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />

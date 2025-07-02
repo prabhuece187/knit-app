@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const CustomerApi = createApi({
   reducerPath: "CustomerApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://knitting.coderplays.com/api/",
+    baseUrl: "http://localhost:8000/api/",
   }),
   tagTypes: ["CustomerTag"],
   endpoints: (build) => ({
