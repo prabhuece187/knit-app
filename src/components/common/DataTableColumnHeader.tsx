@@ -1,3 +1,5 @@
+"use client";
+
 import type { Column } from "@tanstack/react-table";
 import { ArrowDown, ArrowUp, ChevronsUpDown, EyeOff } from "lucide-react";
 
@@ -11,7 +13,7 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 
-interface DataTableColumnHeaderProps<TData, TValue>
+export interface DataTableColumnHeaderProps<TData, TValue>
   extends React.HTMLAttributes<HTMLDivElement> {
   column: Column<TData, TValue>;
   title: string;

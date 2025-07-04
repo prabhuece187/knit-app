@@ -1,27 +1,32 @@
-"use client"
+"use client";
 
-import { MoreHorizontal } from "lucide-react"
+import { MoreHorizontal } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuItem,
+  DropdownMenuContent,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import type { Row } from "@tanstack/react-table";
 
-import { 
-    DropdownMenu,
-    DropdownMenuItem,
-    DropdownMenuContent,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuTrigger, 
-} from "../ui/dropdown-menu"
-import type { Row } from "@tanstack/react-table"
-import type { customerSchema } from "@/schema-types/master-schema"
-import { Button } from "../ui/button"
-
-interface DataTableRowActionsProps {
-  row: Row<customerSchema>;
-  setOpen: (open: boolean) => void;
-  setSelectedCustomerId: (id: number) => void;
+export interface DataTableRowActionsProps<T> {
+  row: Row<T>;
+  onEdit?: (row: T) => void;
+  onDelete?: (row: T) => void;
+  extraActions?: React.ReactNode;
 }
 
-export function DataTableRowActions({ row,setOpen, setSelectedCustomerId  }: DataTableRowActionsProps) {
-  const customer = row.original
+export function DataTableRowActions<T>({
+  row,
+  onEdit,
+  onDelete,
+  extraActions = null,
+}: DataTableRowActionsProps<T>) {
+  const item = row.original;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -34,18 +39,22 @@ export function DataTableRowActions({ row,setOpen, setSelectedCustomerId  }: Dat
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-          <DropdownMenuItem onClick={() => {
-            setSelectedCustomerId(Number(customer.id));
-            setOpen(true);
-          }}>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-        <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        {onEdit && (
+          <DropdownMenuItem onClick={() => onEdit(item)}>
+            Edit
+          </DropdownMenuItem>
+        )}
+        {extraActions}
+        {onDelete && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => onDelete(item)}>
+              Delete
+              <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
-  )
+  );
 }

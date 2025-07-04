@@ -1,25 +1,23 @@
-import { useGetCustomerQuery } from "@/api/CustomerApi";
+import { useGetYarnTypeQuery } from "@/api/YarnTypeApi";
 import DataTableCard from "@/components/custom/DataTableCard";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import AddYarnType from "./component/AddYarnType";
+import EditYarnType from "./component/EditYarnType";
+import { getYarnTypeColumns, searchColumns } from "./constant/yarntype-config";
 
-import AddCustomer from "./component/AddCustomer";
-import { getCustomerColumns, searchColumns } from "./constant/customer-config";
-import EditCustomer from "./component/EditCustomer";
-
-
-export default function Customer() {
-  //  Listing Customer Values
+export default function YarnType() {
+  // Listing Yarn Type Values
   const limit: number = 10;
   const offset: number = 0;
   const curpage: number = 1;
   const searchInput: string = "";
 
   const {
-    data: response, // fallback to [] if undefined
-    isLoading: customerLoading,
+    data: response,
+    isLoading: yarnTypeLoading,
     isError,
-  } = useGetCustomerQuery(
+  } = useGetYarnTypeQuery(
     {
       limit,
       offset,
@@ -31,49 +29,49 @@ export default function Customer() {
     }
   );
 
-  const customerData = response?.data ?? [];
+  const yarnTypeData = response?.data ?? [];
 
   const [open, setOpen] = useState(false);
 
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+  const [selectedYarnTypeId, setSelectedYarnTypeId] = useState<number | null>(
     null
   );
 
-  const columns = getCustomerColumns(setOpen, setSelectedCustomerId);
+  const columns = getYarnTypeColumns(setOpen, setSelectedYarnTypeId);
 
   return (
     <>
       <div className="px-2 lg:px-6">
         <DataTableCard
-          name={"Customer"}
+          name={"Yarn Type"}
           columns={columns}
-          data={customerData}
+          data={yarnTypeData}
           searchColumns={searchColumns}
-          loading={customerLoading}
+          loading={yarnTypeLoading}
           open={open}
           setOpen={setOpen}
           isError={isError}
           trigger={
             <Button
               onClick={() => {
-                setSelectedCustomerId(null);
+                setSelectedYarnTypeId(null);
                 setOpen(true);
               }}
             >
-              + Add Customer
+              Add Yarn Type
             </Button>
           }
         />
       </div>
 
-      {selectedCustomerId ? (
-        <EditCustomer
-          CustomerId={selectedCustomerId}
+      {selectedYarnTypeId ? (
+        <EditYarnType
+          yarnTypeId={selectedYarnTypeId}
           open={open}
           setOpen={setOpen}
         />
       ) : (
-        <AddCustomer open={open} setOpen={setOpen} />
+        <AddYarnType open={open} setOpen={setOpen} />
       )}
     </>
   );

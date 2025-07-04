@@ -1,15 +1,12 @@
-import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader"
-import { DataTableRowActions } from "@/components/common/DataTableRowAction"
-import  { customerSchema } from "@/schema-types/master-schema"
-import type { ColumnDef } from "@tanstack/react-table"
-import type z from "zod"
-
-export type Customer = z.infer<typeof customerSchema>
+import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
+import { DataTableRowActions } from "@/components/common/DataTableRowAction";
+import { customerSchema, type Customer } from "@/schema-types/master-schema";
+import type { ColumnDef } from "@tanstack/react-table";
 
 export function getCustomerColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
   setSelectedCustomerId: React.Dispatch<React.SetStateAction<number | null>>
-): ColumnDef<customerSchema>[] {
+): ColumnDef<Customer>[] {
   return [
     {
       accessorKey: "id",
@@ -24,7 +21,7 @@ export function getCustomerColumns(
       ),
     },
     {
-      accessorKey: "customer_state",
+      accessorKey: "state_name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="State" />
       ),
@@ -58,13 +55,19 @@ export function getCustomerColumns(
       cell: ({ row }) => (
         <DataTableRowActions
           row={row}
-          setOpen={setOpen}
-          setSelectedCustomerId={setSelectedCustomerId}
+          onEdit={(customer) => {
+            setSelectedCustomerId(Number(customer.id));
+            setOpen(true);
+          }}
+          onDelete={(customer) => {
+            // handle delete logic here
+            console.log("Delete", customer);
+          }}
         />
       ),
     },
   ];
 }
 
-
-export const searchColumns = customerSchema.keyof().options as (keyof Customer)[]
+export const searchColumns = customerSchema.keyof()
+  .options as (keyof Customer)[];

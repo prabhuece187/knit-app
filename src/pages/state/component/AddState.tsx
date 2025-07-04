@@ -2,9 +2,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
-import { usePostCustomerMutation } from "@/api/CustomerApi";
-import { Textarea } from "@/components/ui/textarea";
-import { customerSchema, type State } from "@/schema-types/master-schema";
+import { stateSchema } from "@/schema-types/master-schema";
 import {
   Form,
   FormControl,
@@ -23,35 +21,30 @@ import {
   // DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useGetStateListQuery } from "@/api/StateApi";
 
-import { SelectPopover } from "@/components/common/SelectPopover";
 import CommonHeader from "@/components/common/CommonHeader";
+import { usePostStateMutation } from "@/api/StateApi";
 
-export default function AddCustomer({
+export default function AddState({
   open,
   setOpen,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const [postCustomer] = usePostCustomerMutation();
+  const [postState] = usePostStateMutation();
 
-  const form = useForm<z.infer<typeof customerSchema>>({
-    resolver: zodResolver(customerSchema),
+  const form = useForm<z.infer<typeof stateSchema>>({
+    resolver: zodResolver(stateSchema),
     defaultValues: {
       user_id: 1,
     },
   });
 
-  function onSubmit(values: z.infer<typeof customerSchema>) {
-    postCustomer(values);
+  function onSubmit(values: z.infer<typeof stateSchema>) {
+    postState(values);
     setOpen(false);
   }
-
-  // type State = z.infer<typeof stateSchema>;
-
-  const { data: states = [] } = useGetStateListQuery("") as { data: State[] };
 
   return (
     <>
@@ -61,7 +54,7 @@ export default function AddCustomer({
           <DialogContent>
             <DialogHeader>
               <DialogTitle>
-                <CommonHeader name={"Add Customer"} />
+                <CommonHeader name={"Add State"} />
               </DialogTitle>
               <DialogDescription>
                 {/* Make changes to customer details. Click save when you're done. */}
@@ -99,44 +92,13 @@ export default function AddCustomer({
                       <div className="col-span-3">
                         <FormField
                           control={form.control}
-                          name="customer_name"
+                          name="state_name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Customer Name*</FormLabel>
+                              <FormLabel>State Name*</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Enter the Customer Name"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="col-span-3">
-                        <SelectPopover
-                          label="State"
-                          placeholder="Select state..."
-                          options={states}
-                          valueKey="id"
-                          labelKey="state_name"
-                          name="state_id"
-                          control={form.control}
-                        />
-                      </div>
-
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="customer_gst_no"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>GST Number*</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter the GST Number"
+                                  placeholder="Enter the State Name"
                                   {...field}
                                 />
                               </FormControl>
@@ -149,52 +111,13 @@ export default function AddCustomer({
                       <div className="col-span-3">
                         <FormField
                           control={form.control}
-                          name="customer_mobile"
+                          name="state_code"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Mobile Number</FormLabel>
+                              <FormLabel>State Code*</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Enter the Mobile Number"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="customer_email"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Email</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter the Email"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="customer_address"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>Address</FormLabel>
-                              <FormControl>
-                                <Textarea
-                                  placeholder="Enter the Address"
-                                  className="resize-none"
+                                  placeholder="Enter the State Code"
                                   {...field}
                                 />
                               </FormControl>

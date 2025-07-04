@@ -1,25 +1,24 @@
-import { useGetCustomerQuery } from "@/api/CustomerApi";
+
 import DataTableCard from "@/components/custom/DataTableCard";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { getMillColumns, searchColumns } from "./constant/mill-config"; // You’ll need to create this
+import AddMill from "./component/AddMill";
+import EditMill from "./component/EditMill";
+import { useGetMillQuery } from "@/api/MillApi";
 
-import AddCustomer from "./component/AddCustomer";
-import { getCustomerColumns, searchColumns } from "./constant/customer-config";
-import EditCustomer from "./component/EditCustomer";
-
-
-export default function Customer() {
-  //  Listing Customer Values
+export default function Mill() {
+  // Listing Mill Values
   const limit: number = 10;
   const offset: number = 0;
   const curpage: number = 1;
   const searchInput: string = "";
 
   const {
-    data: response, // fallback to [] if undefined
-    isLoading: customerLoading,
+    data: response,
+    isLoading: millLoading,
     isError,
-  } = useGetCustomerQuery(
+  } = useGetMillQuery(
     {
       limit,
       offset,
@@ -31,49 +30,46 @@ export default function Customer() {
     }
   );
 
-  const customerData = response?.data ?? [];
+  const millData = response?.data ?? [];
 
   const [open, setOpen] = useState(false);
+  const [selectedMillId, setSelectedMillId] = useState<number | null>(null);
 
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
-    null
-  );
-
-  const columns = getCustomerColumns(setOpen, setSelectedCustomerId);
+  const columns = getMillColumns(setOpen, setSelectedMillId);
 
   return (
     <>
       <div className="px-2 lg:px-6">
         <DataTableCard
-          name={"Customer"}
+          name={"Mill"}
           columns={columns}
-          data={customerData}
+          data={millData}
           searchColumns={searchColumns}
-          loading={customerLoading}
+          loading={millLoading}
           open={open}
           setOpen={setOpen}
           isError={isError}
           trigger={
             <Button
               onClick={() => {
-                setSelectedCustomerId(null);
+                setSelectedMillId(null);
                 setOpen(true);
               }}
             >
-              + Add Customer
+              Add Mill
             </Button>
           }
         />
       </div>
 
-      {selectedCustomerId ? (
-        <EditCustomer
-          CustomerId={selectedCustomerId}
+      {selectedMillId ? (
+        <EditMill
+          MillId={selectedMillId}
           open={open}
           setOpen={setOpen}
         />
       ) : (
-        <AddCustomer open={open} setOpen={setOpen} />
+        <AddMill open={open} setOpen={setOpen} />
       )}
     </>
   );

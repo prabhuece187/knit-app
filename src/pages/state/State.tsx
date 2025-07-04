@@ -1,14 +1,12 @@
-import { useGetCustomerQuery } from "@/api/CustomerApi";
+import { useGetStateQuery } from "@/api/StateApi";
 import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useState} from "react";
 import { Button } from "@/components/ui/button";
+import {  getStateColumns, searchColumns } from "./constant/state-config";
+import AddState from "./component/AddState";
+import EditState from "./component/EditState";
 
-import AddCustomer from "./component/AddCustomer";
-import { getCustomerColumns, searchColumns } from "./constant/customer-config";
-import EditCustomer from "./component/EditCustomer";
-
-
-export default function Customer() {
+export default function State() {
   //  Listing Customer Values
   const limit: number = 10;
   const offset: number = 0;
@@ -17,9 +15,9 @@ export default function Customer() {
 
   const {
     data: response, // fallback to [] if undefined
-    isLoading: customerLoading,
+    isLoading: stateLoading,
     isError,
-  } = useGetCustomerQuery(
+  } = useGetStateQuery(
     {
       limit,
       offset,
@@ -31,50 +29,52 @@ export default function Customer() {
     }
   );
 
-  const customerData = response?.data ?? [];
+  const stateData = response?.data ?? [];
 
   const [open, setOpen] = useState(false);
 
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+  const [selectedStateId, setSelectedStateId] = useState<number | null>(
     null
   );
 
-  const columns = getCustomerColumns(setOpen, setSelectedCustomerId);
+    const columns = getStateColumns(setOpen, setSelectedStateId);
 
   return (
     <>
       <div className="px-2 lg:px-6">
         <DataTableCard
-          name={"Customer"}
+          name={"State"}
           columns={columns}
-          data={customerData}
+          data={stateData}
           searchColumns={searchColumns}
-          loading={customerLoading}
+          loading={stateLoading}
           open={open}
           setOpen={setOpen}
           isError={isError}
           trigger={
             <Button
               onClick={() => {
-                setSelectedCustomerId(null);
+                setSelectedStateId(null);
                 setOpen(true);
               }}
             >
-              + Add Customer
+              Add State
             </Button>
           }
         />
       </div>
 
-      {selectedCustomerId ? (
-        <EditCustomer
-          CustomerId={selectedCustomerId}
+      {selectedStateId ? (
+        <EditState
+          StateId={selectedStateId}
           open={open}
           setOpen={setOpen}
         />
       ) : (
-        <AddCustomer open={open} setOpen={setOpen} />
+        <AddState open={open} setOpen={setOpen} />
       )}
     </>
   );
 }
+
+

@@ -23,13 +23,17 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
+import DynamicAdd from "./DynamicAdd";
 
 // Generic option type (you can customize this more if needed)
 type SelectOption = {
   [key: string]: string | number;
 };
 
-interface SelectPopoverProps<TFieldValues extends FieldValues, TOption extends SelectOption> {
+interface SelectPopoverProps<
+  TFieldValues extends FieldValues,
+  TOption extends SelectOption
+> {
   label: string;
   placeholder?: string;
   options: TOption[];
@@ -39,7 +43,10 @@ interface SelectPopoverProps<TFieldValues extends FieldValues, TOption extends S
   control: Control<TFieldValues>;
 }
 
-export function SelectPopover<TFieldValues extends FieldValues, TOption extends SelectOption>({
+export function SelectPopover<
+  TFieldValues extends FieldValues,
+  TOption extends SelectOption
+>({
   label,
   placeholder = "Select...",
   options,
@@ -76,9 +83,11 @@ export function SelectPopover<TFieldValues extends FieldValues, TOption extends 
               </PopoverTrigger>
               <PopoverContent className="w-[300px] p-0">
                 <Command>
-                  <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
+                  <CommandInput
+                    placeholder={`Search ${label.toLowerCase()}...`}
+                  />
                   <CommandList>
-                    <CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>
+                    <CommandEmpty>No {label.toLowerCase()} found. <DynamicAdd  label={label}/></CommandEmpty>
                     <CommandGroup>
                       {options.map((opt) => (
                         <CommandItem
