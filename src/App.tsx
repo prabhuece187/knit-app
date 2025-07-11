@@ -10,6 +10,9 @@ import State from "./pages/state/State";
 import Item from "./pages/items/Item";
 import Mill from "./pages/mill/Mill";
 import YarnType from "./pages/yarntype/YarnType";
+import Inward from "./pages/inward/Inward";
+import AddInward from "./pages/inward/component/AddInward";
+import EditInward from "./pages/inward/component/EditInward";
 
 function App() {
   return (
@@ -21,12 +24,19 @@ function App() {
               {/* Dashboard */}
               <Route index element={<Dashboard />} />
 
-              {/* Customer */}
+              {/* Master */}
               <Route path="customers" element={<Customer />} />
               <Route path="items" element={<Item />} />
               <Route path="states" element={<State />} />
               <Route path="mills" element={<Mill />} />
               <Route path="yarn_types" element={<YarnType />} />
+
+              {/* Inward */}
+
+              <Route path="inward" element={<Inward />} />
+              <Route path="addinward" element={<AddInward />} />
+              {/* this id set same as params inwardId */}
+              <Route path="/editinward/:inwardId" element={<EditInward />} />
             </Route>
           </Routes>
         </ThemeProvider>

@@ -77,22 +77,22 @@ const data = {
       ],
     },
     {
-      title: "Models",
+      title: "Inward",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "inward",
+          url: "/inward",
         },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
+        // {
+        //   title: "Explorer",
+        //   url: "#",
+        // },
+        // {
+        //   title: "Quantum",
+        //   url: "#",
+        // },
       ],
     },
     {

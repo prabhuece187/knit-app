@@ -43,6 +43,13 @@ export const ItemApi = createApi({
       }),
       invalidatesTags: ["ItemTag"],
     }),
+    getItemList: build.query({
+      query: () => ({
+        url: `item_list`,
+        method: "GET",
+      }),
+      providesTags: ["ItemTag"],
+    }),
   }),
 });
 
@@ -51,4 +58,5 @@ export const {
   useGetItemByIdQuery,
   usePostItemMutation,
   usePutItemMutation,
+  useGetItemListQuery,
 } = ItemApi;

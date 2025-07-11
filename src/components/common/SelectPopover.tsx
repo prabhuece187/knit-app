@@ -26,9 +26,7 @@ import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import DynamicAdd from "./DynamicAdd";
 
 // Generic option type (you can customize this more if needed)
-type SelectOption = {
-  [key: string]: string | number;
-};
+type SelectOption = Record<string, string | number>;
 
 interface SelectPopoverProps<
   TFieldValues extends FieldValues,
@@ -41,6 +39,8 @@ interface SelectPopoverProps<
   labelKey: keyof TOption;
   name: FieldPath<TFieldValues>;
   control: Control<TFieldValues>;
+  hideLabel?: boolean; 
+  onValueChange?: (selected: TOption) => void;
 }
 
 export function SelectPopover<
@@ -54,6 +54,8 @@ export function SelectPopover<
   labelKey,
   name,
   control,
+  onValueChange,
+  hideLabel = false,
 }: SelectPopoverProps<TFieldValues, TOption>) {
   const [open, setOpen] = useState(false);
 
@@ -66,7 +68,7 @@ export function SelectPopover<
 
         return (
           <FormItem>
-            <FormLabel>{label}</FormLabel>
+            {!hideLabel && <FormLabel>{label}</FormLabel>}
             <Popover open={open} onOpenChange={setOpen}>
               <PopoverTrigger asChild>
                 <FormControl>
@@ -87,7 +89,10 @@ export function SelectPopover<
                     placeholder={`Search ${label.toLowerCase()}...`}
                   />
                   <CommandList>
-                    <CommandEmpty>No {label.toLowerCase()} found. <DynamicAdd  label={label}/></CommandEmpty>
+                    <CommandEmpty>
+                      No {label.toLowerCase()} found.{" "}
+                      <DynamicAdd label={label} />
+                    </CommandEmpty>
                     <CommandGroup>
                       {options.map((opt) => (
                         <CommandItem
@@ -95,6 +100,7 @@ export function SelectPopover<
                           value={String(opt[labelKey])}
                           onSelect={() => {
                             field.onChange(opt[valueKey]);
+                            onValueChange?.(opt);
                             setOpen(false);
                           }}
                         >

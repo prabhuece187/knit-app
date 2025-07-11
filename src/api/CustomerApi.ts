@@ -44,6 +44,13 @@ export const CustomerApi = createApi({
       }),
       invalidatesTags: ["CustomerTag"],
     }),
+    getCustomerList: build.query({
+        query: () => ({
+            url: `customer_list`,
+            method: "GET",
+        }),
+        providesTags: ["CustomerTag"],
+    }),
   }),
 });
 
@@ -52,6 +59,7 @@ export const {
   useGetCustomerByIdQuery,
   usePostCustomerMutation,
   usePutCustomerMutation,
+  useGetCustomerListQuery,
 } = CustomerApi;
 
 

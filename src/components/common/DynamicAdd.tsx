@@ -1,11 +1,13 @@
-import { useState, type Dispatch,type SetStateAction } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { Button } from "../ui/button";
 import AddState from "@/pages/state/component/AddState";
 import AddCustomer from "@/pages/customer/component/AddCustomer";
 import AddItem from "@/pages/items/component/AddItem";
+import AddMill from "@/pages/mill/component/AddMill";
+import AddYarnType from "@/pages/yarntype/component/AddYarnType";
 
 // Define the valid labels
-type LabelType = "State" | "Customer" | "Item";
+type LabelType = "State" | "Customer" | "Item" | "Mill" | "YarnType";
 
 // Props allow any string
 type DynamicAddProps = {
@@ -13,15 +15,23 @@ type DynamicAddProps = {
 };
 
 // Component map with strong typing
-const componentMap: Record<LabelType, React.ComponentType<{ open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }>> = {
+const componentMap: Record<
+  LabelType,
+  React.ComponentType<{
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+  }>
+> = {
   State: AddState,
   Customer: AddCustomer,
   Item: AddItem,
+  Mill: AddMill,
+  YarnType: AddYarnType,
 };
 
 // Type guard to ensure label is one of the valid options
 const isValidLabel = (label: string): label is LabelType => {
-  return ["State", "Customer", "Item"].includes(label);
+  return ["State", "Customer", "Item", "Mill", "YarnType"].includes(label);
 };
 
 export default function DynamicAdd({ label }: DynamicAddProps) {
@@ -40,17 +50,11 @@ export default function DynamicAdd({ label }: DynamicAddProps) {
 
   return (
     <>
-      <Button
-        variant="secondary"
-        className="m-2"
-        onClick={() => setOpen(true)}
-      >
+      <Button variant="secondary" className="m-2" onClick={() => setOpen(true)}>
         + Add New {label}
       </Button>
 
-      {SelectedComponent && (
-        <SelectedComponent open={open} setOpen={setOpen} />
-      )}
+      {SelectedComponent && <SelectedComponent open={open} setOpen={setOpen} />}
     </>
   );
 }

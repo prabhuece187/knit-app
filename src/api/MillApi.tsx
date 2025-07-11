@@ -54,9 +54,9 @@ export const MillApi = createApi({
 });
 
 export const {
-  useGetMillQuery,
-  useGetMillByIdQuery,
-  usePostMillMutation,
-  usePutMillMutation,
-  useGetMillListQuery,
+useGetMillQuery,
+useGetMillByIdQuery,
+usePostMillMutation,
+usePutMillMutation,
+useGetMillListQuery,
 } = MillApi;
