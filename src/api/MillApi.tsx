@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const MillApi = createApi({
   reducerPath: "MillApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/",
+   baseUrl: "http://knitting.coderplays.com/api/",
   }),
   tagTypes: ["MillTag"],
   endpoints: (build) => ({

@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const ItemApi = createApi({
   reducerPath: "ItemApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/",
+    baseUrl: "http://knitting.coderplays.com/api/",
   }),
   tagTypes: ["ItemTag"],
   endpoints: (build) => ({

@@ -13,6 +13,9 @@ import YarnType from "./pages/yarntype/YarnType";
 import Inward from "./pages/inward/Inward";
 import AddInward from "./pages/inward/component/AddInward";
 import EditInward from "./pages/inward/component/EditInward";
+import Outward from "./pages/outward/Outward";
+import AddOutward from "./pages/outward/component/AddOutward";
+import EditOutward from "./pages/outward/component/EditOutward";
 
 function App() {
   return (
@@ -32,11 +35,15 @@ function App() {
               <Route path="yarn_types" element={<YarnType />} />
 
               {/* Inward */}
-
               <Route path="inward" element={<Inward />} />
               <Route path="addinward" element={<AddInward />} />
               {/* this id set same as params inwardId */}
               <Route path="/editinward/:inwardId" element={<EditInward />} />
+
+              {/* Outward */}
+              <Route path="outward" element={<Outward />} />
+              <Route path="addoutward" element={<AddOutward />} />
+              <Route path="/editoutward/:outwardId" element={<EditOutward />} />
             </Route>
           </Routes>
         </ThemeProvider>

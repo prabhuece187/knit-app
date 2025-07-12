@@ -1,54 +1,54 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
-export const InwardApi = createApi({
-  reducerPath: "inwardApi",
+export const OutwardApi = createApi({
+  reducerPath: "outwardApi",
   baseQuery: fetchBaseQuery({
     baseUrl: "http://knitting.coderplays.com/api/",
   }),
-  tagTypes: ["InwardTag"],
+  tagTypes: ["OutwardTag"],
   endpoints: (build) => ({
-    getInward: build.query({
+    getOutward: build.query({
       query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `inward?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+        url: `outward?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
         method: "GET",
       }),
-      providesTags: ["InwardTag"],
+      providesTags: ["OutwardTag"],
     }),
-    getInwardById: build.query({
+    getOutwardById: build.query({
       query: (id) => ({
-        url: `inward_edit/${id}`,
+        url: `outward_edit/${id}`,
         method: "GET",
       }),
-      providesTags: ["InwardTag"],
+      providesTags: ["OutwardTag"],
     }),
-    postInward: build.mutation({
+    postOutward: build.mutation({
       query: (data) => ({
-        url: "inward_add",
+        url: "outward_add",
         method: "POST",
         body: data,
         headers: {
           "Content-Type": "application/json",
         },
       }),
-      invalidatesTags: ["InwardTag"],
+      invalidatesTags: ["OutwardTag"],
     }),
-    putInward: build.mutation({
+    putOutward: build.mutation({
       query: (data) => ({
-        url: `inward_update/${data.id}`,
+        url: `outward_update/${data.id}`,
         method: "PUT",
         body: data,
         headers: {
           "Content-Type": "application/json",
         },
       }),
-      invalidatesTags: ["InwardTag"],
+      invalidatesTags: ["OutwardTag"],
     }),
   }),
 });
 
 export const {
-  useGetInwardQuery,
-  useGetInwardByIdQuery,
-  usePostInwardMutation,
-  usePutInwardMutation,
-} = InwardApi;
+  useGetOutwardQuery,
+  useGetOutwardByIdQuery,
+  usePostOutwardMutation,
+  usePutOutwardMutation,
+} = OutwardApi;

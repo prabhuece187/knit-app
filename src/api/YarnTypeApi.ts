@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const YarnTypeApi = createApi({
   reducerPath: "YarnTypeApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/",
+    baseUrl: "http://knitting.coderplays.com/api/",
   }),
   tagTypes: ["YarnTypeTag"],
   endpoints: (build) => ({

@@ -4,7 +4,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const StateApi = createApi({
   reducerPath: "StateApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/",
+    baseUrl: "http://knitting.coderplays.com/api/",
   }),
   tagTypes: ["StateTag"],
   endpoints: (build) => ({

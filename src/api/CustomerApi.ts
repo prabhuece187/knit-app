@@ -1,10 +1,9 @@
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const CustomerApi = createApi({
   reducerPath: "CustomerApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:8000/api/",
+    baseUrl: "http://knitting.coderplays.com/api/",
   }),
   tagTypes: ["CustomerTag"],
   endpoints: (build) => ({
@@ -45,11 +44,11 @@ export const CustomerApi = createApi({
       invalidatesTags: ["CustomerTag"],
     }),
     getCustomerList: build.query({
-        query: () => ({
-            url: `customer_list`,
-            method: "GET",
-        }),
-        providesTags: ["CustomerTag"],
+      query: () => ({
+        url: `customer_list`,
+        method: "GET",
+      }),
+      providesTags: ["CustomerTag"],
     }),
   }),
 });
@@ -61,6 +60,3 @@ export const {
   usePutCustomerMutation,
   useGetCustomerListQuery,
 } = CustomerApi;
-
-
-
