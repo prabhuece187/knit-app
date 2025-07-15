@@ -14,17 +14,14 @@ import {
   inwardSchema,
   type FullInwardFormValues,
 } from "@/schema-types/inward-schema";
-import {  useForm,  } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { usePostInwardMutation } from "@/api/InwardApi";
 
 import { SelectPopover } from "@/components/common/SelectPopover";
-import type {
-  Customer,
-  Mill,
-} from "@/schema-types/master-schema";
+import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
 import { useGetMillListQuery } from "@/api/MillApi";
 import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
@@ -44,7 +41,7 @@ export default function AddInward() {
     resolver: zodResolver(fullInwardSchema),
     defaultValues: {
       user_id: 1,
-      inward_date: new Date().toISOString().split("T")[0]
+      inward_date: new Date().toISOString().split("T")[0],
     },
   });
 
@@ -163,9 +160,7 @@ export default function AddInward() {
                             <Input
                               type="date"
                               value={field.value ?? ""}
-                              onChange={(e) =>
-                                field.onChange(e.target.value)
-                              }
+                              onChange={(e) => field.onChange(e.target.value)}
                             />
                           </FormControl>
                           <FormMessage />
@@ -210,12 +205,13 @@ export default function AddInward() {
                 </div>
 
                 {/* INWARD DETAILS TABLE */}
-                  <ItemsDetailsTable 
-                    name="inward_details"
-                    control={control}
-                    setValue={setValue}
-                    watch={watch}
-                  /> 
+                <ItemsDetailsTable
+                  name="inward_details"
+                  control={control}
+                  setValue={setValue}
+                  watch={watch}
+                  mode="inward"
+                />
 
                 {/* Form Buttons */}
                 <div className="flex justify-end gap-2">

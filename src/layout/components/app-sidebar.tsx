@@ -75,23 +75,16 @@ const data = {
       ],
     },
     {
-      title: "Inward",
+      title: "Process",
       url: "#",
       icon: Bot,
       items: [
         {
-          title: "inward",
+          title: "Inward",
           url: "/inward",
         },
-      ],
-    },
-    {
-      title: "Outward",
-      url: "#",
-      icon: Bot,
-      items: [
         {
-          title: "outward",
+          title: "Outward",
           url: "/outward",
         },
       ],

@@ -77,7 +77,7 @@ export default function AddInward() {
           inward_weight: item.inward_weight,
           inward_detail_date: item.inward_detail_date,
           yarn_colour: item.yarn_colour,
-          // item_name: item.item_name, 
+          // item_name: item.item_name,
           // yarn_type: item.yarn_type,
         })),
       };
@@ -294,6 +294,7 @@ export default function AddInward() {
                   control={control}
                   setValue={setValue}
                   watch={watch}
+                  mode="inward"
                 />
 
                 {/* Form Buttons */}

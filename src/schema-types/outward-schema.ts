@@ -29,7 +29,7 @@ export const outwardSchema = z.object({
   total_weight: z.number().optional(),
   total_quantity: z.number().optional(),
   outward_vehicle_no: z.string().optional(),
-  status: z.string().optional(),
+  status: z.number().optional(),
   yarn_send: z.string().optional(),
 });
 

@@ -247,6 +247,7 @@ export default function AddOutward() {
                   control={control}
                   setValue={setValue}
                   watch={watch}
+                  mode="outward"
                 />
 
                 {/* Form Buttons */}

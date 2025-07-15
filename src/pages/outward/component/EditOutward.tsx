@@ -19,7 +19,10 @@ import { useForm } from "react-hook-form";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { useGetOutwardByIdQuery, usePutOutwardMutation } from "@/api/OutwardApi";
+import {
+  useGetOutwardByIdQuery,
+  usePutOutwardMutation,
+} from "@/api/OutwardApi";
 import { SelectPopover } from "@/components/common/SelectPopover";
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
@@ -303,6 +306,7 @@ export default function EditOutward() {
                   control={control}
                   setValue={setValue}
                   watch={watch}
+                  mode="outward"
                 />
 
                 {/* Form Buttons */}

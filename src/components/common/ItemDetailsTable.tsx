@@ -31,6 +31,7 @@ interface ItemsDetailsTableProps<TFormValues extends FieldValues> {
   control: Control<TFormValues>;
   setValue: UseFormSetValue<TFormValues>;
   watch: UseFormWatch<TFormValues>;
+  mode?: "inward" | "outward";
 }
 
 export function ItemsDetailsTable<TFormValues extends FieldValues>({
@@ -38,6 +39,7 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
   control,
   setValue,
   watch,
+  mode = "inward",
 }: ItemsDetailsTableProps<TFormValues>) {
   const { data: yarntypes = [] } = useGetYarnTypeListQuery("") as {
     data: YarnType[];
@@ -54,25 +56,44 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
 
   const watchItems = watch(name as Path<TFormValues>) as RowType[];
 
-  const defaultRow: RowType = {
-    item_id: 0,
-    user_id: 1,
-    inward_qty: 0,
-    inward_weight: 0,
-    yarn_dia: 0,
-    yarn_gsm: 0,
-    yarn_gauge: "",
-    inward_detail_date: new Date().toISOString().split("T")[0],
-    yarn_colour: "",
-  };
+  const defaultRow: RowType =
+    mode === "outward"
+      ? {
+          item_id: 0,
+          user_id: 1,
+          outward_qty: 0,
+          outward_weight: 0,
+          yarn_dia: 0,
+          yarn_gsm: 0,
+          yarn_gauge: "",
+          outward_detail_date: new Date().toISOString().split("T")[0],
+          yarn_colour: "",
+          deliverd_weight: 0,
+        }
+      : {
+          item_id: 0,
+          user_id: 1,
+          inward_qty: 0,
+          inward_weight: 0,
+          yarn_dia: 0,
+          yarn_gsm: 0,
+          yarn_gauge: "",
+          inward_detail_date: new Date().toISOString().split("T")[0],
+          yarn_colour: "",
+        };
+
+  const qtyField = mode === "outward" ? "outward_qty" : "inward_qty";
+  const weightField = mode === "outward" ? "outward_weight" : "inward_weight";
+  const dateField =
+    mode === "outward" ? "outward_detail_date" : "inward_detail_date";
 
   const amountCalculation = (details: RowType[]) => {
     const totalQty = details.reduce(
-      (sum, item) => sum + (item.inward_qty || 0),
+      (sum, item) => sum + (item[qtyField] || 0),
       0
     );
     const totalWeight = details.reduce(
-      (sum, item) => sum + (item.inward_weight || 0),
+      (sum, item) => sum + (item[weightField] || 0),
       0
     );
 
@@ -128,12 +149,19 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
             <TableHead>Item</TableHead>
             <TableHead>Yarn Type</TableHead>
             <TableHead>Yarn Gauge</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Quantity</TableHead>
-            <TableHead>Weight</TableHead>
+            <TableHead>
+              {mode === "outward" ? "Outward Date" : "Inward Date"}
+            </TableHead>
+            <TableHead>
+              {mode === "outward" ? "Outward Qty" : "Inward Qty"}
+            </TableHead>
+            <TableHead>
+              {mode === "outward" ? "Outward Weight" : "Inward Weight"}
+            </TableHead>
             <TableHead>Dia</TableHead>
             <TableHead>GSM</TableHead>
             <TableHead>Colour</TableHead>
+            {mode === "outward" && <TableHead>Delivered Weight</TableHead>}
             <TableHead className="text-center">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -187,7 +215,7 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
               <TableCell>
                 <FormField
                   control={control}
-                  name={buildPath(index, "inward_detail_date")}
+                  name={buildPath(index, dateField as keyof RowType)}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
@@ -206,16 +234,16 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
               <TableCell>
                 <FormField
                   control={control}
-                  name={buildPath(index, "inward_qty")}
+                  name={buildPath(index, qtyField as keyof RowType)}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Enter Quantity"
+                          placeholder="Quantity"
                           {...field}
                           onChange={(e) =>
-                            itemPropChange(index, "inward_qty", +e.target.value)
+                            itemPropChange(index, qtyField, +e.target.value)
                           }
                         />
                       </FormControl>
@@ -228,20 +256,16 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
               <TableCell>
                 <FormField
                   control={control}
-                  name={buildPath(index, "inward_weight")}
+                  name={buildPath(index, weightField as keyof RowType)}
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="Enter Weight"
+                          placeholder="Weight"
                           {...field}
                           onChange={(e) =>
-                            itemPropChange(
-                              index,
-                              "inward_weight",
-                              +e.target.value
-                            )
+                            itemPropChange(index, weightField, +e.target.value)
                           }
                         />
                       </FormControl>
@@ -305,6 +329,33 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
                   )}
                 />
               </TableCell>
+
+              {/* Extra fields for Inward */}
+              {mode === "outward" && (
+                <>
+                  {/* deliverd_weight */}
+                  <TableCell>
+                    <FormField
+                      control={control}
+                      name={buildPath(index, "deliverd_weight")}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              type="number"
+                              placeholder="Deliverd weight"
+                              {...field}
+                              onChange={(e) => field.onChange(+e.target.value)}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </TableCell>
+                </>
+              )}
+
               {/* Actions */}
               <TableCell className="text-center">
                 <Button
@@ -328,24 +379,24 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
           ))}
         </TableBody>
       </Table>
-        <div className="flex justify-end mt-6">
+      <div className="flex justify-end mt-6">
         <Card className="w-fit">
-            <CardContent className="flex gap-8 px-6 py-4 text-sm">
+          <CardContent className="flex gap-8 px-6 py-4 text-sm">
             <div className="flex flex-col items-end">
-                <span className="text-sm">Total Quantity</span>
-                <span className="text-xl font-bold">
+              <span className="text-sm">Total Quantity</span>
+              <span className="text-xl font-bold">
                 {watch("total_quantity" as Path<TFormValues>)}
-                </span>
+              </span>
             </div>
             <div className="flex flex-col items-end">
-                <span className="text-sm">Total Weight</span>
-                <span className="text-xl font-bold">
+              <span className="text-sm">Total Weight</span>
+              <span className="text-xl font-bold">
                 {watch("total_weight" as Path<TFormValues>)}
-                </span>
+              </span>
             </div>
-            </CardContent>
+          </CardContent>
         </Card>
-        </div>
+      </div>
     </div>
   );
 }
