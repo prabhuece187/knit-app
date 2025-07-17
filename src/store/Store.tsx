@@ -7,6 +7,7 @@ import { YarnTypeApi } from "@/api/YarnTypeApi";
 import { InwardApi } from "@/api/InwardApi";
 import { MillApi } from "@/api/MillApi";
 import { OutwardApi } from "@/api/OutwardApi";
+import { ReportApi } from "@/api/ReportApi";
 
 
 export const store = configureStore({
@@ -19,6 +20,7 @@ export const store = configureStore({
     [YarnTypeApi.reducerPath] :YarnTypeApi.reducer,
     [InwardApi.reducerPath] :InwardApi.reducer,
     [OutwardApi.reducerPath] :OutwardApi.reducer,
+    [ReportApi.reducerPath] :ReportApi.reducer,
   },
   middleware : (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -29,6 +31,7 @@ export const store = configureStore({
         YarnTypeApi.middleware,
         InwardApi.middleware,
         OutwardApi.middleware,
+        ReportApi.middleware,
     ),
 });
 

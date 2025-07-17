@@ -16,6 +16,7 @@ import EditInward from "./pages/inward/component/EditInward";
 import Outward from "./pages/outward/Outward";
 import AddOutward from "./pages/outward/component/AddOutward";
 import EditOutward from "./pages/outward/component/EditOutward";
+import OverAllReport from "./pages/report/OverAll";
 
 function App() {
   return (
@@ -44,6 +45,11 @@ function App() {
               <Route path="outward" element={<Outward />} />
               <Route path="addoutward" element={<AddOutward />} />
               <Route path="/editoutward/:outwardId" element={<EditOutward />} />
+
+              {/* Report */}
+              <Route path="over-all-report" element={<OverAllReport />} />
+
+
             </Route>
           </Routes>
         </ThemeProvider>

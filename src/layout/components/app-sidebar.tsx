@@ -5,13 +5,13 @@ import {
   Command,
   Frame,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
+  // Map,
+  // PieChart,
   SquareTerminal,
 } from "lucide-react";
 // import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "./ui/sidebar"
 import { NavMain } from "./nav-main";
-import { NavProjects } from "./nav-projects";
+// import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
 import { TeamSwitcher } from "./team-switcher";
 import {
@@ -89,24 +89,35 @@ const data = {
         },
       ],
     },
-  ],
-  Reports: [
     {
-      name: "Design Engineering",
+      title: "Reports",
       url: "#",
       icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      items: [
+        {
+          title: "Overall Report",
+          url: "/over-all-report",
+        },
+      ],
     },
   ],
+  // Reports: [
+  //   {
+  //     name: "Overall Report",
+  //     url: "/over-all-report",
+  //     icon: Frame,
+  //   },
+  //   {
+  //     name: "Sales & Marketing",
+  //     url: "#",
+  //     icon: PieChart,
+  //   },
+  //   {
+  //     name: "Travel",
+  //     url: "#",
+  //     icon: Map,
+  //   },
+  // ],
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -117,7 +128,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.Reports} />
+        {/* <NavProjects projects={data.Reports} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

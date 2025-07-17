@@ -30,6 +30,9 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "connect-history-api-fallback": "^2.0.0",
+    "file-saver": "^2.0.5",
+    "jspdf": "^3.0.1",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.513.0",
     "react": "^19.1.0",
     "react-devtools": "^6.1.2",
@@ -39,10 +42,12 @@
     "react-router-dom": "^7.6.2",
     "tailwind-merge": "^3.3.0",
     "tailwindcss": "^4.1.8",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.67"
   },
   "devDependencies": {
     "@eslint/js": "^9.25.0",
+    "@types/file-saver": "^2.0.7",
     "@types/node": "^24.0.0",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
