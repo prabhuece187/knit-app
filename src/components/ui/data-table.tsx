@@ -1,14 +1,14 @@
-"use client"
+"use client";
 
-import React from "react"
+import React from "react";
 import {
   flexRender,
   getCoreRowModel,
-  getFilteredRowModel,
+  // getFilteredRowModel,
   useReactTable,
   type ColumnDef,
   type FilterFn,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 
 import {
   Table,
@@ -17,33 +17,33 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./table"
+} from "./table";
 
-import { Input } from "./input"
-import { DataTablePagination } from "../common/DataTablePagination"
+import { Input } from "./input";
+import { DataTablePagination } from "../common/DataTablePagination";
 
-interface DataTableProps<TData,TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  searchColumns: (keyof TData)[]
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  searchColumns: (keyof TData)[];
 }
 
-export function DataTable<TData,TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
   searchColumns,
-}: DataTableProps<TData,TValue>) {
-  const [globalFilter, setGlobalFilter] = React.useState("")
+}: DataTableProps<TData, TValue>) {
+  const [globalFilter, setGlobalFilter] = React.useState("");
 
   // ✅ This filters across multiple columns
   const globalFilterFn: FilterFn<TData> = (row, _columnId, filterValue) => {
     return searchColumns.some((col) => {
-      const value = row.getValue(col as string)
+      const value = row.getValue(col as string);
       return String(value ?? "")
         .toLowerCase()
-        .includes(filterValue.toLowerCase())
-    })
-  }
+        .includes(filterValue.toLowerCase());
+    });
+  };
 
   const table = useReactTable<TData>({
     data,
@@ -54,8 +54,9 @@ export function DataTable<TData,TValue>({
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-  })
+    // getFilteredRowModel: getFilteredRowModel(),
+    manualFiltering: true,
+  });
 
   return (
     <>
@@ -77,7 +78,10 @@ export function DataTable<TData,TValue>({
                   <TableHead key={header.id}>
                     {header.isPlaceholder
                       ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
                   </TableHead>
                 ))}
               </TableRow>
@@ -90,22 +94,28 @@ export function DataTable<TData,TValue>({
                 <TableRow key={row.id}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} className="text-left">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
                   No results.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
-        </Table>        
+        </Table>
       </div>
       <DataTablePagination table={table} />
     </>
-  )
+  );
 }
