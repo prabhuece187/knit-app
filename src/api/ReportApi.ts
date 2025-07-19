@@ -19,7 +19,21 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
+    postAllDetailReport: build.mutation({
+      query: (data) => ({
+        url: "over-all-detail-report",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
   }),
 });
 
-export const { usePostOverAllReportMutation } = ReportApi;
+export const {
+  usePostOverAllReportMutation,
+  usePostAllDetailReportMutation,
+} = ReportApi;

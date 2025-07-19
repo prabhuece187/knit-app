@@ -98,6 +98,10 @@ const data = {
           title: "Overall Report",
           url: "/over-all-report",
         },
+        {
+          title: "Detail Report",
+          url: "/over-all-detail-report",
+        },
       ],
     },
   ],

@@ -17,6 +17,7 @@ import Outward from "./pages/outward/Outward";
 import AddOutward from "./pages/outward/component/AddOutward";
 import EditOutward from "./pages/outward/component/EditOutward";
 import OverAllReport from "./pages/report/OverAll";
+import OverAllDetailReport from "./pages/report/OverAllDetail";
 
 function App() {
   return (
@@ -48,8 +49,7 @@ function App() {
 
               {/* Report */}
               <Route path="over-all-report" element={<OverAllReport />} />
-
-
+              <Route path="over-all-detail-report" element={<OverAllDetailReport />}/>
             </Route>
           </Routes>
         </ThemeProvider>
