@@ -57,7 +57,6 @@ export default function EditMill({
   }
 
   return (
-    <div className="px-4 lg:px-6">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -173,6 +172,5 @@ export default function EditMill({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
   );
 }

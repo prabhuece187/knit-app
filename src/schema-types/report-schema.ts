@@ -110,3 +110,10 @@ export type Totals = {
     balance_quantity: number;
   };
 };
+
+
+export type Tab = {
+  name: string;
+  icon?: React.ElementType;
+  content: React.ReactNode;
+};

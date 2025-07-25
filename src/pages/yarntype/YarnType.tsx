@@ -41,7 +41,6 @@ export default function YarnType() {
 
   return (
     <>
-      <div className="px-2 lg:px-6">
         <DataTableCard
           name={"Yarn Type"}
           columns={columns}
@@ -62,7 +61,6 @@ export default function YarnType() {
             </Button>
           }
         />
-      </div>
 
       {selectedYarnTypeId ? (
         <EditYarnType

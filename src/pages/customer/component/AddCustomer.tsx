@@ -25,7 +25,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useGetStateListQuery } from "@/api/StateApi";
 
-import { SelectPopover } from "@/components/common/SelectPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover";
 import CommonHeader from "@/components/common/CommonHeader";
 
 export default function AddCustomer({
@@ -55,7 +55,6 @@ export default function AddCustomer({
 
   return (
     <>
-      <div className="px-4 lg:px-6">
         <Dialog open={open} onOpenChange={setOpen}>
           {/* <DialogTrigger></DialogTrigger> */}
           <DialogContent>
@@ -220,7 +219,6 @@ export default function AddCustomer({
             </div>
           </DialogContent>
         </Dialog>
-      </div>
     </>
   );
 }

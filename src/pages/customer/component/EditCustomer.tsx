@@ -29,7 +29,7 @@ import { Button } from "@/components/ui/button";
 import { useGetStateListQuery } from "@/api/StateApi";
 
 import { useEffect } from "react";
-import { SelectPopover } from "@/components/common/SelectPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover";
 import CommonHeader from "@/components/common/CommonHeader";
 
 export default function EditCustomer({
@@ -70,7 +70,6 @@ export default function EditCustomer({
 
   return (
     <>
-      <div className="px-4 lg:px-6">
         <Dialog open={open} onOpenChange={setOpen}>
           {/* <DialogTrigger></DialogTrigger> */}
           <DialogContent>
@@ -232,7 +231,6 @@ export default function EditCustomer({
             </div>
           </DialogContent>
         </Dialog>
-      </div>
     </>
   );
 }

@@ -2,11 +2,14 @@ import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { customerSchema, type Customer } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 export function getCustomerColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
   setSelectedCustomerId: React.Dispatch<React.SetStateAction<number | null>>
 ): ColumnDef<Customer>[] {
+
+  const encoded = btoa("Customer");
   return [
     {
       accessorKey: "id",
@@ -18,6 +21,14 @@ export function getCustomerColumns(
       accessorKey: "customer_name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Customer Name" />
+      ),
+      cell: ({ row }) => (
+        <Link
+          to={`/customers/${row.original.id}/${encoded}`}
+          className="text-blue-600 hover:underline font-medium"
+        >
+          {row.original.customer_name}
+        </Link>
       ),
     },
     {

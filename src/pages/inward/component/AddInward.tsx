@@ -20,7 +20,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { usePostInwardMutation } from "@/api/InwardApi";
 
-import { SelectPopover } from "@/components/common/SelectPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover";
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
 import { useGetMillListQuery } from "@/api/MillApi";
@@ -52,7 +52,6 @@ export default function AddInward() {
   }
   return (
     <>
-      <div className="px-2 lg:px-6">
         <CommonHeader name="Add Inward" />
         <Card className="@container/card">
           <CardContent className="pt-4">
@@ -224,7 +223,6 @@ export default function AddInward() {
             </Form>
           </CardContent>
         </Card>
-      </div>
     </>
   );
 }

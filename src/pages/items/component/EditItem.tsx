@@ -67,7 +67,6 @@ export default function EditItem({
   }
 
   return (
-    <div className="px-4 lg:px-6">
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <DialogHeader>
@@ -181,6 +180,5 @@ export default function EditItem({
           </div>
         </DialogContent>
       </Dialog>
-    </div>
   );
 }

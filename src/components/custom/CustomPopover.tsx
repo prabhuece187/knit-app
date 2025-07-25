@@ -23,7 +23,7 @@ import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import type { Control, FieldPath, FieldValues } from "react-hook-form";
-import DynamicAdd from "./DynamicAdd";
+import DynamicAdd from "../common/DynamicAdd";
 
 // Generic option type (you can customize this more if needed)
 type SelectOption = Record<string, string | number>;

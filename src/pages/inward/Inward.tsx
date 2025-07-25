@@ -49,7 +49,6 @@ export default function Inward() {
 
   return (
     <>
-      <div className="px-2 lg:px-6">
         <DataTableCard
           name={"Inward"}
           columns={columns}
@@ -65,7 +64,6 @@ export default function Inward() {
             </Button>
           }
         />
-      </div>
     </>
   );
 }

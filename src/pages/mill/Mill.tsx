@@ -39,7 +39,6 @@ export default function Mill() {
 
   return (
     <>
-      <div className="px-2 lg:px-6">
         <DataTableCard
           name={"Mill"}
           columns={columns}
@@ -60,7 +59,6 @@ export default function Mill() {
             </Button>
           }
         />
-      </div>
 
       {selectedMillId ? (
         <EditMill

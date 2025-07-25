@@ -62,7 +62,6 @@ export default function EditState({
 
   return (
     <>
-      <div className="px-4 lg:px-6">
         <Dialog open={open} onOpenChange={setOpen}>
           {/* <DialogTrigger></DialogTrigger> */}
           <DialogContent>
@@ -155,7 +154,6 @@ export default function EditState({
             </div>
           </DialogContent>
         </Dialog>
-      </div>
     </>
   );
 }

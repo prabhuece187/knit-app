@@ -10,7 +10,6 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { SelectPopover } from "./SelectPopover";
 import { useGetYarnTypeListQuery } from "@/api/YarnTypeApi";
 import { useGetItemListQuery } from "@/api/ItemApi";
 import type { Item, YarnType } from "@/schema-types/master-schema";
@@ -25,6 +24,7 @@ import type {
 } from "react-hook-form";
 import { useFieldArray } from "react-hook-form";
 import { Card, CardContent } from "../ui/card";
+import { SelectPopover } from "../custom/CustomPopover";
 
 interface ItemsDetailsTableProps<TFormValues extends FieldValues> {
   name: ArrayPath<TFormValues>;

@@ -52,7 +52,6 @@ export const itemSchema = z.object({
 
 export type Item = z.infer<typeof itemSchema>;
 
-
 // =======================  Mill ============================
 
 export const millSchema = z.object({
@@ -68,7 +67,6 @@ export const millSchema = z.object({
 
 export type Mill = z.infer<typeof millSchema>;
 
-
 // =======================  Yarn Type ============================
 
 export const yarnTypeSchema = z.object({
@@ -80,3 +78,13 @@ export const yarnTypeSchema = z.object({
 });
 
 export type YarnType = z.infer<typeof yarnTypeSchema>;
+
+export type SidebarRightData = {
+  id: number;
+  name: string;
+  detail: string;
+};
+
+
+// ======================== Dynamic Add ==========================
+export type LabelType = "State" | "Customer" | "Item" | "Mill" | "YarnType";

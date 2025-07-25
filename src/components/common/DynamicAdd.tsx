@@ -5,9 +5,7 @@ import AddCustomer from "@/pages/customer/component/AddCustomer";
 import AddItem from "@/pages/items/component/AddItem";
 import AddMill from "@/pages/mill/component/AddMill";
 import AddYarnType from "@/pages/yarntype/component/AddYarnType";
-
-// Define the valid labels
-type LabelType = "State" | "Customer" | "Item" | "Mill" | "YarnType";
+import type { LabelType } from "@/schema-types/master-schema";
 
 // Props allow any string
 type DynamicAddProps = {

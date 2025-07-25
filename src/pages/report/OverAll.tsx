@@ -3,7 +3,7 @@ import { useGetMillListQuery } from "@/api/MillApi";
 import { usePostOverAllReportMutation } from "@/api/ReportApi";
 import CommonHeader from "@/components/common/CommonHeader";
 import ExportActions from "@/components/common/ExportAction";
-import { SelectPopover } from "@/components/common/SelectPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -75,7 +75,7 @@ export default function OverAllReport() {
   }
 
   return (
-    <div className="px-2 lg:px-6">
+    <>
       <CommonHeader
         name="Over All Report"
         trigger={
@@ -345,6 +345,6 @@ export default function OverAllReport() {
           </div>
         </CardContent>
       </Card>
-    </div>
+    </>
   );
 }

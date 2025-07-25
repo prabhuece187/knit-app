@@ -39,7 +39,6 @@ export default function State() {
 
   return (
     <>
-      <div className="px-2 lg:px-6">
         <DataTableCard
           name={"State"}
           columns={columns}
@@ -60,7 +59,6 @@ export default function State() {
             </Button>
           }
         />
-      </div>
 
       {selectedItemId ? (
         <EditItem itemId={selectedItemId} open={open} setOpen={setOpen} />
