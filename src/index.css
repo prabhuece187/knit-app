@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Bitcount:wght@100..900&family=Playwrite+AU+QLD:wght@100..400&display=swap");
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -111,10 +113,15 @@
 }
 
 @layer base {
+  :root {
+    --font-sans: "Bitcount", sans-serif;
+    --font-display: "Playwrite", cursive;
+  }
   * {
     @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
   }
 }
