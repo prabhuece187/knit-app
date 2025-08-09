@@ -1,0 +1,98 @@
+/* ===== Universal Print Styles ===== */
+@media print {
+  /* Reset defaults for consistent output */
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+    color: black;
+    font-size: 12pt;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Show only printable area */
+  body * {
+    visibility: hidden;
+  }
+  #printable-area,
+  #printable-area * {
+    visibility: visible;
+  }
+
+  /* Printable container */
+  .print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: white;
+    padding: 1cm;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* Universal table styling */
+  .print-container table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0.5rem;
+    font-size: inherit;
+  }
+  .print-container th,
+  .print-container td {
+    border: 1px solid #333;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  .print-container th {
+    background: #f0f0f0;
+  }
+  .text-right {
+    text-align: right;
+  }
+
+  /* Avoid page breaks inside tables */
+  table, tr, td, th {
+    page-break-inside: avoid !important;
+  }
+
+  /* ===== Format Specific ===== */
+  .print-a4 {
+    width: 210mm;
+    min-height: 297mm;
+    font-size: 12pt;
+  }
+  .print-a5 {
+    width: 148mm;
+    min-height: 210mm;
+    font-size: 11pt;
+  }
+  .print-thermal {
+    width: 80mm;
+    font-size: 9pt;
+  }
+  .print-thermal table {
+    table-layout: fixed;
+    word-break: break-word;
+  }
+  .print-thermal th,
+  .print-thermal td {
+    padding: 2px 4px;
+    font-size: 8pt;
+    white-space: normal;
+  }
+
+  /* Page break control for multi-page */
+  .print-a4,
+  .print-a5 {
+    page-break-after: always;
+  }
+}
+
+/* ===== Screen Preview Styles (Optional) ===== */
+.print-container {
+  background: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  margin: 1rem auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}

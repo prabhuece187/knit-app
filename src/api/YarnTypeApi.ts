@@ -50,6 +50,13 @@ export const YarnTypeApi = createApi({
       }),
       providesTags: ["YarnTypeTag"],
     }),
+    getSingleYarnTypeData: build.query({
+      query: (data) => ({
+        url: `single_yarn_type_data/${data}`,
+        method: "GET",
+      }),
+      providesTags: ["YarnTypeTag"],
+    }),
   }),
 });
 
@@ -59,4 +66,5 @@ export const {
   usePostYarnTypeMutation,
   usePutYarnTypeMutation,
   useGetYarnTypeListQuery,
+  useGetSingleYarnTypeDataQuery,
 } = YarnTypeApi;

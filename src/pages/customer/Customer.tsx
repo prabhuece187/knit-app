@@ -7,13 +7,8 @@ import AddCustomer from "./component/AddCustomer";
 import { getCustomerColumns, searchColumns } from "./constant/customer-config";
 import EditCustomer from "./component/EditCustomer";
 // import { useOutletContext } from "react-router-dom";
-import type {
-  Customer,
-  customerSchema,
-} from "@/schema-types/master-schema";
+import type { Customer, customerSchema } from "@/schema-types/master-schema";
 import type z from "zod";
-
-
 
 export type APIResponseCustomer = z.infer<typeof customerSchema>;
 
@@ -40,8 +35,8 @@ export default function Customer() {
     {
       skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
     }
-    );
-  
+  );
+
   const rawData = useMemo<APIResponseCustomer[]>(() => {
     return Array.isArray(response?.data)
       ? response.data
@@ -50,14 +45,10 @@ export default function Customer() {
       : [];
   }, [response?.data]);
 
-
-
   const [open, setOpen] = useState(false);
-  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
-    null
-  );
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const columns = getCustomerColumns(setOpen, setSelectedCustomerId);
+  const columns = getCustomerColumns(setOpen, setSelectedId);
 
   return (
     <>
@@ -73,7 +64,7 @@ export default function Customer() {
         trigger={
           <Button
             onClick={() => {
-              setSelectedCustomerId(null);
+              setSelectedId(null);
               setOpen(true);
             }}
           >
@@ -82,12 +73,8 @@ export default function Customer() {
         }
       />
 
-      {selectedCustomerId ? (
-        <EditCustomer
-          CustomerId={selectedCustomerId}
-          open={open}
-          setOpen={setOpen}
-        />
+      {selectedId ? (
+        <EditCustomer id={selectedId} open={open} setOpen={setOpen} />
       ) : (
         <AddCustomer open={open} setOpen={setOpen} />
       )}

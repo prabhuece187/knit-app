@@ -6,9 +6,9 @@ const tabList: Tab[] = [
   {
     name: "Transactions",
     icon: FileText,
-    content: <div>Customer transaction list</div>,
+    content: <div>Item transaction list</div>,
   },
-  { name: "Profile", icon: User, content: <div>Customer profile info</div> },
+  { name: "Profile", icon: User, content: <div>Item profile info</div> },
   {
     name: "Ledger (Statement)",
     icon: ScrollText,
@@ -21,6 +21,6 @@ const tabList: Tab[] = [
   },
 ];
 
-export default function CustomerReportSection() {
+export default function ItemReportSection() {
   return <ReportTabs tabs={tabList} defaultTab="Transactions" />;
 }

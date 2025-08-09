@@ -3,12 +3,12 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        // sans: ["var(--font-sans)", "sans-serif"],
+        sans: ["var(--font-sans)", "sans-serif"],
         // Or add as a custom font family:
         // sans: ["Inter", "sans-serif"],
         // mono: ["JetBrains Mono", "monospace"],
-        sans: ["var(--font-sans)"], // Bitcount
-        display: ["var(--font-display)"], // Playwrite
+        // sans: ["var(--font-sans)"], // Bitcount
+        // display: ["var(--font-display)"], // Playwrite
       },
     },
   },

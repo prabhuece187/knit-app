@@ -18,7 +18,7 @@ import AddOutward from "./pages/outward/component/AddOutward";
 import EditOutward from "./pages/outward/component/EditOutward";
 import OverAllReport from "./pages/report/OverAll";
 import OverAllDetailReport from "./pages/report/OverAllDetail";
-import IndizualData from "./pages/report/IndizualData";
+import IndizualData from "./pages/report/common/IndividualData";
 
 function App() {
   return (
@@ -56,7 +56,8 @@ function App() {
               />
 
               {/* Add-on Service */}
-              <Route path="customers/:id/:name" element={<IndizualData />} />
+              <Route path="customers/:id" element={<IndizualData />} />
+              <Route path="items/:id" element={<IndizualData />} />
             </Route>
           </Routes>
         </ThemeProvider>

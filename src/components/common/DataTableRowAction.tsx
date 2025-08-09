@@ -19,13 +19,20 @@ export interface DataTableRowActionsProps<T> {
   extraActions?: React.ReactNode;
 }
 
-export function DataTableRowActions<T>({
+export function DataTableRowActions<T extends { id?: number | string }>({
   row,
   onEdit,
   onDelete,
   extraActions = null,
 }: DataTableRowActionsProps<T>) {
   const item = row.original;
+
+  // Avoid rendering if ID is missing
+//  if (item.id === undefined || item.id === null) {
+//    console.warn("Missing ID for row:", item);
+  //  }
+  if (!item.id) return null;
+  console.log(item);
 
   return (
     <DropdownMenu>
@@ -40,9 +47,7 @@ export function DataTableRowActions<T>({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
         {onEdit && (
-          <DropdownMenuItem onClick={() => onEdit(item)}>
-            Edit
-          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => onEdit(item)}>Edit</DropdownMenuItem>
         )}
         {extraActions}
         {onDelete && (

@@ -30,10 +30,22 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
+    postCustomerLedgerInOut: build.mutation({
+      query: (data) => ({
+        url: "customer-ledger-inout",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
   }),
 });
 
 export const {
   usePostOverAllReportMutation,
   usePostAllDetailReportMutation,
+  usePostCustomerLedgerInOutMutation,
 } = ReportApi;

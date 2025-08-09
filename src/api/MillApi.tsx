@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const MillApi = createApi({
   reducerPath: "MillApi",
   baseQuery: fetchBaseQuery({
-   baseUrl: "http://knitting.coderplays.com/api/",
+    baseUrl: "http://knitting.coderplays.com/api/",
   }),
   tagTypes: ["MillTag"],
   endpoints: (build) => ({
@@ -50,13 +50,21 @@ export const MillApi = createApi({
       }),
       providesTags: ["MillTag"],
     }),
+    getSingleMillData: build.query({
+      query: (data) => ({
+        url: `single_mill_data/${data}`,
+        method: "GET",
+      }),
+      providesTags: ["MillTag"],
+    }),
   }),
 });
 
 export const {
-useGetMillQuery,
-useGetMillByIdQuery,
-usePostMillMutation,
-usePutMillMutation,
-useGetMillListQuery,
+  useGetMillQuery,
+  useGetMillByIdQuery,
+  usePostMillMutation,
+  usePutMillMutation,
+  useGetMillListQuery,
+  useGetSingleMillDataQuery,
 } = MillApi;

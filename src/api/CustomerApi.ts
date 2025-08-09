@@ -50,6 +50,13 @@ export const CustomerApi = createApi({
       }),
       providesTags: ["CustomerTag"],
     }),
+    getSingleCustomerData: build.query({
+      query: (data) => ({
+        url: `single_customer_data/${data}`,
+        method: "GET",
+      }),
+      providesTags: ["CustomerTag"],
+    }),
   }),
 });
 
@@ -59,4 +66,5 @@ export const {
   usePostCustomerMutation,
   usePutCustomerMutation,
   useGetCustomerListQuery,
+  useGetSingleCustomerDataQuery,
 } = CustomerApi;

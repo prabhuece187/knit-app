@@ -50,6 +50,13 @@ export const ItemApi = createApi({
       }),
       providesTags: ["ItemTag"],
     }),
+    getSingleItemData: build.query({
+      query: (data) => ({
+        url: `single_item_data/${data}`,
+        method: "GET",
+      }),
+      providesTags: ["ItemTag"],
+    }),
   }),
 });
 
@@ -59,4 +66,5 @@ export const {
   usePostItemMutation,
   usePutItemMutation,
   useGetItemListQuery,
+  useGetSingleItemDataQuery,
 } = ItemApi;

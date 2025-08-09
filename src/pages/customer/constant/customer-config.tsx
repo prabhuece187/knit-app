@@ -6,10 +6,8 @@ import { Link } from "react-router-dom";
 
 export function getCustomerColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedCustomerId: React.Dispatch<React.SetStateAction<number | null>>
+  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>
 ): ColumnDef<Customer>[] {
-
-  const encoded = btoa("Customer");
   return [
     {
       accessorKey: "id",
@@ -17,20 +15,43 @@ export function getCustomerColumns(
         <DataTableColumnHeader column={column} title="Id" />
       ),
     },
+    // {
+    //   accessorKey: "customer_name",
+    //   header: ({ column }) => (
+    //     <DataTableColumnHeader column={column} title="Customer Name" />
+    //   ),
+    //   cell: ({ row }) => (
+
+    //     <Link
+    //       to={`/customers/${row.original.id}/${encoded}`}
+    //       className="text-blue-600 hover:underline font-medium"
+    //     >
+    //       {row.original.customer_name}
+    //     </Link>
+    //   ),
+    // },
     {
       accessorKey: "customer_name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Customer Name" />
       ),
-      cell: ({ row }) => (
-        <Link
-          to={`/customers/${row.original.id}/${encoded}`}
-          className="text-blue-600 hover:underline font-medium"
-        >
-          {row.original.customer_name}
-        </Link>
-      ),
+      cell: ({ row }) => {
+        // const encodedType = btoa("Customer");
+        const id = row.original.id;
+
+        if (!id) return null; // secure the ID here
+        const encodedId = btoa(id.toString());
+        return (
+          <Link
+            to={`/customers/${encodedId}`}
+            className="text-violet-600 hover:underline font-medium"
+          >
+            {row.original.customer_name}
+          </Link>
+        );
+      },
     },
+
     {
       accessorKey: "state_name",
       header: ({ column }) => (
@@ -67,7 +88,8 @@ export function getCustomerColumns(
         <DataTableRowActions
           row={row}
           onEdit={(customer) => {
-            setSelectedCustomerId(Number(customer.id));
+            console.log("Edit", customer.id);
+            setSelectedId(Number(customer.id));
             setOpen(true);
           }}
           onDelete={(customer) => {

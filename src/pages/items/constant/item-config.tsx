@@ -2,6 +2,7 @@ import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { itemSchema, type Item } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 // Define TS type based on Zod schema
 
@@ -21,6 +22,21 @@ export function getItemColumns(
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Item Name" />
       ),
+      cell: ({ row }) => {
+        // const encodedType = btoa("Customer");
+        const id = row.original.id;
+
+        if (!id) return null; // secure the ID here
+        const encodedId = btoa(id.toString());
+        return (
+          <Link
+            to={`/items/${encodedId}`}
+            className="text-violet-600 hover:underline font-medium"
+          >
+            {row.original.item_name}
+          </Link>
+        );
+      },
     },
     {
       accessorKey: "item_code",

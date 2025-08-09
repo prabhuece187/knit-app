@@ -29,7 +29,7 @@ function DataTableCard<T>({
     <>
       <CommonHeader name={name} trigger={trigger} />
       <Card className="@container/card">
-        <CardContent className="pt-4">
+        <CardContent className="pt-1">
           {loading ? (
             <div>Loading...</div>
           ) : isError ? (
