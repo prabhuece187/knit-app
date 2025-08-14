@@ -1,26 +1,32 @@
 import ReportTabs from "@/components/common/ReportTab";
 import type { Tab } from "@/schema-types/report-schema";
-import { FileText, User, ScrollText, ListOrdered } from "lucide-react";
+import { FileText, User, ScrollText } from "lucide-react";
+import ItemProfile from "./ItemProfile";
+import ItemStockReport from "./ItemStockReport";
+import ItemStockCustomerWise from "./ItemStockCustomerWise";
 
-const tabList: Tab[] = [
-  {
-    name: "Transactions",
-    icon: FileText,
-    content: <div>Item transaction list</div>,
-  },
-  { name: "Profile", icon: User, content: <div>Item profile info</div> },
-  {
-    name: "Ledger (Statement)",
-    icon: ScrollText,
-    content: <div>Ledger details</div>,
-  },
-  {
-    name: "Item Wise Report",
-    icon: ListOrdered,
-    content: <div>Report based on items sold</div>,
-  },
-];
+type Props = {
+  id: number;
+};
 
-export default function ItemReportSection() {
-  return <ReportTabs tabs={tabList} defaultTab="Transactions" />;
+export default function ItemReportSection({ id }: Props) {
+  const tabList: Tab[] = [
+    {
+      name: "Item Details",
+      icon: FileText,
+      content: <ItemProfile id={id} />,
+    },
+    {
+      name: "Stock Report",
+      icon: User,
+      content: <ItemStockReport id={id} />,
+    },
+    {
+      name: "Customer Wise (Statement)",
+      icon: ScrollText,
+      content: <ItemStockCustomerWise id={id} />,
+    },
+  ];
+
+  return <ReportTabs key={id} tabs={tabList} defaultTab="Item Details" />;
 }

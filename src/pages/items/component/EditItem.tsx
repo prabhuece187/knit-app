@@ -26,10 +26,7 @@ import {
 import CommonHeader from "@/components/common/CommonHeader";
 
 import { itemSchema } from "@/schema-types/master-schema";
-import {
-  useGetItemByIdQuery,
-  usePutItemMutation,
-} from "@/api/ItemApi";
+import { useGetItemByIdQuery, usePutItemMutation } from "@/api/ItemApi";
 
 // Types
 type Item = z.infer<typeof itemSchema>;
@@ -37,11 +34,11 @@ type Item = z.infer<typeof itemSchema>;
 export default function EditItem({
   open,
   setOpen,
-  itemId,
+  id,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  itemId: number;
+  id: number;
 }) {
   const [putItem] = usePutItemMutation();
 
@@ -49,11 +46,11 @@ export default function EditItem({
     resolver: zodResolver(itemSchema),
   });
 
-  const { data: itemData, isSuccess } = useGetItemByIdQuery(itemId, {
-    skip: itemId === undefined,
+  const { data: itemData, isSuccess } = useGetItemByIdQuery(id, {
+    skip: id === undefined,
   });
 
-//   const { data: items = [] } = useGetItemListQuery("") as { data: Item[] };
+  //   const { data: items = [] } = useGetItemListQuery("") as { data: Item[] };
 
   useEffect(() => {
     if (isSuccess && itemData) {
@@ -67,118 +64,128 @@ export default function EditItem({
   }
 
   return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              <CommonHeader name="Edit Item" />
-            </DialogTitle>
-            <DialogDescription />
-          </DialogHeader>
-          <div className="grid grid-cols-12 px-2 py-2">
-            <div className="col-span-12">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
-                  <div className="grid grid-cols-6 gap-2">
-                    <div className="col-span-3" hidden>
-                      <FormField
-                        control={form.control}
-                        name="user_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>User ID</FormLabel>
-                            <FormControl>
-                              <Input type="hidden" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="col-span-3">
-                      <FormField
-                        control={form.control}
-                        name="item_name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Item Name*</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter the Item Name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="col-span-3">
-                      <FormField
-                        control={form.control}
-                        name="item_code"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Item Code</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter the Item Code" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="col-span-3">
-                      <FormField
-                        control={form.control}
-                        name="unit"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Unit</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter the Unit" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
-                    <div className="col-span-6">
-                      <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Description</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                placeholder="Enter the Description"
-                                className="resize-none"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            <CommonHeader name="Edit Item" />
+          </DialogTitle>
+          <DialogDescription />
+        </DialogHeader>
+        <div className="grid grid-cols-12 px-2 py-2">
+          <div className="col-span-12">
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
+                <div className="grid grid-cols-6 gap-2">
+                  <div className="col-span-3" hidden>
+                    <FormField
+                      control={form.control}
+                      name="user_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>User ID</FormLabel>
+                          <FormControl>
+                            <Input type="hidden" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
-                  <div className="flex justify-end gap-2">
-                    <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-                      Cancel
-                    </Button>
-                    <Button type="submit">Update</Button>
+                  <div className="col-span-3">
+                    <FormField
+                      control={form.control}
+                      name="item_name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Item Name*</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter the Item Name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
-                </form>
-              </Form>
-            </div>
+
+                  <div className="col-span-3">
+                    <FormField
+                      control={form.control}
+                      name="item_code"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Item Code</FormLabel>
+                          <FormControl>
+                            <Input
+                              placeholder="Enter the Item Code"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="col-span-3">
+                    <FormField
+                      control={form.control}
+                      name="unit"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Unit</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Enter the Unit" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+
+                  <div className="col-span-6">
+                    <FormField
+                      control={form.control}
+                      name="description"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Description</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              placeholder="Enter the Description"
+                              className="resize-none"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit">Update</Button>
+                </div>
+              </form>
+            </Form>
           </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

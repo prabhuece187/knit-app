@@ -4,6 +4,7 @@ import { FileText, User, ScrollText, ListOrdered } from "lucide-react";
 // import ProfileCard from "./common/ProfileCard";
 import CustomerProfile from "./CustomerProfile";
 import CustomerLedger from "./CustomerLedger";
+import CustomerLedgerItemWise from "./CustomerLedgerItemWise";
 
 type Props = {
   id: number;
@@ -25,7 +26,7 @@ export default function CustomerReportSection({ id }: Props) {
     {
       name: "Item Wise Report",
       icon: ListOrdered,
-      content: <div>Report based on items sold</div>,
+      content: <CustomerLedgerItemWise id={id} />,
     },
   ];
   return <ReportTabs key={id} tabs={tabList} defaultTab="Transactions" />;

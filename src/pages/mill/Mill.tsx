@@ -6,7 +6,6 @@ import { getMillColumns, searchColumns } from "./constant/mill-config"; // Youâ€
 import AddMill from "./component/AddMill";
 import EditMill from "./component/EditMill";
 import { useGetMillQuery } from "@/api/MillApi";
-
 export default function Mill() {
   // Listing Mill Values
   const limit: number = 10;
@@ -62,7 +61,7 @@ export default function Mill() {
 
       {selectedMillId ? (
         <EditMill
-          MillId={selectedMillId}
+          id={selectedMillId}
           open={open}
           setOpen={setOpen}
         />

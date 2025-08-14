@@ -1,98 +1,79 @@
-/* ===== Universal Print Styles ===== */
 @media print {
-  /* Reset defaults for consistent output */
+  /* Reset colors for printing - override dark mode */
   body {
-    margin: 0;
-    padding: 0;
-    background: white;
-    color: black;
-    font-size: 12pt;
-    font-family: Arial, sans-serif;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+    color: black !important;
+    font-size: 12pt !important;
+    font-family: Arial, sans-serif !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 
-  /* Show only printable area */
+  /* Hide everything except printable area */
   body * {
-    visibility: hidden;
+    visibility: hidden !important;
+    background: transparent !important;
+    color: black !important;
   }
   #printable-area,
   #printable-area * {
-    visibility: visible;
+    visibility: visible !important;
+    background: white !important;
+    color: black !important;
   }
 
-  /* Printable container */
   .print-container {
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: white;
-    padding: 1cm;
-    box-sizing: border-box;
-    width: 100%;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    background: white !important;
+    padding: 1cm !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    color: black !important;
   }
 
-  /* Universal table styling */
   .print-container table {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 0.5rem;
-    font-size: inherit;
+    border-collapse: collapse !important;
+    width: 100% !important;
+    margin-top: 0.5rem !important;
+    font-size: inherit !important;
+    background: white !important;
+    color: black !important;
   }
+
   .print-container th,
   .print-container td {
-    border: 1px solid #333;
-    padding: 6px 8px;
-    text-align: left;
-  }
-  .print-container th {
-    background: #f0f0f0;
-  }
-  .text-right {
-    text-align: right;
+    border: 1px solid #333 !important;
+    padding: 6px 8px !important;
+    text-align: left !important;
+    background: white !important;
+    color: black !important;
   }
 
-  /* Avoid page breaks inside tables */
-  table, tr, td, th {
+  .print-container th {
+    background-color: #f0f0f0 !important;
+    font-weight: bold !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .text-right {
+    text-align: right !important;
+    color: black !important;
+  }
+
+  table,
+  tr,
+  td,
+  th {
     page-break-inside: avoid !important;
   }
 
-  /* ===== Format Specific ===== */
-  .print-a4 {
-    width: 210mm;
-    min-height: 297mm;
-    font-size: 12pt;
-  }
-  .print-a5 {
-    width: 148mm;
-    min-height: 210mm;
-    font-size: 11pt;
-  }
-  .print-thermal {
-    width: 80mm;
-    font-size: 9pt;
-  }
-  .print-thermal table {
-    table-layout: fixed;
-    word-break: break-word;
-  }
-  .print-thermal th,
-  .print-thermal td {
-    padding: 2px 4px;
-    font-size: 8pt;
-    white-space: normal;
-  }
-
-  /* Page break control for multi-page */
   .print-a4,
   .print-a5 {
-    page-break-after: always;
+    page-break-after: always !important;
   }
-}
-
-/* ===== Screen Preview Styles (Optional) ===== */
-.print-container {
-  background: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  margin: 1rem auto;
-  padding: 1rem;
-  box-sizing: border-box;
 }

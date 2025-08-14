@@ -1,36 +1,10 @@
 import DateRangePicker from "@/components/common/DateRangePicker";
 import { Button } from "@/components/ui/button";
-import { usePostCustomerLedgerInOutMutation } from "@/api/ReportApi";
+import { usePostCustomerInOutItemWiseMutation } from "@/api/ReportApi";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
-
-type BaseLedger = {
-  date: string;
-  type: string;
-  description: string;
-};
-
-type NormalLedger = BaseLedger & {
-  type: "Inward" | "Outward";
-  qty: number;
-  weight: number;
-};
-
-type LossLedger = BaseLedger & {
-  type: "Loss";
-  qty_loss: number;
-  weight_loss: number;
-};
-
-type TotalLedger = {
-  type: "Total";
-  qty_inward: number;
-  weight_inward: number;
-  qty_outward: number;
-  weight_outward: number;
-};
 
 type CustomerLedger = {
   customer_name: string;
@@ -39,7 +13,15 @@ type CustomerLedger = {
   customer_address: string;
 };
 
-type LedgerEntry = NormalLedger | LossLedger | TotalLedger;
+type ItemWiseReport = {
+  item: string;
+  inward_qty: number;
+  inward_weight: number;
+  outward_qty: number;
+  outward_weight: number;
+  loss_qty: number;
+  loss_weight: number;
+};
 
 type PrintFormat = "A4" | "A5" | "Thermal";
 
@@ -47,11 +29,11 @@ type Props = {
   id: number;
 };
 
-export default function CustomerLedger({ id }: Props) {
+export default function CustomerLedgerItemWise({ id }: Props) {
   const [range, setRange] = useState<DateRange | undefined>();
-  const [ledgerData, setLedgerData] = useState<LedgerEntry[]>([]);
   const [customerData, setCustomerData] = useState<CustomerLedger>();
-  const [CustomerLedgerInOut] = usePostCustomerLedgerInOutMutation();
+  const [reportData, setReportData] = useState<ItemWiseReport[]>([]);
+  const [CustomerLedgerInOutItemWise] = usePostCustomerInOutItemWiseMutation();
 
   const [printFormat, setPrintFormat] = useState<PrintFormat>("A4");
 
@@ -65,8 +47,8 @@ export default function CustomerLedger({ id }: Props) {
     const requestBody = { from, to, id };
 
     try {
-      const response = await CustomerLedgerInOut(requestBody).unwrap();
-      setLedgerData(response.ledger);
+      const response = await CustomerLedgerInOutItemWise(requestBody).unwrap();
+      setReportData(response.item_wise_report);
       setCustomerData(response.customer);
     } catch (error) {
       console.error("API Error:", error);
@@ -136,6 +118,7 @@ export default function CustomerLedger({ id }: Props) {
         id="printable-area"
         className={`print-container print-${printFormat.toLowerCase()}`}
       >
+        {/* Header */}
         {/* Header Info */}
         <div className="flex justify-between mb-6">
           {/* Customer Info */}
@@ -178,67 +161,46 @@ export default function CustomerLedger({ id }: Props) {
           </div>
         </div>
 
-        {/* Ledger Table */}
-        {ledgerData.length > 0 ? (
+        {/* Table */}
+        {Array.isArray(reportData) && reportData.length > 0 ? (
           <table className="w-full border border-gray-300 border-collapse text-xs">
             <thead>
-              <tr className=" border-b border-gray-300">
-                <th className="p-2 text-left border-r border-gray-300">Type</th>
-                <th className="p-2 text-left border-r border-gray-300">Date</th>
-                <th className="p-2 text-left border-r border-gray-300">
-                  Description
+              <tr className="border-b border-gray-300">
+                <th className="p-2 border-r border-gray-300 text-left">Item</th>
+                <th className="p-2 border-r border-gray-300 text-right">
+                  Inward Qty
                 </th>
-                <th className="p-2 text-right border-r border-gray-300">Qty</th>
-                <th className="p-2 text-right">Weight</th>
+                <th className="p-2 border-r border-gray-300 text-right">
+                  Inward Wt
+                </th>
+                <th className="p-2 border-r border-gray-300 text-right">
+                  Outward Qty
+                </th>
+                <th className="p-2 border-r border-gray-300 text-right">
+                  Outward Wt
+                </th>
+                <th className="p-2 border-r border-gray-300 text-right">
+                  Loss Qty
+                </th>
+                <th className="p-2 text-right">Loss Wt</th>
               </tr>
             </thead>
             <tbody>
-              {ledgerData.map((row, idx) => {
-                if (row.type === "Total") {
-                  return (
-                    <tr
-                      key={idx}
-                      className="font-semibold border-t border-gray-300"
-                    >
-                      <td colSpan={3} className="p-2">
-                        Total
-                      </td>
-                      <td className="p-2 text-right">{`Inward = ${row.qty_inward} / Outward = ${row.qty_outward}`}</td>
-                      <td className="p-2 text-right">{`Inward = ${row.weight_inward} / Outward = ${row.weight_outward}`}</td>
-                    </tr>
-                  );
-                }
-                if (row.type === "Loss") {
-                  return (
-                    // <tr key={idx} className="text-red-600">
-                    //   <td className="p-2"></td>
-                    //   <td className="p-2">{row.type}</td>
-                    //   <td className="p-2">-</td>
-                    //   <td className="p-2 text-right">{row.qty_loss}</td>
-                    //   <td className="p-2 text-right">{row.weight_loss}</td>
-                    // </tr>
-
-                    <tr key={idx} className="text-red-600">
-                      <td colSpan={3} className="p-2">
-                        {row.type}
-                      </td>
-                      <td className="p-2 text-right">{row.qty_loss}</td>
-                      <td className="p-2 text-right">{row.weight_loss}</td>
-                    </tr>
-                  );
-                }
-                return (
-                  <tr key={idx} className="border-t border-gray-200">
-                    <td className="p-2">{row.type}</td>
-                    <td className="p-2">
-                      {row?.date ? format(row.date, "dd-MM-yyyy") : "-"}
-                    </td>
-                    <td className="p-2">{row.description}</td>
-                    <td className="p-2 text-right">{row.qty}</td>
-                    <td className="p-2 text-right">{row.weight}</td>
-                  </tr>
-                );
-              })}
+              {reportData.map((row, idx) => (
+                <tr key={idx} className="border-t border-gray-200">
+                  <td className="p-2">{row.item}</td>
+                  <td className="p-2 text-right">{row.inward_qty}</td>
+                  <td className="p-2 text-right">{row.inward_weight}</td>
+                  <td className="p-2 text-right">{row.outward_qty}</td>
+                  <td className="p-2 text-right">{row.outward_weight}</td>
+                  <td className="p-2 text-right text-red-600">
+                    {row.loss_qty}
+                  </td>
+                  <td className="p-2 text-right text-red-600">
+                    {row.loss_weight}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         ) : (

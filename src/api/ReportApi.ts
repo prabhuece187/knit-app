@@ -41,6 +41,72 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
+    postCustomerInOutItemWise: build.mutation({
+      query: (data) => ({
+        url: "customer-ledger-itemwise",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postItemStockReport: build.mutation({
+      query: (data) => ({
+        url: "item-stock-report",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postItemStockReportCUstomerWise: build.mutation({
+      query: (data) => ({
+        url: "item-stock-customerwise",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postMillLedgerInOut: build.mutation({
+      query: (data) => ({
+        url: "mill-ledger-inout",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postMillLedgerItemWise: build.mutation({
+      query: (data) => ({
+        url: "mill-ledger-itemwise",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postYarnTypeLedger: build.mutation({
+      query: (data) => ({
+        url: "yarn-type-ledger",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
   }),
 });
 
@@ -48,4 +114,10 @@ export const {
   usePostOverAllReportMutation,
   usePostAllDetailReportMutation,
   usePostCustomerLedgerInOutMutation,
+  usePostCustomerInOutItemWiseMutation,
+  usePostItemStockReportMutation,
+  usePostItemStockReportCUstomerWiseMutation,
+  usePostMillLedgerInOutMutation,
+  usePostMillLedgerItemWiseMutation,
+  usePostYarnTypeLedgerMutation,
 } = ReportApi;

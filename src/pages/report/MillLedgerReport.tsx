@@ -1,6 +1,6 @@
 import DateRangePicker from "@/components/common/DateRangePicker";
 import { Button } from "@/components/ui/button";
-import { usePostCustomerLedgerInOutMutation } from "@/api/ReportApi";
+import { usePostMillLedgerInOutMutation } from "@/api/ReportApi";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
@@ -32,11 +32,10 @@ type TotalLedger = {
   weight_outward: number;
 };
 
-type CustomerLedger = {
-  customer_name: string;
-  customer_mobile: string;
-  customer_email: string;
-  customer_address: string;
+type MillLedgerData = {
+  mill_name: string;
+  mill_mobile: string;
+  mill_address: string;
 };
 
 type LedgerEntry = NormalLedger | LossLedger | TotalLedger;
@@ -44,14 +43,14 @@ type LedgerEntry = NormalLedger | LossLedger | TotalLedger;
 type PrintFormat = "A4" | "A5" | "Thermal";
 
 type Props = {
-  id: number;
+  id: number; // mill id
 };
 
-export default function CustomerLedger({ id }: Props) {
+export default function MillLedgerReport({ id }: Props) {
   const [range, setRange] = useState<DateRange | undefined>();
   const [ledgerData, setLedgerData] = useState<LedgerEntry[]>([]);
-  const [customerData, setCustomerData] = useState<CustomerLedger>();
-  const [CustomerLedgerInOut] = usePostCustomerLedgerInOutMutation();
+  const [millData, setMillData] = useState<MillLedgerData>();
+  const [postMillLedgerInOut] = usePostMillLedgerInOutMutation();
 
   const [printFormat, setPrintFormat] = useState<PrintFormat>("A4");
 
@@ -62,12 +61,10 @@ export default function CustomerLedger({ id }: Props) {
     const from = formData.get("from") as string;
     const to = formData.get("to") as string;
 
-    const requestBody = { from, to, id };
-
     try {
-      const response = await CustomerLedgerInOut(requestBody).unwrap();
+      const response = await postMillLedgerInOut({ from, to, id }).unwrap();
       setLedgerData(response.ledger);
-      setCustomerData(response.customer);
+      setMillData(response.mill);
     } catch (error) {
       console.error("API Error:", error);
     }
@@ -79,9 +76,7 @@ export default function CustomerLedger({ id }: Props) {
 
   return (
     <>
-      {/* Form + Search */}
       <form onSubmit={handleSubmit} className="flex flex-wrap gap-2 mb-4">
-        {/* Hidden inputs for from/to dates and ID */}
         <input
           type="hidden"
           name="from"
@@ -94,10 +89,7 @@ export default function CustomerLedger({ id }: Props) {
         />
         <input type="hidden" name="id" value={id} />
 
-        {/* Date range picker */}
         <DateRangePicker value={range} onChange={setRange} />
-
-        {/* Submit button with search icon */}
         <Button
           type="submit"
           size="icon"
@@ -107,7 +99,6 @@ export default function CustomerLedger({ id }: Props) {
           <Search className="h-4 w-4" />
         </Button>
 
-        {/* Print format selector and print button */}
         <div className="mb-4 flex gap-3 text-xs">
           <select
             id="printFormat"
@@ -131,40 +122,33 @@ export default function CustomerLedger({ id }: Props) {
         </div>
       </form>
 
-      {/* Report container */}
       <div
         id="printable-area"
         className={`print-container print-${printFormat.toLowerCase()}`}
       >
         {/* Header Info */}
         <div className="flex justify-between mb-6">
-          {/* Customer Info */}
           <div className="w-1/2 space-y-2 text-left">
             <p className="text-xs">
-              <span className="text-xs font-bold">Customer :</span>{" "}
-              {customerData?.customer_name}
+              <span className="text-xs font-bold">Mill :</span>{" "}
+              {millData?.mill_name}
             </p>
             <p className="text-xs">
               <span className="text-xs font-bold">Mobile :</span>{" "}
-              {customerData?.customer_mobile}
-            </p>
-            <p className="text-xs">
-              <span className="text-xs font-bold">Email :</span>{" "}
-              {customerData?.customer_email}
+              {millData?.mill_mobile}
             </p>
             <p className="text-xs">
               <span className="text-xs font-bold">Address :</span>{" "}
-              {customerData?.customer_address}
+              {millData?.mill_address}
             </p>
           </div>
 
-          {/* Company Info */}
           <div className="w-1/2 space-y-2 text-right">
             <p className="text-xs">
               <span className="text-xs font-bold">Company :</span> Coder Plays
             </p>
             <p className="text-xs">
-              <span className="text-xs font-bold">Report :</span> Customer
+              <span className="text-xs font-bold">Report :</span> Mill
               In/Outward Ledger
             </p>
             <p className="text-xs">
@@ -182,7 +166,7 @@ export default function CustomerLedger({ id }: Props) {
         {ledgerData.length > 0 ? (
           <table className="w-full border border-gray-300 border-collapse text-xs">
             <thead>
-              <tr className=" border-b border-gray-300">
+              <tr className="border-b border-gray-300">
                 <th className="p-2 text-left border-r border-gray-300">Type</th>
                 <th className="p-2 text-left border-r border-gray-300">Date</th>
                 <th className="p-2 text-left border-r border-gray-300">
@@ -210,15 +194,7 @@ export default function CustomerLedger({ id }: Props) {
                 }
                 if (row.type === "Loss") {
                   return (
-                    // <tr key={idx} className="text-red-600">
-                    //   <td className="p-2"></td>
-                    //   <td className="p-2">{row.type}</td>
-                    //   <td className="p-2">-</td>
-                    //   <td className="p-2 text-right">{row.qty_loss}</td>
-                    //   <td className="p-2 text-right">{row.weight_loss}</td>
-                    // </tr>
-
-                    <tr key={idx} className="text-red-600">
+                    <tr key={idx} className="text-red-600 font-semibold">
                       <td colSpan={3} className="p-2">
                         {row.type}
                       </td>
@@ -231,7 +207,9 @@ export default function CustomerLedger({ id }: Props) {
                   <tr key={idx} className="border-t border-gray-200">
                     <td className="p-2">{row.type}</td>
                     <td className="p-2">
-                      {row?.date ? format(row.date, "dd-MM-yyyy") : "-"}
+                      {row.date
+                        ? format(new Date(row.date), "dd-MM-yyyy")
+                        : "-"}
                     </td>
                     <td className="p-2">{row.description}</td>
                     <td className="p-2 text-right">{row.qty}</td>

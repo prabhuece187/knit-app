@@ -13,7 +13,6 @@ import {
   useGetCustomerListQuery,
   useGetSingleCustomerDataQuery,
 } from "@/api/CustomerApi";
-import { useGetMillListQuery, useGetSingleMillDataQuery } from "@/api/MillApi";
 import { useGetItemListQuery, useGetSingleItemDataQuery } from "@/api/ItemApi";
 import {
   useGetYarnTypeListQuery,
@@ -33,6 +32,7 @@ import EditCustomer from "../../customer/component/EditCustomer";
 import EditMill from "../../mill/component/EditMill";
 import EditYarnType from "../../yarntype/component/EditYarnType";
 import EditItem from "../../items/component/EditItem";
+import { useGetMillListQuery, useGetSingleMillDataQuery } from "@/api/MillApi";
 
 export type APIResponseCustomer = z.infer<typeof customerSchema>;
 
@@ -48,7 +48,7 @@ export default function IndividualData() {
     customers: "Customer",
     mills: "Mill",
     items: "Item",
-    yarntypes: "YarnType",
+    yarn_types: "YarnType",
   };
   const title = titleMap[currentPage] || "Unknown";
 
@@ -74,9 +74,11 @@ export default function IndividualData() {
     currentPage === "items" ? "" : skipToken
   ) as { data: Item[] };
 
-  const { data: yarnTypes = [] } = useGetYarnTypeListQuery(
-    currentPage === "yarntypes" ? "" : skipToken
+  const { data: yarn_types = [] } = useGetYarnTypeListQuery(
+    currentPage === "yarn_types" ? "" : skipToken
   ) as { data: YarnType[] };
+
+  console.log(yarn_types);
 
   // Single record queries
   const { data: singleCustomer } = useGetSingleCustomerDataQuery(
@@ -92,8 +94,9 @@ export default function IndividualData() {
   );
 
   const { data: singleYarnType } = useGetSingleYarnTypeDataQuery(
-    currentPage === "yarntypes" && decodedId ? decodedId : skipToken
+    currentPage === "yarn_types" && decodedId ? decodedId : skipToken
   );
+
 
   // Name display
   let name = "Loading...";
@@ -103,7 +106,7 @@ export default function IndividualData() {
     name = singleMill?.mill_name || "Loading...";
   } else if (currentPage === "items") {
     name = singleItem?.item_name || "Loading...";
-  } else if (currentPage === "yarntypes") {
+  } else if (currentPage === "yarn_types") {
     name = singleYarnType?.yarn_type || "Loading...";
   }
 
@@ -128,8 +131,8 @@ export default function IndividualData() {
           name: i.item_name,
           detail: i.item_code ?? "",
         }));
-      case "yarntypes":
-        return yarnTypes.map((y) => ({
+      case "yarn_types":
+        return yarn_types.map((y) => ({
           id: y.id ?? 1,
           name: y.yarn_type,
           detail: "",
@@ -137,7 +140,7 @@ export default function IndividualData() {
       default:
         return [];
     }
-  }, [currentPage, customers, mills, items, yarnTypes]);
+  }, [currentPage, customers, mills, items, yarn_types]);
 
   // Report section
   let reportContent: React.ReactNode = (
@@ -148,13 +151,13 @@ export default function IndividualData() {
       reportContent = <CustomerReportSection id={Number(decodedId)} />;
       break;
     case "mills":
-      reportContent = <MillReportSection />;
+      reportContent = <MillReportSection id={Number(decodedId)} />;
       break;
     case "items":
-      reportContent = <ItemReportSection />;
+      reportContent = <ItemReportSection id={Number(decodedId)} />;
       break;
-    case "yarntypes":
-      reportContent = <YarnTypeReportSection />;
+    case "yarn_types":
+      reportContent = <YarnTypeReportSection id={Number(decodedId)} />;
       break;
   }
 

@@ -1,20 +1,20 @@
 import ReportTabs from "@/components/common/ReportTab";
 import type { Tab } from "@/schema-types/report-schema";
-import {  ScrollText, ListOrdered } from "lucide-react";
+import { ScrollText } from "lucide-react";
+import  YarnTypeLedger from "./YarnTypeLedger";
 
-const tabList: Tab[] = [
-  {
-    name: "Yarn Type",
-    icon: ScrollText,
-    content: <div>Yarn Type details</div>,
-  },
-  {
-    name: "Item Wise Report",
-    icon: ListOrdered,
-    content: <div>Report based on items sold</div>,
-  },
-];
+type Props = {
+  id: number;
+};
 
-export default function YarnTypeReportSection() {
-  return <ReportTabs tabs={tabList} defaultTab="Transactions" />;
+export default function YarnTypeReportSection({ id }: Props) {
+  const tabList: Tab[] = [
+    {
+      name: "Yarn Type Ledger",
+      icon: ScrollText,
+      content: <YarnTypeLedger id={id}/>,
+    },
+  ];
+
+  return <ReportTabs key={id} tabs={tabList} defaultTab="Yarn Type Ledger" />;
 }

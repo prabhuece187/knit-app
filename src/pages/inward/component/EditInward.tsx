@@ -23,10 +23,10 @@ import { useGetInwardByIdQuery, usePutInwardMutation } from "@/api/InwardApi";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
-import { useGetMillListQuery } from "@/api/MillApi";
 import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { useGetMillListQuery } from "@/api/MillApi";
 
 export default function AddInward() {
   const [putInward] = usePutInwardMutation();

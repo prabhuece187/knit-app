@@ -2,6 +2,7 @@ import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { millSchema, type Mill } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 export function getMillColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -19,6 +20,20 @@ export function getMillColumns(
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Mill Name" />
       ),
+      cell: ({ row }) => {
+        const id = row.original.id;
+
+        if (!id) return null; // secure the ID here
+        const encodedId = btoa(id.toString());
+        return (
+          <Link
+            to={`/mills/${encodedId}`}
+            className="text-violet-600 hover:underline font-medium"
+          >
+            {row.original.mill_name}
+          </Link>
+        );
+      },
     },
     {
       accessorKey: "mobile_number",

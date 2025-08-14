@@ -2,6 +2,7 @@ import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { yarnTypeSchema, type YarnType } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 
 export function getYarnTypeColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
@@ -19,6 +20,20 @@ export function getYarnTypeColumns(
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Yarn Type" />
       ),
+      cell: ({ row }) => {
+        const id = row.original.id;
+
+        if (!id) return null; // secure the ID here
+        const encodedId = btoa(id.toString());
+        return (
+          <Link
+            to={`/yarn_types/${encodedId}`}
+            className="text-violet-600 hover:underline font-medium"
+          >
+            {row.original.yarn_type}
+          </Link>
+        );
+      },
     },
     {
       id: "actions",
@@ -38,4 +53,5 @@ export function getYarnTypeColumns(
   ];
 }
 
-export const searchColumns = yarnTypeSchema.keyof().options as (keyof YarnType)[];
+export const searchColumns = yarnTypeSchema.keyof()
+  .options as (keyof YarnType)[];

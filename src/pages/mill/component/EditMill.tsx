@@ -21,19 +21,19 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-import { useGetMillByIdQuery, usePutMillMutation } from "@/api/MillApi";
 
 import { useEffect } from "react";
 import CommonHeader from "@/components/common/CommonHeader";
+import { useGetMillByIdQuery, usePutMillMutation } from "@/api/MillApi";
 
 export default function EditMill({
   open,
   setOpen,
-  MillId,
+  id,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  MillId: number;
+  id: number;
 }) {
   const [putMill] = usePutMillMutation();
 
@@ -41,8 +41,8 @@ export default function EditMill({
     resolver: zodResolver(millSchema),
   });
 
-  const { data: mill, isSuccess } = useGetMillByIdQuery(MillId, {
-    skip: MillId === undefined,
+  const { data: mill, isSuccess } = useGetMillByIdQuery(id, {
+    skip: id === undefined,
   });
 
   useEffect(() => {

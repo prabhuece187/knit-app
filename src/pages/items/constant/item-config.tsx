@@ -23,7 +23,6 @@ export function getItemColumns(
         <DataTableColumnHeader column={column} title="Item Name" />
       ),
       cell: ({ row }) => {
-        // const encodedType = btoa("Customer");
         const id = row.original.id;
 
         if (!id) return null; // secure the ID here

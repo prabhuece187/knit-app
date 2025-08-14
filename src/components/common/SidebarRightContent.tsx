@@ -14,7 +14,7 @@ function getPathPrefix(title: string): string {
     customer: "customers",
     mill: "mills",
     item: "items",
-    yarntype: "yarntypes",
+    yarntype: "yarn_types",
   };
 
   return map[title.toLowerCase()] || "not-found";

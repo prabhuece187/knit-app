@@ -61,7 +61,7 @@ export default function State() {
         />
 
       {selectedItemId ? (
-        <EditItem itemId={selectedItemId} open={open} setOpen={setOpen} />
+        <EditItem id={selectedItemId} open={open} setOpen={setOpen} />
       ) : (
         <AddItem open={open} setOpen={setOpen} />
       )}

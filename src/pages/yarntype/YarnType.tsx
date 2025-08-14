@@ -64,7 +64,7 @@ export default function YarnType() {
 
       {selectedYarnTypeId ? (
         <EditYarnType
-          yarnTypeId={selectedYarnTypeId}
+          id={selectedYarnTypeId}
           open={open}
           setOpen={setOpen}
         />

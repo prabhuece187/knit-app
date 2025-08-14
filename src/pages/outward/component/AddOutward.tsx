@@ -23,8 +23,8 @@ import { usePostOutwardMutation } from "@/api/OutwardApi";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
-import { useGetMillListQuery } from "@/api/MillApi";
 import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
+import { useGetMillListQuery } from "@/api/MillApi";
 
 export default function AddOutward() {
   const [postOutward] = usePostOutwardMutation();

@@ -29,11 +29,11 @@ import { useGetYarnTypeByIdQuery, usePutYarnTypeMutation } from "@/api/YarnTypeA
 export default function EditYarnType({
   open,
   setOpen,
-  yarnTypeId,
+  id,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  yarnTypeId: number;
+  id: number;
 }) {
   const [putYarnType] = usePutYarnTypeMutation();
 
@@ -41,8 +41,8 @@ export default function EditYarnType({
     resolver: zodResolver(yarnTypeSchema),
   });
 
-  const { data: member, isSuccess } = useGetYarnTypeByIdQuery(yarnTypeId, {
-    skip: yarnTypeId === undefined,
+  const { data: member, isSuccess } = useGetYarnTypeByIdQuery(id, {
+    skip: id === undefined,
   });
 
   useEffect(() => {
