@@ -1,7 +1,8 @@
 import ReportTabs from "@/components/common/ReportTab";
 import type { Tab } from "@/schema-types/report-schema";
 import { ScrollText } from "lucide-react";
-import  YarnTypeLedger from "./YarnTypeLedger";
+import YarnTypeLedger from "./YarnTypeLedger";
+import YarnTypeIndividualCustomer from "./YarnTypeIndividualCustome";
 
 type Props = {
   id: number;
@@ -12,7 +13,12 @@ export default function YarnTypeReportSection({ id }: Props) {
     {
       name: "Yarn Type Ledger",
       icon: ScrollText,
-      content: <YarnTypeLedger id={id}/>,
+      content: <YarnTypeLedger id={id} />,
+    },
+    {
+      name: "Individual Customer Wise",
+      icon: ScrollText,
+      content: <YarnTypeIndividualCustomer id={id} />,
     },
   ];
 

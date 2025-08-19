@@ -52,6 +52,17 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
+    postCustomerIndividualItem: build.mutation({
+      query: (data) => ({
+        url: "customer-individual-item",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
     postItemStockReport: build.mutation({
       query: (data) => ({
         url: "item-stock-report",
@@ -63,9 +74,20 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
-    postItemStockReportCUstomerWise: build.mutation({
+    postItemStockReportCustomerWise: build.mutation({
       query: (data) => ({
         url: "item-stock-customerwise",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postItemIndividualCustomer: build.mutation({
+      query: (data) => ({
+        url: "item-individual-customer",
         method: "POST",
         body: data,
         headers: {
@@ -96,9 +118,31 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
+    postMillIndividualItem: build.mutation({
+      query: (data) => ({
+        url: "mill-individual-item",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
     postYarnTypeLedger: build.mutation({
       query: (data) => ({
         url: "yarn-type-ledger",
+        method: "POST",
+        body: data,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }),
+      invalidatesTags: ["ReportTag"],
+    }),
+    postYarnTypeIndividualCustomer: build.mutation({
+      query: (data) => ({
+        url: "yarn-individual-customer",
         method: "POST",
         body: data,
         headers: {
@@ -115,9 +159,13 @@ export const {
   usePostAllDetailReportMutation,
   usePostCustomerLedgerInOutMutation,
   usePostCustomerInOutItemWiseMutation,
+  usePostCustomerIndividualItemMutation,
   usePostItemStockReportMutation,
-  usePostItemStockReportCUstomerWiseMutation,
+  usePostItemStockReportCustomerWiseMutation,
+  usePostItemIndividualCustomerMutation,
   usePostMillLedgerInOutMutation,
   usePostMillLedgerItemWiseMutation,
+  usePostMillIndividualItemMutation,
   usePostYarnTypeLedgerMutation,
+  usePostYarnTypeIndividualCustomerMutation,
 } = ReportApi;

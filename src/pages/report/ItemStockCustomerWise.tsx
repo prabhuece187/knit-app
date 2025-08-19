@@ -1,4 +1,4 @@
-import { usePostItemStockReportCUstomerWiseMutation } from "@/api/ReportApi";
+import { usePostItemStockReportCustomerWiseMutation } from "@/api/ReportApi";
 import { useState } from "react";
 import type { DateRange } from "react-day-picker";
 import { format } from "date-fns";
@@ -42,7 +42,7 @@ export default function ItemStockCustomerWise({ id }: { id: number }) {
   const [customerReports, setCustomerReports] = useState<CustomerStockReport[]>(
     []
   );
-  const [fetchStockReport] = usePostItemStockReportCUstomerWiseMutation();
+  const [fetchStockReport] = usePostItemStockReportCustomerWiseMutation();
   const [printFormat, setPrintFormat] = useState<PrintFormat>("A4");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
