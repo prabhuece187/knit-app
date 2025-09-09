@@ -39,7 +39,7 @@ interface SelectPopoverProps<
   labelKey: keyof TOption;
   name: FieldPath<TFieldValues>;
   control: Control<TFieldValues>;
-  hideLabel?: boolean; 
+  hideLabel?: boolean;
   onValueChange?: (selected: TOption) => void;
 }
 

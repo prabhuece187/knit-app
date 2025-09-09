@@ -90,6 +90,17 @@ const data = {
       ],
     },
     {
+      title: "Billing",
+      url: "#",
+      icon: Bot,
+      items: [
+        {
+          title: "Invoice",
+          url: "/invoice",
+        },
+      ],
+    },
+    {
       title: "Reports",
       url: "#",
       icon: Frame,

@@ -19,6 +19,8 @@ import EditOutward from "./pages/outward/component/EditOutward";
 import OverAllReport from "./pages/report/OverAll";
 import OverAllDetailReport from "./pages/report/OverAllDetail";
 import IndividualData from "./pages/report/common/IndividualData";
+import Invoice from "./pages/invoice/Invoice";
+import AddInvoice from "./pages/invoice/component/AddInvoice";
 
 function App() {
   return (
@@ -47,6 +49,10 @@ function App() {
               <Route path="outward" element={<Outward />} />
               <Route path="addoutward" element={<AddOutward />} />
               <Route path="/editoutward/:outwardId" element={<EditOutward />} />
+
+              {/* Invoice */}
+              <Route path="invoice" element={<Invoice />} />
+              <Route path="addinvoice" element={<AddInvoice />} />
 
               {/* Report */}
               <Route path="over-all-report" element={<OverAllReport />} />

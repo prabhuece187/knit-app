@@ -50,6 +50,7 @@ export default function AddInward() {
   function onSubmit(values: z.infer<typeof inwardSchema>) {
     postInward(values);
   }
+  
   return (
     <>
         <CommonHeader name="Add Inward" />

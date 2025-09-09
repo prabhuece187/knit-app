@@ -8,6 +8,7 @@ import { InwardApi } from "@/api/InwardApi";
 import { OutwardApi } from "@/api/OutwardApi";
 import { ReportApi } from "@/api/ReportApi";
 import { MillApi } from "@/api/MillApi";
+import { InvoiceApi } from "@/api/InvoiceApi";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
     [YarnTypeApi.reducerPath]: YarnTypeApi.reducer,
     [InwardApi.reducerPath]: InwardApi.reducer,
     [OutwardApi.reducerPath]: OutwardApi.reducer,
+    [InvoiceApi.reducerPath]: InvoiceApi.reducer,
     [ReportApi.reducerPath]: ReportApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
@@ -30,6 +32,7 @@ export const store = configureStore({
       YarnTypeApi.middleware,
       InwardApi.middleware,
       OutwardApi.middleware,
+      InvoiceApi.middleware,
       ReportApi.middleware
     ),
 });
