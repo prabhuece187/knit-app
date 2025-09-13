@@ -57,20 +57,8 @@ const data = {
           url: "/customers",
         },
         {
-          title: "Items",
-          url: "/items",
-        },
-        {
-          title: "Mills",
-          url: "/mills",
-        },
-        {
           title: "States",
           url: "/states",
-        },
-        {
-          title: "Yarn Types",
-          url: "/yarn_types",
         },
       ],
     },
@@ -83,10 +71,6 @@ const data = {
           title: "Inward",
           url: "/inward",
         },
-        {
-          title: "Outward",
-          url: "/outward",
-        },
       ],
     },
     {
@@ -97,10 +81,6 @@ const data = {
         {
           title: "Overall Report",
           url: "/over-all-report",
-        },
-        {
-          title: "Detail Report",
-          url: "/over-all-detail-report",
         },
       ],
     },

@@ -1,11 +1,5 @@
 import { useMemo, useState } from "react";
-import type {
-  Customer,
-  Item,
-  Mill,
-  SidebarRightData,
-  YarnType,
-} from "@/schema-types/master-schema";
+import type { Customer, SidebarRightData } from "@/schema-types/master-schema";
 import type z from "zod";
 import { customerSchema } from "@/schema-types/master-schema";
 import { useLocation, useParams } from "react-router-dom";
@@ -13,26 +7,16 @@ import {
   useGetCustomerListQuery,
   useGetSingleCustomerDataQuery,
 } from "@/api/CustomerApi";
-import { useGetItemListQuery, useGetSingleItemDataQuery } from "@/api/ItemApi";
-import {
-  useGetYarnTypeListQuery,
-  useGetSingleYarnTypeDataQuery,
-} from "@/api/YarnTypeApi";
+
 import { SidebarRight } from "@/components/sidebar-right";
 import SidebarRightContent from "@/components/common/SidebarRightContent";
 import CommonHeader from "@/components/common/CommonHeader";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import CustomerReportSection from "../CustomerReportSection";
-import MillReportSection from "../MillReportSection";
-import ItemReportSection from "../ItemReportSection";
-import YarnTypeReportSection from "../YarnTypeReportSection";
+
 import { skipToken } from "@reduxjs/toolkit/query";
 import EditCustomer from "../../customer/component/EditCustomer";
-import EditMill from "../../mill/component/EditMill";
-import EditYarnType from "../../yarntype/component/EditYarnType";
-import EditItem from "../../items/component/EditItem";
-import { useGetMillListQuery, useGetSingleMillDataQuery } from "@/api/MillApi";
 
 export type APIResponseCustomer = z.infer<typeof customerSchema>;
 
@@ -46,17 +30,11 @@ export default function IndividualData() {
 
   const titleMap: Record<string, string> = {
     customers: "Customer",
-    mills: "Mill",
-    items: "Item",
-    yarn_types: "YarnType",
   };
   const title = titleMap[currentPage] || "Unknown";
 
   const editComponentMap: Record<string, React.ElementType> = {
     Customer: EditCustomer,
-    Mill: EditMill,
-    Item: EditItem,
-    YarnType: EditYarnType,
   };
 
   const EditComponent = editComponentMap[title];
@@ -66,48 +44,15 @@ export default function IndividualData() {
     currentPage === "customers" ? "" : skipToken
   ) as { data: Customer[] };
 
-  const { data: mills = [] } = useGetMillListQuery(
-    currentPage === "mills" ? "" : skipToken
-  ) as { data: Mill[] };
-
-  const { data: items = [] } = useGetItemListQuery(
-    currentPage === "items" ? "" : skipToken
-  ) as { data: Item[] };
-
-  const { data: yarn_types = [] } = useGetYarnTypeListQuery(
-    currentPage === "yarn_types" ? "" : skipToken
-  ) as { data: YarnType[] };
-
-  console.log(yarn_types);
-
   // Single record queries
   const { data: singleCustomer } = useGetSingleCustomerDataQuery(
     currentPage === "customers" && decodedId ? decodedId : skipToken
   );
 
-  const { data: singleMill } = useGetSingleMillDataQuery(
-    currentPage === "mills" && decodedId ? decodedId : skipToken
-  );
-
-  const { data: singleItem } = useGetSingleItemDataQuery(
-    currentPage === "items" && decodedId ? decodedId : skipToken
-  );
-
-  const { data: singleYarnType } = useGetSingleYarnTypeDataQuery(
-    currentPage === "yarn_types" && decodedId ? decodedId : skipToken
-  );
-
-
   // Name display
   let name = "Loading...";
   if (currentPage === "customers") {
     name = singleCustomer?.customer_name || "Loading...";
-  } else if (currentPage === "mills") {
-    name = singleMill?.mill_name || "Loading...";
-  } else if (currentPage === "items") {
-    name = singleItem?.item_name || "Loading...";
-  } else if (currentPage === "yarn_types") {
-    name = singleYarnType?.yarn_type || "Loading...";
   }
 
   // Sidebar list
@@ -119,28 +64,11 @@ export default function IndividualData() {
           name: c.customer_name,
           detail: c.customer_mobile ?? "",
         }));
-      case "mills":
-        return mills.map((m) => ({
-          id: m.id ?? 1,
-          name: m.mill_name,
-          detail: m.mobile_number ?? "",
-        }));
-      case "items":
-        return items.map((i) => ({
-          id: i.id ?? 1,
-          name: i.item_name,
-          detail: i.item_code ?? "",
-        }));
-      case "yarn_types":
-        return yarn_types.map((y) => ({
-          id: y.id ?? 1,
-          name: y.yarn_type,
-          detail: "",
-        }));
+
       default:
         return [];
     }
-  }, [currentPage, customers, mills, items, yarn_types]);
+  }, [currentPage, customers]);
 
   // Report section
   let reportContent: React.ReactNode = (
@@ -149,15 +77,6 @@ export default function IndividualData() {
   switch (currentPage) {
     case "customers":
       reportContent = <CustomerReportSection id={Number(decodedId)} />;
-      break;
-    case "mills":
-      reportContent = <MillReportSection id={Number(decodedId)} />;
-      break;
-    case "items":
-      reportContent = <ItemReportSection id={Number(decodedId)} />;
-      break;
-    case "yarn_types":
-      reportContent = <YarnTypeReportSection id={Number(decodedId)} />;
       break;
   }
 

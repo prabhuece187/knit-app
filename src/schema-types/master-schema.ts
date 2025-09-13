@@ -85,6 +85,5 @@ export type SidebarRightData = {
   detail: string;
 };
 
-
 // ======================== Dynamic Add ==========================
-export type LabelType = "State" | "Customer" | "Item" | "Mill" | "YarnType";
+export type LabelType = "State" | "Customer";

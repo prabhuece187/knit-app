@@ -2,9 +2,6 @@ import { useState, type Dispatch, type SetStateAction } from "react";
 import { Button } from "../ui/button";
 import AddState from "@/pages/state/component/AddState";
 import AddCustomer from "@/pages/customer/component/AddCustomer";
-import AddItem from "@/pages/items/component/AddItem";
-import AddMill from "@/pages/mill/component/AddMill";
-import AddYarnType from "@/pages/yarntype/component/AddYarnType";
 import type { LabelType } from "@/schema-types/master-schema";
 
 // Props allow any string
@@ -22,14 +19,11 @@ const componentMap: Record<
 > = {
   State: AddState,
   Customer: AddCustomer,
-  Item: AddItem,
-  Mill: AddMill,
-  YarnType: AddYarnType,
 };
 
 // Type guard to ensure label is one of the valid options
 const isValidLabel = (label: string): label is LabelType => {
-  return ["State", "Customer", "Item", "Mill", "YarnType"].includes(label);
+  return ["State", "Customer"].includes(label);
 };
 
 export default function DynamicAdd({ label }: DynamicAddProps) {
