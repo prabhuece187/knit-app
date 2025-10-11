@@ -4,7 +4,7 @@ import { Search } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 type SidebarRightContentProps = {
-  title: string; // Should be 'Customer', 'Mill', 'Item', 'YarnType'
+  title: string; // Should be 'Customer', 'Mill', 'Item', 'YarnType','Bank'
   items: SidebarRightData[];
 };
 
@@ -15,6 +15,7 @@ function getPathPrefix(title: string): string {
     mill: "mills",
     item: "items",
     yarntype: "yarn_types",
+    bank: "banks",
   };
 
   return map[title.toLowerCase()] || "not-found";

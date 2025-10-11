@@ -1,75 +1,173 @@
 "use client";
 
-import { useFieldArray, type Control } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addAdditionalCharge,
+  removeAdditionalCharge,
+  updateAdditionalCharge,
+} from "@/slice/InvoiceFormSlice";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { FormField, FormItem, FormControl } from "@/components/ui/form";
-import type { FullInvoiceFormValues } from "@/schema-types/invoice-schema";
+import type { RootState, AppDispatch } from "@/store/Store";
+import { selectIsAnyItemTaxApplied } from "@/utility/invoice-selectors";
 
-export function AdditionalChargesTable({
-  control,
-  name,
-}: {
-  control: Control<FullInvoiceFormValues>;
-  name: "additional_charges";
-}) {
-  const { fields, remove } = useFieldArray({ control, name });
+interface AdditionalChargesTableProps {
+  rowErrors?: Record<number, Record<string, string>>;
+}
 
-  if (fields.length === 0) return null; // hide table if no rows
+export function AdditionalChargesTable({ rowErrors }: AdditionalChargesTableProps) {
+  const dispatch = useDispatch<AppDispatch>();
+  const charges = useSelector(
+    (state: RootState) => state.invoiceForm.additional_charges
+  );
+
+  // Selector for disabling the tax dropdown
+  const isTaxDropdownDisabled = !useSelector(selectIsAnyItemTaxApplied);
+
+  const handleChange = (
+    index: number,
+    // Note: The 'field' must match the property key in the Redux state.
+    field:
+      | "additional_charge_name"
+      | "additional_charge_amount"
+      | "tax_applicable",
+    value: string | number
+  ) => {
+    let finalValue = value;
+
+    // Logic to force 'none' if the tax dropdown is disabled
+    if (field === "tax_applicable" && isTaxDropdownDisabled) {
+      finalValue = "none";
+    }
+
+    // Dispatch the update. Redux Toolkit will handle the specific field update.
+    dispatch(updateAdditionalCharge({ index, [field]: finalValue }));
+  };
+
+  const addAdditionalData = () => {
+    dispatch(
+      addAdditionalCharge({
+        additional_charge_name: "",
+        additional_charge_amount: 0,
+        tax_applicable: "none",
+      })
+    );
+  };
+
+  const handleRemove = (index: number) => {
+    dispatch(removeAdditionalCharge(index));
+  };
+
+  // Check if any charge is incomplete to disable the Add button
+  const isAddDisabled = charges.some(
+    (c) => !c.additional_charge_name || c.additional_charge_amount === 0
+  );
 
   return (
-    <div className="p-4 border rounded mt-3 space-y-3">
-      {fields.map((field, index) => (
-        <div key={field.id} className="flex gap-3 items-center">
-          <FormField
-            control={control}
-            name={`${name}.${index}.additional_charge_name`}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormControl>
-                  <Input placeholder="Charge Name" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name={`${name}.${index}.additional_charge_amount`}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormControl>
-                  <Input type="number" placeholder="Amount" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name={`${name}.${index}.additional_tax`}
-            render={({ field }) => (
-              <FormItem className="flex-1">
-                <FormControl>
+    <div className="border p-4 rounded">
+      {charges.length > 0 && (
+        <table className="w-full">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="p-2 text-left">Description</th>
+              <th className="p-2 text-right">Amount</th>
+              <th className="p-2 text-right">Tax</th>
+              <th />
+            </tr>
+          </thead>
+          <tbody>
+            {charges.map((charge, i) => (
+              <tr key={i}>
+                {/* DESCRIPTION */}
+                <td className="p-2">
+                  <input
+                    type="text"
+                    className="border px-2 w-full"
+                    value={charge.additional_charge_name}
+                    onChange={(e) =>
+                      handleChange(i, "additional_charge_name", e.target.value)
+                    }
+                  />
+                  {rowErrors?.[i]?.additional_charge_name && (
+                    <span className="text-red-500 text-sm">
+                      {rowErrors[i].additional_charge_name}
+                    </span>
+                  )}
+                </td>
+
+                {/* AMOUNT (FIXED: Uses Redux state directly for value) */}
+                <td className="p-2">
+                  <input
+                    type="text" // Changed to text to handle decimal input
+                    step="0.01"
+                    className="border px-2 w-28 text-right"
+                    // Use the number value converted to a string from Redux state
+                    value={charge.additional_charge_amount.toString()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      // Allow empty string, or valid number format (0-9, single dot)
+                      if (val === "" || /^\d*\.?\d*$/.test(val)) {
+                        // Dispatch the update immediately
+                        // Empty string is converted to 0 as the number value
+                        handleChange(
+                          i,
+                          "additional_charge_amount",
+                          val === "" ? 0 : Number(val)
+                        );
+                      }
+                    }}
+                  />
+                  {rowErrors?.[i]?.additional_charge_amount && (
+                    <span className="text-red-500 text-sm">
+                      {rowErrors[i].additional_charge_amount}
+                    </span>
+                  )}
+                </td>
+
+                {/* TAX DROPDOWN */}
+                <td className="p-2">
                   <select
-                    className="w-full border rounded px-2 py-1"
-                    {...field}
+                    className="border px-2 w-28"
+                    value={charge.tax_applicable ?? "none"}
+                    disabled={isTaxDropdownDisabled}
+                    onChange={(e) =>
+                      handleChange(i, "tax_applicable", e.target.value)
+                    }
                   >
-                    <option value={0}>No Applicable Tax</option>
+                    <option value="none">No Tax</option>
+                    <option value="gst5">GST 5%</option>
+                    <option value="gst12">GST 12%</option>
+                    <option value="gst18">GST 18%</option>
+                    <option value="gst28">GST 28%</option>
                   </select>
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <Button
-            type="button"
-            size="icon"
-            variant="destructive"
-            className="w-6 h-6 p-0 flex items-center justify-center"
-            onClick={() => remove(index)}
-          >
-            ×
-          </Button>
-        </div>
-      ))}
+                </td>
+
+                {/* REMOVE BUTTON */}
+                <td className="p-2">
+                  <Button
+                    size="sm"
+                    variant="destructive"
+                    onClick={() => handleRemove(i)}
+                  >
+                    X
+                  </Button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {/* ADD BUTTON */}
+      <div className="mt-2">
+        <Button
+          variant="outline"
+          className="w-full"
+          disabled={isAddDisabled}
+          onClick={addAdditionalData}
+        >
+          ➕ Add Additional Charge
+        </Button>
+      </div>
     </div>
   );
 }

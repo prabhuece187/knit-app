@@ -1,56 +1,40 @@
 "use client";
 
-import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import type { Control, UseFormWatch } from "react-hook-form";
-import type { FullInvoiceFormValues } from "@/schema-types/invoice-schema";
+import { useDispatch, useSelector } from "react-redux";
+import { updateField } from "@/slice/InvoiceFormSlice";
+import type { RootState, AppDispatch } from "@/store/Store";
 
-export function NotesSummary({
-  control,
-//   watch,
-}: {
-  control: Control<FullInvoiceFormValues>;
-  watch: UseFormWatch<FullInvoiceFormValues>;
-}) {
+export function NotesSummary() {
+  const dispatch = useDispatch<AppDispatch>();
+  const { invoice_notes, invoice_terms } = useSelector(
+    (state: RootState) => state.invoiceForm
+  );
+
   return (
-    <div className="grid grid-cols-12 gap-6 mt-6">
-      {/* Notes & Terms */}
-      <div className="col-span-12 lg:col-span-7">
-        <div className="grid gap-4">
-          <FormField
-            control={control}
-            name="invoice_notes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Notes</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Notes..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name="invoice_terms"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Terms & Conditions</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Terms & Conditions..." {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-      </div>
+    <div className="border p-4 rounded space-y-2">
+      <h3 className="font-semibold">Notes & Terms</h3>
+      <textarea
+        className="border px-2 w-full"
+        rows={3}
+        placeholder="Invoice Notes"
+        value={invoice_notes}
+        onChange={(e) =>
+          dispatch(
+            updateField({ field: "invoice_notes", value: e.target.value })
+          )
+        }
+      />
+      <textarea
+        className="border px-2 w-full"
+        rows={3}
+        placeholder="Invoice Terms"
+        value={invoice_terms}
+        onChange={(e) =>
+          dispatch(
+            updateField({ field: "invoice_terms", value: e.target.value })
+          )
+        }
+      />
     </div>
   );
 }

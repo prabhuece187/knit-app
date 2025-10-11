@@ -1,6 +1,6 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import { invoiceSchema, type Invoice } from "@/schema-types/invoice-schema";
+import {  type Invoice } from "@/schema-types/invoice-schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export function getInvoiceColumns(
@@ -67,5 +67,18 @@ export function getInvoiceColumns(
   ];
 }
 
-export const searchColumns = invoiceSchema.keyof()
-  .options as (keyof Invoice)[];
+// -------------------------
+// Search Columns
+// -------------------------
+// Use TypeScript type keyof instead of Zod keyOf()
+type InvoiceKeys = keyof Invoice;
+
+// List the fields you want to allow search on
+export const searchColumns: InvoiceKeys[] = [
+  "id",
+  "invoice_number",
+  "invoice_date",
+  "invoice_total",
+  "balance_amount",
+  "customer_id", // or "customer_name" depending on your flattened data
+];

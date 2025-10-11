@@ -94,7 +94,7 @@ export default function AddItem({
               <div className="col-span-3">
                 <FormField
                   control={form.control}
-                  name="item_code"
+                  name="hsn_code"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Item Code</FormLabel>

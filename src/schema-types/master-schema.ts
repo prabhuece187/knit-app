@@ -45,9 +45,10 @@ export const itemSchema = z.object({
   item_name: z.string().min(2, {
     message: "Please Enter the Item Name.",
   }),
-  item_code: z.string().optional(),
+  hsn_code: z.string().optional(),
   unit: z.string().optional(),
   description: z.string().optional(),
+  price: z.number().optional(),
 });
 
 export type Item = z.infer<typeof itemSchema>;
@@ -85,6 +86,33 @@ export type SidebarRightData = {
   detail: string;
 };
 
-
 // ======================== Dynamic Add ==========================
-export type LabelType = "State" | "Customer" | "Item" | "Mill" | "YarnType";
+export type LabelType =
+  | "State"
+  | "Customer"
+  | "Item"
+  | "Mill"
+  | "YarnType"
+  | "Bank";
+
+// =======================  Bank ============================
+export const bankSchema = z.object({
+  id: z.number().optional(), // optional if new record
+  user_id: z.number().min(1, { message: "Please select a User." }),
+  bank_name: z.string().min(2, { message: "Please enter the Bank Name." }),
+  branch_name: z.string().optional(),
+  account_holder_name: z.string().optional(),
+  account_number: z.string().optional(),
+  ifsc_code: z.string().optional(),
+  bank_city: z.string().optional(),
+  bank_state: z.string().optional(),
+  bank_email: z
+    .string()
+    .email({ message: "Invalid email address." })
+    .optional(),
+  bank_mobile: z.string().optional(),
+  bank_address: z.string().optional(),
+  is_default: z.boolean().default(false),
+});
+
+export type Bank = z.infer<typeof bankSchema>;

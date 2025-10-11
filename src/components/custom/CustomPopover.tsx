@@ -1,10 +1,7 @@
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+"use client";
+
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -18,112 +15,111 @@ import {
   CommandEmpty,
   CommandGroup,
 } from "@/components/ui/command";
-import { Button } from "@/components/ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { ChevronsUpDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
-import type { Control, FieldPath, FieldValues } from "react-hook-form";
 import DynamicAdd from "../common/DynamicAdd";
+import { Controller, type Control, type FieldPath } from "react-hook-form";
 
-// Generic option type (you can customize this more if needed)
 type SelectOption = Record<string, string | number>;
 
 interface SelectPopoverProps<
-  TFieldValues extends FieldValues,
-  TOption extends SelectOption
+  TOption extends SelectOption,
+  TFormValues extends Record<string, unknown> = Record<string, unknown>
 > {
   label: string;
-  placeholder?: string;
   options: TOption[];
   valueKey: keyof TOption;
   labelKey: keyof TOption;
-  name: FieldPath<TFieldValues>;
-  control: Control<TFieldValues>;
+  value?: number;
+  onValueChange?: (val: number) => void;
+  placeholder?: string;
   hideLabel?: boolean;
-  onValueChange?: (selected: TOption) => void;
+  control?: Control<TFormValues>;
+  name?: FieldPath<TFormValues>;
 }
 
 export function SelectPopover<
-  TFieldValues extends FieldValues,
-  TOption extends SelectOption
+  TOption extends SelectOption,
+  TFormValues extends Record<string, unknown> = Record<string, unknown>
 >({
   label,
-  placeholder = "Select...",
   options,
   valueKey,
   labelKey,
-  name,
-  control,
+  value,
   onValueChange,
-  hideLabel = false,
-}: SelectPopoverProps<TFieldValues, TOption>) {
+  placeholder = "Select...",
+  hideLabel,
+  control,
+  name,
+}: SelectPopoverProps<TOption, TFormValues>) {
   const [open, setOpen] = useState(false);
 
-  return (
-    <FormField
-      control={control}
-      name={name}
-      render={({ field }) => {
-        const selected = options.find((opt) => opt[valueKey] === field.value);
+  const renderPopover = (
+    val: number | undefined,
+    setVal: (v: number) => void
+  ) => {
+    const selected = options.find((opt) => opt[valueKey] === val);
 
-        return (
-          <FormItem>
-            {!hideLabel && <FormLabel>{label}</FormLabel>}
-            <Popover open={open} onOpenChange={setOpen}>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    aria-expanded={open}
-                    className="w-full justify-between"
-                  >
-                    {selected?.[labelKey] ?? placeholder}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-[300px] p-0">
-                <Command>
-                  <CommandInput
-                    placeholder={`Search ${label.toLowerCase()}...`}
-                  />
-                  <CommandList>
-                    <CommandEmpty>
-                      No {label.toLowerCase()} found.{" "}
-                      <DynamicAdd label={label} />
-                    </CommandEmpty>
-                    <CommandGroup>
-                      {options.map((opt) => (
-                        <CommandItem
-                          key={String(opt[valueKey])}
-                          value={String(opt[labelKey])}
-                          onSelect={() => {
-                            field.onChange(opt[valueKey]);
-                            onValueChange?.(opt);
-                            setOpen(false);
-                          }}
-                        >
-                          {opt[labelKey]}
-                          <Check
-                            className={cn(
-                              "ml-auto",
-                              field.value === opt[valueKey]
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            <FormMessage />
-          </FormItem>
-        );
-      }}
-    />
-  );
+    return (
+      <div>
+        {!hideLabel && <label className="text-sm font-medium">{label}</label>}
+        <Popover open={open} onOpenChange={setOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              role="combobox"
+            >
+              {selected?.[labelKey] ?? placeholder}
+              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[300px] p-0">
+            <Command>
+              <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
+              <CommandList>
+                <CommandEmpty>
+                  No {label.toLowerCase()} found. <DynamicAdd label={label} />
+                </CommandEmpty>
+                <CommandGroup>
+                  {options.map((opt) => (
+                    <CommandItem
+                      key={String(opt[valueKey])}
+                      value={String(opt[labelKey])}
+                      onSelect={() => setVal(opt[valueKey] as number)}
+                    >
+                      {opt[labelKey]}
+                      <Check
+                        className={cn(
+                          "ml-auto",
+                          val === opt[valueKey] ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      </div>
+    );
+  };
+
+  // React Hook Form integration
+  if (control && name) {
+    return (
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) =>
+          renderPopover(field.value as number | undefined, field.onChange)
+        }
+      />
+    );
+  }
+
+  // Manual usage fallback
+  return renderPopover(value, (val) => onValueChange?.(val));
 }

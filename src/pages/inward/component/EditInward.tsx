@@ -92,221 +92,221 @@ export default function AddInward() {
 
   return (
     <>
-        <CommonHeader name="Edit Inward" />
-        <Card className="@container/card">
-          <CardContent className="pt-4">
-            <Form {...form}>
-              <form
-                id="inward-form"
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-8"
-              >
-                {/* MAIN FORM GRID */}
-                <div className="grid grid-cols-12 gap-4">
-                  {/* Hidden User ID */}
-                  <FormField
-                    control={form.control}
-                    name="user_id"
-                    render={({ field }) => <Input type="hidden" {...field} />}
-                  />
-
-                  {/* Customer */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <SelectPopover
-                      label="Customer"
-                      placeholder="Select customer..."
-                      options={customers}
-                      valueKey="id"
-                      labelKey="customer_name"
-                      name="customer_id"
-                      control={form.control}
-                    />
-                  </div>
-
-                  {/* Mill */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <SelectPopover
-                      label="Mill"
-                      placeholder="Select mill..."
-                      options={mills}
-                      valueKey="id"
-                      labelKey="mill_name"
-                      name="mill_id"
-                      control={form.control}
-                    />
-                  </div>
-
-                  {/* Inward No */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="inward_no"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Inward No*</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter Inward No." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Invoice No */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="inward_invoice_no"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Invoice No*</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter Invoice No." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Tin No */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="inward_tin_no"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>TIN No*</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter TIN No." {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Inward Date */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="inward_date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Inward Date*</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="date"
-                              value={field.value ?? ""}
-                              onChange={(e) => field.onChange(e.target.value)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Vehicle No */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="inward_vehicle_no"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Vehicle No</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter Vehicle No" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Total Weight */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="total_weight"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Total Weight</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="Enter Total Weight"
-                              {...field}
-                              onChange={(e) => field.onChange(+e.target.value)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Total Quantity */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="total_quantity"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Total Quantity</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              placeholder="Enter Total Quantity"
-                              {...field}
-                              onChange={(e) => field.onChange(+e.target.value)}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  {/* Status */}
-                  <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                    <FormField
-                      control={form.control}
-                      name="status"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Status</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Enter Status" {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                </div>
-
-                {/* INWARD DETAILS TABLE */}
-                <ItemsDetailsTable
-                  name="inward_details"
-                  control={control}
-                  setValue={setValue}
-                  watch={watch}
-                  mode="inward"
+      <CommonHeader name="Edit Inward" />
+      <Card className="@container/card">
+        <CardContent className="pt-4">
+          <Form {...form}>
+            <form
+              id="inward-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-8"
+            >
+              {/* MAIN FORM GRID */}
+              <div className="grid grid-cols-12 gap-4">
+                {/* Hidden User ID */}
+                <FormField
+                  control={form.control}
+                  name="user_id"
+                  render={({ field }) => <Input type="hidden" {...field} />}
                 />
 
-                {/* Form Buttons */}
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline">
-                    Cancel
-                  </Button>
-                  <Button type="submit">Submit</Button>
+                {/* Customer */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <SelectPopover
+                    label="Customer"
+                    placeholder="Select customer..."
+                    options={customers}
+                    valueKey="id"
+                    labelKey="customer_name"
+                    value={form.watch("customer_id")}
+                    onValueChange={(val) => form.setValue("customer_id", val)}
+                  />
                 </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
+
+                {/* Mill */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <SelectPopover
+                    label="Mill"
+                    placeholder="Select mill..."
+                    options={mills}
+                    valueKey="id"
+                    labelKey="mill_name"
+                    value={form.watch("mill_id")}
+                    onValueChange={(val) => form.setValue("mill_id", val)}
+                  />
+                </div>
+
+                {/* Inward No */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="inward_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Inward No*</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter Inward No." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Invoice No */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="inward_invoice_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Invoice No*</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter Invoice No." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Tin No */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="inward_tin_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>TIN No*</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter TIN No." {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Inward Date */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="inward_date"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Inward Date*</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            value={field.value ?? ""}
+                            onChange={(e) => field.onChange(e.target.value)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Vehicle No */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="inward_vehicle_no"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Vehicle No</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter Vehicle No" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Total Weight */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="total_weight"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Total Weight</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Enter Total Weight"
+                            {...field}
+                            onChange={(e) => field.onChange(+e.target.value)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Total Quantity */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="total_quantity"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Total Quantity</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Enter Total Quantity"
+                            {...field}
+                            onChange={(e) => field.onChange(+e.target.value)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Status */}
+                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Enter Status" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* INWARD DETAILS TABLE */}
+              <ItemsDetailsTable
+                name="inward_details"
+                control={control}
+                setValue={setValue}
+                watch={watch}
+                mode="inward"
+              />
+
+              {/* Form Buttons */}
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline">
+                  Cancel
+                </Button>
+                <Button type="submit">Submit</Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
     </>
   );
 }

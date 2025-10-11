@@ -9,9 +9,12 @@ import { OutwardApi } from "@/api/OutwardApi";
 import { ReportApi } from "@/api/ReportApi";
 import { MillApi } from "@/api/MillApi";
 import { InvoiceApi } from "@/api/InvoiceApi";
+import invoiceFormReducer from "@/slice/InvoiceFormSlice";
+import { BankApi } from "@/api/BankApi";
 
 export const store = configureStore({
   reducer: {
+    invoiceForm: invoiceFormReducer,
     StateCode: StateSlice.reducer,
     [CustomerApi.reducerPath]: CustomerApi.reducer,
     [ItemApi.reducerPath]: ItemApi.reducer,
@@ -22,6 +25,7 @@ export const store = configureStore({
     [OutwardApi.reducerPath]: OutwardApi.reducer,
     [InvoiceApi.reducerPath]: InvoiceApi.reducer,
     [ReportApi.reducerPath]: ReportApi.reducer,
+    [BankApi.reducerPath]: BankApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -33,8 +37,10 @@ export const store = configureStore({
       InwardApi.middleware,
       OutwardApi.middleware,
       InvoiceApi.middleware,
-      ReportApi.middleware
+      ReportApi.middleware,
+      BankApi.middleware
     ),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;

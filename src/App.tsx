@@ -21,6 +21,7 @@ import OverAllDetailReport from "./pages/report/OverAllDetail";
 import IndividualData from "./pages/report/common/IndividualData";
 import Invoice from "./pages/invoice/Invoice";
 import AddInvoice from "./pages/invoice/component/AddInvoice";
+import Bank from "./pages/bank/Bank";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
               <Route index element={<Dashboard />} />
 
               {/* Master */}
+              <Route path="banks" element={<Bank />} />
               <Route path="customers" element={<Customer />} />
               <Route path="items" element={<Item />} />
               <Route path="states" element={<State />} />
@@ -66,6 +68,7 @@ function App() {
               <Route path="items/:id" element={<IndividualData />} />
               <Route path="mills/:id" element={<IndividualData />} />
               <Route path="yarn_types/:id" element={<IndividualData />} />
+              <Route path="banks/:id" element={<IndividualData />} />
             </Route>
           </Routes>
         </ThemeProvider>

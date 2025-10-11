@@ -176,24 +176,38 @@ export function ItemsDetailsTable<TFormValues extends FieldValues>({
                   options={items}
                   valueKey="id"
                   labelKey="item_name"
-                  name={buildPath(index, "item_id")}
-                  control={control}
-                  onValueChange={(val) => itemChange(val, index)}
+                  value={watch(buildPath(index, "item_id"))} // 👈 watch with buildPath
                   hideLabel
+                  onValueChange={(val: number | undefined) => {
+                    if (!val) return;
+                    setValue(
+                      buildPath(index, "item_id"),
+                      val as RowType["item_id"]
+                    ); // 👈 use setValue
+                    const selectedItem = items.find((i) => i.id === val);
+                    if (selectedItem) itemChange(selectedItem, index); // reuse your helper
+                  }}
                 />
               </TableCell>
               {/* Yarn Type */}
               <TableCell>
                 <SelectPopover
-                  label="Yarn Type"
+                  label="YarnType"
                   placeholder="Select Yarn Type..."
                   options={yarntypes}
                   valueKey="id"
                   labelKey="yarn_type"
-                  name={buildPath(index, "yarn_type_id")}
-                  control={control}
-                  onValueChange={(val) => typeChange(val, index)}
+                  value={watch(buildPath(index, "yarn_type_id"))} // 👈 bound value
                   hideLabel
+                  onValueChange={(val: number | undefined) => {
+                    if (!val) return;
+                    setValue(
+                      buildPath(index, "yarn_type_id"),
+                      val as RowType["yarn_type_id"]
+                    );
+                    const selectedType = yarntypes.find((yt) => yt.id === val);
+                    if (selectedType) typeChange(selectedType, index); // reuse helper
+                  }}
                 />
               </TableCell>
               {/* Yarn Gauge */}
