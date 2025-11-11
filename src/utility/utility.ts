@@ -1,4 +1,42 @@
-export function to2(val: number): number {
-  if (!isFinite(val)) return 0;
-  return Math.round((val + Number.EPSILON) * 100) / 100;
+export function to2(val: number | null | undefined): number {
+  const num = Number(val); // convert anything to number
+  if (!isFinite(num)) return 0; // handle NaN, Infinity, undefined
+  return Math.round((num + Number.EPSILON) * 100) / 100;
 }
+
+
+export const formatDate = (
+  val?: string | number | Date,
+  style: "dash" | "short" | "long" = "dash"
+): string => {
+  if (!val) return "—";
+  const d = val instanceof Date ? val : new Date(String(val));
+  if (Number.isNaN(d.getTime())) return "—";
+
+  switch (style) {
+    case "short":
+      // Example: 05 Nov 2025
+      return d.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      });
+
+    case "long":
+      // Example: 05 November 2025
+      return d.toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric",
+      });
+
+    case "dash":
+    default: {
+      // Example: 05-11-2025
+      const day = String(d.getDate()).padStart(2, "0");
+      const month = String(d.getMonth() + 1).padStart(2, "0");
+      const year = d.getFullYear();
+      return `${day}-${month}-${year}`;
+    }
+  }
+};

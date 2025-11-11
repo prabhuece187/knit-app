@@ -15,8 +15,8 @@ export const InvoiceApi = createApi({
       providesTags: ["InvoiceTag"],
     }),
     getInvoiceById: build.query({
-      query: (id) => ({
-        url: `invoice_edit/${id}`,
+      query: (invoiceId) => ({
+        url: `invoice_edit/${invoiceId}`,
         method: "GET",
       }),
       providesTags: ["InvoiceTag"],

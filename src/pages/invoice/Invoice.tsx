@@ -46,7 +46,11 @@ export default function Invoice() {
 
   const [open, setOpen] = useState(false);
 
-  const columns = getInvoiceColumns(handleEdit, handleDelete);
+  const columns = getInvoiceColumns(
+    handleEdit,
+    handleDelete,
+    navigate
+  );
 
   return (
     <>

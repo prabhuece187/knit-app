@@ -1,57 +1,67 @@
 import z from "zod";
 import type { Item } from "./master-schema";
 
+// Helper transforms for booleans that might be 0/1
+const coerceBoolean = z
+  .union([z.boolean(), z.number(), z.string()])
+  .transform((v) => {
+    if (typeof v === "boolean") return v;
+    if (typeof v === "number") return v === 1;
+    if (typeof v === "string") return v === "true" || v === "1";
+    return false;
+  });
+
 // =======================  Invoice ============================
 export const baseInvoiceSchema = z.object({
   id: z.coerce.number().optional(),
-  user_id: z.number().optional(),
-  customer_id: z.number().min(1, {
-    message: "Please Enter Customer Name.",
-  }),
-  bank_id: z.number().min(1, {
-    message: "Please Enter Bank Name.",
-  }),
-  invoice_number: z.string().min(1, {
-    message: "Please Enter Invoice Number.",
-  }),
+  user_id: z.coerce.number().optional(),
+  customer_id: z.coerce
+    .number()
+    .min(1, { message: "Please Enter Customer Name." }),
+  bank_id: z.coerce.number().min(1, { message: "Please Enter Bank Name." }),
+
+  invoice_number: z
+    .string()
+    .min(1, { message: "Please Enter Invoice Number." }),
   invoice_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
-  payment_terms: z.number().optional(),
+  payment_terms: z.coerce.number().optional(),
   due_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)")
     .optional(),
+
   invoice_notes: z.string().optional(),
   invoice_terms: z.string().optional(),
 
-  invoice_subtotal: z.number().optional(),
-  invoice_taxable_value: z.number().optional(),
-  invoice_total: z.number().optional(),
+  invoice_subtotal: z.coerce.number().optional(),
+  invoice_taxable_value: z.coerce.number().optional(),
+  invoice_total: z.coerce.number().optional(),
 
-  invoice_cgst: z.number().nullable().optional(),
-  invoice_sgst: z.number().nullable().optional(),
-  invoice_igst: z.number().nullable().optional(),
+  invoice_cgst: z.coerce.number().nullable().optional(),
+  invoice_sgst: z.coerce.number().nullable().optional(),
+  invoice_igst: z.coerce.number().nullable().optional(),
 
-  bill_discount_per: z.number().nullable().optional(),
-  bill_discount_amount: z.number().nullable().optional(),
+  bill_discount_per: z.coerce.number().nullable().optional(),
+  bill_discount_amount: z.coerce.number().nullable().optional(),
   bill_discount_type: z.string().optional(),
 
-  amount_received: z.number().optional(),
-  amount_received_type: z.string().optional(),
+  amount_received: z.coerce.number().optional(),
+  amount_received_type: z.string().nullable().optional(),
 
-  balance_amount: z.number().optional(),
-  round_off: z.boolean().optional(),
+  balance_amount: z.coerce.number().optional(),
+  round_off: coerceBoolean.optional(),
   round_off_type: z.string().optional(),
-  round_off_amount: z.number().optional(),
+  round_off_amount: z.coerce.number().optional(),
 
-  fully_paid: z.boolean().optional(),
+  fully_paid: coerceBoolean.optional(),
 
-  subtotal_discount: z.number().optional(),
-  subtotal_tax: z.number().optional(),
+  subtotal_discount: z.coerce.number().optional(),
+  subtotal_tax: z.coerce.number().optional(),
 
-  invoice_type: z.string().optional(),
-  invoice_total_quantity: z.number().optional(),
+  invoice_type: z.string().nullable().optional(),
+  invoice_total_quantity: z.coerce.number().optional(),
 });
 
 export const invoiceSchema = baseInvoiceSchema
@@ -86,27 +96,22 @@ export const invoiceSchema = baseInvoiceSchema
 
 export type Invoice = z.infer<typeof invoiceSchema>;
 
+// =======================  Invoice Detail ============================
 export const invoiceDetailSchema = z
   .object({
     id: z.coerce.number().optional(),
-    user_id: z.number().optional(),
-    invoice_id: z.number().optional(),
-    item_id: z.number().min(1, {
-      message: "Please select an Item.",
-    }),
-    item_description: z.string().optional(),
+    user_id: z.coerce.number().optional(),
+    invoice_id: z.coerce.number().optional(),
+    item_id: z.coerce.number().min(1, { message: "Please select an Item." }),
+    item_description: z.string().optional().nullable(),
     hsn_code: z.string().optional(),
-    quantity: z.number().min(1, {
-      message: "Please enter Quantity.",
-    }),
-    price: z.number().min(1, {
-      message: "Please enter Price.",
-    }),
-    item_discount_per: z.number().nullable().optional(),
-    item_discount_amount: z.number().nullable().optional(),
-    item_tax_per: z.number().nullable().optional(),
-    item_tax_amount: z.number().nullable().optional(),
-    amount: z.number().optional(),
+    quantity: z.coerce.number().min(1, { message: "Please enter Quantity." }),
+    price: z.coerce.number().min(1, { message: "Please enter Price." }),
+    item_discount_per: z.coerce.number().nullable().optional(),
+    item_discount_amount: z.coerce.number().nullable().optional(),
+    item_tax_per: z.coerce.number().nullable().optional(),
+    item_tax_amount: z.coerce.number().nullable().optional(),
+    amount: z.coerce.number().optional(),
     discountSource: z.string().nullable().optional(),
   })
   .refine(
@@ -119,14 +124,14 @@ export type InvoiceDetail = z.infer<typeof invoiceDetailSchema>;
 // =======================  Additional Charges ============================
 export const additionalChargeSchema = z.object({
   id: z.coerce.number().optional(),
-  user_id: z.number().optional(),
-  invoice_id: z.number().optional(),
-  additional_charge_name: z.string().min(1, {
-    message: "Please enter Charge Name.",
-  }),
-  additional_charge_amount: z.number().min(1, {
-    message: "Please enter valid Amount.",
-  }),
+  user_id: z.coerce.number().optional(),
+  invoice_id: z.coerce.number().optional(),
+  additional_charge_name: z
+    .string()
+    .min(1, { message: "Please enter Charge Name." }),
+  additional_charge_amount: z.coerce
+    .number()
+    .min(1, { message: "Please enter valid Amount." }),
   tax_applicable: z.string().nullable().optional(),
 });
 
@@ -138,15 +143,13 @@ export const fullInvoiceSchema = baseInvoiceSchema.extend({
     .array(invoiceDetailSchema)
     .min(1, "Add at least one item."),
   additional_charges: z.array(additionalChargeSchema),
-  // bank_details: bankDetailSchema,
 });
 
 export type FullInvoiceFormValues = z.infer<typeof fullInvoiceSchema>;
-
 export type InvoiceFormState = FullInvoiceFormValues;
-
 export type InvoiceFormFields = keyof InvoiceFormState;
 
+// =======================  Types ============================
 export type InvoiceItemWithDetails = Item & {
   id?: number;
   item_id: number;
@@ -162,19 +165,19 @@ export type InvoiceItemWithDetails = Item & {
 };
 
 export const invoiceRowSchema = z.object({
-  id: z.number().optional(),
-  user_id: z.number().optional(),
-  invoice_id: z.number(),
-  item_id: z.number(),
+  id: z.coerce.number().optional(),
+  user_id: z.coerce.number().optional(),
+  invoice_id: z.coerce.number(),
+  item_id: z.coerce.number(),
   description: z.string().optional(),
   hsn_code: z.string().optional(),
-  quantity: z.number(),
-  price: z.number(),
-  item_discount_per: z.number().nullable().optional(),
-  item_discount_amount: z.number().nullable().optional(),
-  item_tax_per: z.number().nullable().optional(),
-  item_tax_amount: z.number().nullable().optional(),
-  amount: z.number().optional(),
+  quantity: z.coerce.number(),
+  price: z.coerce.number(),
+  item_discount_per: z.coerce.number().nullable().optional(),
+  item_discount_amount: z.coerce.number().nullable().optional(),
+  item_tax_per: z.coerce.number().nullable().optional(),
+  item_tax_amount: z.coerce.number().nullable().optional(),
+  amount: z.coerce.number().optional(),
 });
 
 export type InvoiceRow = z.infer<typeof invoiceRowSchema>;

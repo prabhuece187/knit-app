@@ -26,6 +26,7 @@ export interface InvoiceFormState extends FullInvoiceFormValues {
   show_discount_form: boolean;
   invoice_details: InvoiceRowRedux[];
   bill_lastEdited?: "billDiscountPer" | "billDiscountAmt";
+  isModified?: boolean;
 }
 
 const initialState: InvoiceFormState = {
@@ -79,8 +80,9 @@ const initialState: InvoiceFormState = {
   selected_tax: "none",
   show_discount_form: false,
   bill_lastEdited: undefined,
-  round_off_type: "+Add",
+  round_off_type: "none",
   round_off_amount: 0.0,
+  isModified: false,
 };
 
 // -------------------- SLICE --------------------
@@ -96,6 +98,9 @@ const invoiceFormSlice = createSlice({
       action: PayloadAction<{ field: K; value: InvoiceFormState[K] }>
     ) => {
       state[action.payload.field] = action.payload.value;
+      if (action.payload.field !== "isModified") {
+        state.isModified = true; // Mark user touched something
+      }
     },
 
     updateBillDiscount: (
@@ -179,6 +184,24 @@ const invoiceFormSlice = createSlice({
     removeAdditionalCharge: (state, action: PayloadAction<number>) => {
       state.additional_charges.splice(action.payload, 1);
     },
+
+    setFullInvoice: (state, action: PayloadAction<FullInvoiceFormValues>) => {
+      const payload = action.payload;
+
+      Object.assign(state, {
+        ...payload,
+        invoice_details: payload.invoice_details.map((item) => ({
+          ...item,
+          discountSource:
+            item.discountSource === "bill" || item.discountSource === "item"
+              ? item.discountSource
+              : undefined,
+        })),
+        additional_charges: payload.additional_charges || [],
+        isModified: false,
+      });
+    },
+
     toggleDiscountForm: (state) => {
       // Toggle discount form visibility
       state.show_discount_form = !state.show_discount_form;
@@ -211,6 +234,7 @@ export const {
   removeAdditionalCharge,
   toggleDiscountForm,
   updateBillDiscount,
+  setFullInvoice,
 } = invoiceFormSlice.actions;
 
 // -------------------- SELECTORS --------------------

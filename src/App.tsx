@@ -22,6 +22,8 @@ import IndividualData from "./pages/report/common/IndividualData";
 import Invoice from "./pages/invoice/Invoice";
 import AddInvoice from "./pages/invoice/component/AddInvoice";
 import Bank from "./pages/bank/Bank";
+import EditInvoice from "./pages/invoice/component/EditInvoice";
+import PrintInvoice from "./pages/invoice/component/PrintInvoice";
 
 function App() {
   return (
@@ -55,6 +57,8 @@ function App() {
               {/* Invoice */}
               <Route path="invoice" element={<Invoice />} />
               <Route path="addinvoice" element={<AddInvoice />} />
+              <Route path="/editinvoice/:invoiceId" element={<EditInvoice />} />
+              <Route path="/printinvoice/:invoiceId" element={<PrintInvoice />} />
 
               {/* Report */}
               <Route path="over-all-report" element={<OverAllReport />} />

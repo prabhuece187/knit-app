@@ -1,12 +1,20 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import {  type Invoice } from "@/schema-types/invoice-schema";
+import { type Invoice } from "@/schema-types/invoice-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+// import { useNavigate } from "react-router-dom";
 
 export function getInvoiceColumns(
   handleEdit: (invoice: Invoice) => void,
-  handleDelete: (invoice: Invoice) => void
+  handleDelete: (invoice: Invoice) => void,
+  navigate?: (path: string) => void,
+  handlePrint?: (invoice: Invoice) => void
 ): ColumnDef<Invoice>[] {
+  // const navigate = useNavigate();
+  const defaultHandlePrint = (invoice: Invoice) => {
+    if (navigate) navigate(`/printinvoice/${invoice.id}`);
+  };
+
   return [
     {
       accessorKey: "id",
@@ -21,7 +29,7 @@ export function getInvoiceColumns(
       ),
     },
     {
-      accessorKey: "invoice_no",
+      accessorKey: "invoice_number",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Invoice No" />
       ),
@@ -61,6 +69,8 @@ export function getInvoiceColumns(
           row={row}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          // ✅ use provided handler if available, otherwise fallback
+          onPrint={handlePrint || defaultHandlePrint}
         />
       ),
     },

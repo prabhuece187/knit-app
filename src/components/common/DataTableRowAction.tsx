@@ -11,11 +11,13 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import type { Row } from "@tanstack/react-table";
+import { useLocation } from "react-router-dom";
 
 export interface DataTableRowActionsProps<T> {
   row: Row<T>;
   onEdit?: (row: T) => void;
   onDelete?: (row: T) => void;
+  onPrint?: (row: T) => void;
   extraActions?: React.ReactNode;
 }
 
@@ -23,16 +25,21 @@ export function DataTableRowActions<T extends { id?: number | string }>({
   row,
   onEdit,
   onDelete,
+  onPrint,
   extraActions = null,
 }: DataTableRowActionsProps<T>) {
+  const location = useLocation();
   const item = row.original;
 
   // Avoid rendering if ID is missing
-//  if (item.id === undefined || item.id === null) {
-//    console.warn("Missing ID for row:", item);
+  //  if (item.id === undefined || item.id === null) {
+  //    console.warn("Missing ID for row:", item);
   //  }
   if (!item.id) return null;
-  console.log(item);
+  const isInvoicePage = location.pathname.includes("invoice");
+
+  console.log("its run nice ", isInvoicePage);
+  console.log("its run nice ", onPrint);
 
   return (
     <DropdownMenu>
@@ -48,6 +55,14 @@ export function DataTableRowActions<T extends { id?: number | string }>({
       <DropdownMenuContent align="end" className="w-[160px]">
         {onEdit && (
           <DropdownMenuItem onClick={() => onEdit(item)}>Edit</DropdownMenuItem>
+        )}
+
+        {/* 👇 Show only on Invoice page */}
+
+        {isInvoicePage && onPrint && (
+          <DropdownMenuItem onClick={() => onPrint(item)}>
+            Print
+          </DropdownMenuItem>
         )}
         {extraActions}
         {onDelete && (
