@@ -103,8 +103,14 @@ export const invoiceDetailSchema = z
     user_id: z.coerce.number().optional(),
     invoice_id: z.coerce.number().optional(),
     item_id: z.coerce.number().min(1, { message: "Please select an Item." }),
-    item_description: z.string().optional().nullable(),
-    hsn_code: z.string().optional(),
+    item_description: z
+      .string()
+      .nullable()
+      .transform((v) => v ?? ""),
+    hsn_code: z
+      .string()
+      .nullable()
+      .transform((v) => v ?? ""),
     quantity: z.coerce.number().min(1, { message: "Please enter Quantity." }),
     price: z.coerce.number().min(1, { message: "Please enter Price." }),
     item_discount_per: z.coerce.number().nullable().optional(),
@@ -137,12 +143,33 @@ export const additionalChargeSchema = z.object({
 
 export type AdditionalCharge = z.infer<typeof additionalChargeSchema>;
 
+// =======================  Invoice Taxes ============================
+
+export const invoiceTaxSchema = z.object({
+  id: z.coerce.number().optional(),
+  user_id: z.coerce.number().optional(),
+  invoice_id: z.coerce.number().optional(),
+  tax_type: z.string().min(1, { message: "Missing tax type" }),
+  tax_rate: z.coerce.number().min(0, { message: "Invalid rate" }),
+  tax_amount: z.coerce.number().min(0, { message: "Invalid amount" }),
+});
+
+export type InvoiceTax = z.infer<typeof invoiceTaxSchema>;
+
 // =======================  Full Invoice ============================
 export const fullInvoiceSchema = baseInvoiceSchema.extend({
   invoice_details: z
     .array(invoiceDetailSchema)
     .min(1, "Add at least one item."),
   additional_charges: z.array(additionalChargeSchema),
+  invoice_taxes: z.array(invoiceTaxSchema),
+  customer: z
+    .object({
+      id: z.coerce.number().optional(),
+      customer_name: z.string().optional(),
+      state_code: z.string().optional(),
+    })
+    .optional(),
 });
 
 export type FullInvoiceFormValues = z.infer<typeof fullInvoiceSchema>;

@@ -25,6 +25,7 @@ import type { Customer } from "@/schema-types/master-schema";
 import type { FullInvoiceFormValues } from "@/schema-types/invoice-schema";
 import { fullInvoiceSchema } from "@/schema-types/invoice-schema";
 import { setFullInvoice } from "@/slice/InvoiceFormSlice";
+import { selectGstBreakdown } from "@/utility/invoice-selectors";
 
 interface FormErrors {
   header?: Record<string, string>;
@@ -40,13 +41,15 @@ export default function EditInvoice() {
   const invoiceDataFromStore = useSelector(
     (state: RootState) => state.invoiceForm
   );
+  const gstBreakdown = useSelector((state: RootState) =>
+    selectGstBreakdown(state)
+  );
 
   const { data: customers = [] } = useGetCustomerListQuery("") as {
     data: Customer[];
   };
   const { data: banksData = [] } = useGetBankListQuery();
   const { data: defaultBank } = useGetSingleBankDataQuery();
-
   const { data: existingInvoice, isLoading } = useGetInvoiceByIdQuery(id, {
     skip: !id,
   });
@@ -67,31 +70,39 @@ export default function EditInvoice() {
         ...existingInvoice,
         invoice_details: existingInvoice.Items || [],
         additional_charges: existingInvoice.AdditionalCharges || [],
+        invoice_taxes: existingInvoice.InvoiceTaxes || [],
       };
-      dispatch(setFullInvoice(mappedInvoice)); // update Redux
-      reset(mappedInvoice); // update RHF view
+      dispatch(setFullInvoice(mappedInvoice));
+      reset(mappedInvoice);
     }
   }, [existingInvoice, dispatch, reset]);
 
-  // ---------------- Sync form with Redux (Option A) ----------------
+  // ---------------- Sync form with Redux ----------------
   useEffect(() => {
-    reset(invoiceDataFromStore); // always reset form values when Redux changes
+    reset(invoiceDataFromStore);
   }, [invoiceDataFromStore, reset]);
 
   // ---------------- Set default bank ----------------
   useEffect(() => {
     const currentBankId = getValues("bank_id");
-    if (defaultBank?.id && !currentBankId) {
-      setValue("bank_id", defaultBank.id);
-    }
+    if (defaultBank?.id && !currentBankId) setValue("bank_id", defaultBank.id);
   }, [defaultBank, getValues, setValue]);
 
   // ---------------- Submit Handler ----------------
   const handleUpdateInvoice = () => {
-    const latestInvoiceData = { ...invoiceDataFromStore }; // always get from Redux
-    const result = fullInvoiceSchema.safeParse(latestInvoiceData);
+    const latestInvoiceData = getValues();
 
-    console.log(latestInvoiceData);
+    // Map gstBreakdown to backend-friendly invoice_taxes
+    latestInvoiceData.invoice_taxes = gstBreakdown.map((t) => {
+      const [taxType, rateStr] = t.label.split("@");
+      return {
+        tax_type: taxType.trim(), // IGST, SGST, CGST
+        tax_rate: parseFloat(rateStr),
+        tax_amount: parseFloat(t.amount.toString()),
+      };
+    });
+
+    const result = fullInvoiceSchema.safeParse(latestInvoiceData);
 
     if (result.success) {
       updateInvoice({ id, ...latestInvoiceData });
@@ -125,9 +136,8 @@ export default function EditInvoice() {
     }
   };
 
-  if (isLoading) {
+  if (isLoading)
     return <div className="text-center py-10">Loading invoice...</div>;
-  }
 
   return (
     <FormProvider {...methods}>

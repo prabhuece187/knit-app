@@ -17,7 +17,8 @@ import type { Customer } from "@/schema-types/master-schema";
 import type { RootState } from "@/store/Store";
 import type { FullInvoiceFormValues } from "@/schema-types/invoice-schema";
 import { fullInvoiceSchema } from "@/schema-types/invoice-schema";
-import { usePostInvoiceMutation } from "@/api/InvoiceApi";
+import { selectGstBreakdown } from "@/utility/invoice-selectors";
+// import { usePostInvoiceMutation } from "@/api/InvoiceApi";
 
 interface FormErrors {
   header?: Record<string, string>;
@@ -32,7 +33,7 @@ export default function AddInvoice() {
   };
   const { data: defaultBank } = useGetSingleBankDataQuery();
 
-  const [postInvoice] = usePostInvoiceMutation();
+  // const [postInvoice] = usePostInvoiceMutation();
 
   const { data: banksData = [] } = useGetBankListQuery();
 
@@ -51,12 +52,30 @@ export default function AddInvoice() {
       setValue("bank_id", defaultBank.id);
   }, [defaultBank, setValue]);
 
+  const gstBreakdown = useSelector((state: RootState) =>
+    selectGstBreakdown(state)
+  );
+
   const handleSaveInvoice = () => {
-    const result = fullInvoiceSchema.safeParse(invoiceData);
+    // Map gstBreakdown to backend-friendly invoice_taxes
+    const invoiceToSend = {
+      ...invoiceData,
+      invoice_taxes: gstBreakdown.map((t) => {
+        const [taxType, rateStr] = t.label.split("@");
+        return {
+          tax_type: taxType, // "IGST", "SGST", "CGST"
+          tax_rate: parseFloat(rateStr),
+          tax_amount: t.amount,
+        };
+      }),
+    };
+
+    // Validate the invoice using Zod schema
+    const result = fullInvoiceSchema.safeParse(invoiceToSend);
 
     if (result.success) {
-      postInvoice(invoiceData);
-      console.log("✅ Invoice saved successfully:", invoiceData);
+      // postInvoice(invoiceToSend);
+      console.log("✅ Invoice saved successfully:", invoiceToSend);
 
       setErrors({});
     } else {
@@ -65,6 +84,7 @@ export default function AddInvoice() {
         rows: {},
         additionalCharges: {},
       };
+
       result.error.errors.forEach((e) => {
         if (e.path[0] === "invoice_details") {
           const index = e.path[1] as number;
@@ -82,6 +102,7 @@ export default function AddInvoice() {
           formattedErrors.header![field] = e.message;
         }
       });
+
       setErrors(formattedErrors);
       console.log("Validation Errors:", formattedErrors);
     }

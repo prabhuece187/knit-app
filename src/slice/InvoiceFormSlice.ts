@@ -7,6 +7,7 @@ import type {
   AdditionalCharge,
   FullInvoiceFormValues,
   InvoiceDetail,
+  InvoiceTax,
 } from "@/schema-types/invoice-schema";
 import type { InvoiceRowRedux } from "@/schema-types/invoice-detail";
 
@@ -56,6 +57,7 @@ const initialState: InvoiceFormState = {
     },
   ],
   additional_charges: [],
+  invoice_taxes: [],
   // bank_details: {
   //   bank_name: "",
   //   account_number: "",
@@ -83,6 +85,11 @@ const initialState: InvoiceFormState = {
   round_off_type: "none",
   round_off_amount: 0.0,
   isModified: false,
+  customer: {
+    id: 0,
+    customer_name: "",
+    state_code: "",
+  },
 };
 
 // -------------------- SLICE --------------------
@@ -202,6 +209,31 @@ const invoiceFormSlice = createSlice({
       });
     },
 
+    addInvoiceTax: (
+      state,
+      action: PayloadAction<{
+        tax_type: string;
+        tax_rate: number;
+        tax_amount: number;
+      }>
+    ) => {
+      state.invoice_taxes.push(action.payload);
+    },
+
+    updateInvoiceTax: (
+      state,
+      action: PayloadAction<{ index: number; changes: Partial<InvoiceTax> }>
+    ) => {
+      const { index, changes } = action.payload;
+      if (state.invoice_taxes[index]) {
+        Object.assign(state.invoice_taxes[index], changes);
+      }
+    },
+
+    removeInvoiceTax: (state, action: PayloadAction<number>) => {
+      state.invoice_taxes.splice(action.payload, 1);
+    },
+
     toggleDiscountForm: (state) => {
       // Toggle discount form visibility
       state.show_discount_form = !state.show_discount_form;
@@ -235,6 +267,9 @@ export const {
   toggleDiscountForm,
   updateBillDiscount,
   setFullInvoice,
+  addInvoiceTax,
+  updateInvoiceTax,
+  removeInvoiceTax,
 } = invoiceFormSlice.actions;
 
 // -------------------- SELECTORS --------------------

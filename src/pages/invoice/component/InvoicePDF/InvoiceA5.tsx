@@ -1,5 +1,5 @@
 import type { Invoice } from "@/schema-types/invoice-schema";
-import { formatDate } from "@/utility/utility";
+import { amountInWords, formatDate } from "@/utility/utility";
 import {
   Page,
   Text,
@@ -185,6 +185,15 @@ interface InvoiceCustomer {
   customer_mobile?: string;
 }
 
+export interface InvoiceTax {
+  id: number;
+  user_id: number;
+  invoice_id: number;
+  tax_type: "CGST" | "SGST" | "IGST";
+  tax_rate: number;
+  tax_amount: number;
+}
+
 interface InvoiceWithRelations extends Invoice {
   customer?: InvoiceCustomer;
   Items?: InvoiceItem[];
@@ -192,6 +201,7 @@ interface InvoiceWithRelations extends Invoice {
   company_name?: string;
   company_address?: string;
   company_phone?: string;
+  InvoiceTaxes?: InvoiceTax[];
 }
 
 export const InvoiceA5 = ({ invoice }: { invoice: InvoiceWithRelations }) => {
@@ -347,14 +357,46 @@ export const InvoiceA5 = ({ invoice }: { invoice: InvoiceWithRelations }) => {
               <Text>Taxable</Text>
               <Text>₹{invoice.invoice_taxable_value ?? "0.00"}</Text>
             </View>
-            <View style={styles.rightRow}>
-              <Text>CGST</Text>
-              <Text>₹{invoice.invoice_cgst ?? "0.00"}</Text>
-            </View>
-            <View style={styles.rightRow}>
-              <Text>SGST</Text>
-              <Text>₹{invoice.invoice_sgst ?? "0.00"}</Text>
-            </View>
+            {/* ✅ Dynamic Tax Breakdown */}
+            {(() => {
+              const taxes = invoice.InvoiceTaxes || [];
+
+              // Group all tax types (SGST, CGST, IGST) by rate
+              const grouped = taxes.reduce((acc, t) => {
+                const rate = Number(t.tax_rate) || 0;
+                if (!acc[rate]) acc[rate] = { CGST: 0, SGST: 0, IGST: 0 };
+                acc[rate][t.tax_type as "CGST" | "SGST" | "IGST"] =
+                  Number(t.tax_amount) || 0;
+                return acc;
+              }, {} as Record<number, { CGST: number; SGST: number; IGST: number }>);
+
+              return Object.entries(grouped)
+                .sort(([a], [b]) => Number(a) - Number(b))
+                .map(([rate, values]) => {
+                  const isIGST = values.IGST > 0;
+                  return (
+                    <View key={String(rate)}>
+                      {isIGST ? (
+                        <View style={styles.rightRow}>
+                          <Text>IGST @{rate}%</Text>
+                          <Text>₹{values.IGST.toFixed(2)}</Text>
+                        </View>
+                      ) : (
+                        <>
+                          <View style={styles.rightRow}>
+                            <Text>CGST @{rate}%</Text>
+                            <Text>₹{values.CGST.toFixed(2)}</Text>
+                          </View>
+                          <View style={styles.rightRow}>
+                            <Text>SGST @{rate}%</Text>
+                            <Text>₹{values.SGST.toFixed(2)}</Text>
+                          </View>
+                        </>
+                      )}
+                    </View>
+                  );
+                });
+            })()}
             <View style={styles.totalRow}>
               <Text>Total</Text>
               <Text>₹{invoice.invoice_total ?? "0.00"}</Text>
@@ -365,7 +407,9 @@ export const InvoiceA5 = ({ invoice }: { invoice: InvoiceWithRelations }) => {
             </View>
             <View style={{ padding: 4 }}>
               <Text style={styles.bold}>In Words:</Text>
-              <Text style={styles.textSm}>Two Hundred Twenty Rupees Only</Text>
+              <Text style={styles.textSm}>
+                {amountInWords(Number(invoice.invoice_total ?? 0))}
+              </Text>
             </View>
           </View>
         </View>

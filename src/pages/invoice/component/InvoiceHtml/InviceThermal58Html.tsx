@@ -23,9 +23,19 @@ interface InvoiceCustomer {
   customer_mobile?: string;
 }
 
+export interface InvoiceTax {
+  id: number;
+  user_id: number;
+  invoice_id: number;
+  tax_type: "CGST" | "SGST" | "IGST";
+  tax_rate: string;
+  tax_amount: string;
+}
+
 interface InvoiceWithRelations extends Invoice {
   customer?: InvoiceCustomer;
   Items?: InvoiceItem[];
+  InvoiceTaxes?: InvoiceTax[];
 }
 
 export const InvoiceThermal58Html = ({
@@ -105,18 +115,48 @@ export const InvoiceThermal58Html = ({
           <span>Taxable</span>
           <span>₹{invoice.invoice_taxable_value ?? "0.00"}</span>
         </div>
-        <div className="flex justify-between">
-          <span>CGST</span>
-          <span>₹{invoice.invoice_cgst ?? "0.00"}</span>
-        </div>
-        <div className="flex justify-between">
-          <span>SGST</span>
-          <span>₹{invoice.invoice_sgst ?? "0.00"}</span>
-        </div>
-        <div className="flex justify-between font-semibold">
-          <span>Total</span>
-          <span>₹{invoice.invoice_total ?? "0.00"}</span>
-        </div>
+        {/* Group and show taxes */}
+        {(() => {
+          const taxes = invoice.InvoiceTaxes || [];
+
+          // Group all tax types (SGST, CGST, IGST) by rate
+          const grouped = taxes.reduce((acc, t) => {
+            const rate = parseFloat(t.tax_rate) || 0;
+            if (!acc[rate]) acc[rate] = { CGST: 0, SGST: 0, IGST: 0 };
+            acc[rate][t.tax_type] = parseFloat(t.tax_amount) || 0;
+            return acc;
+          }, {} as Record<number, { CGST: number; SGST: number; IGST: number }>);
+
+          return Object.entries(grouped)
+            .sort(([a], [b]) => Number(a) - Number(b))
+            .map(([rate, values]) => {
+              const isIGST = values.IGST > 0;
+              return (
+                <div
+                  key={rate}
+                  className="border-b border-gray-100 last:border-0"
+                >
+                  {isIGST ? (
+                    <div className="flex justify-between">
+                      <span>IGST @{rate}%</span>
+                      <span>₹{values.IGST.toFixed(2)}</span>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex justify-between">
+                        <span>CGST @{rate}%</span>
+                        <span>₹{values.CGST.toFixed(2)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>SGST @{rate}%</span>
+                        <span>₹{values.SGST.toFixed(2)}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            });
+        })()}
         <div className="flex justify-between">
           <span>Received</span>
           <span>₹{invoice.amount_received ?? "0.00"}</span>

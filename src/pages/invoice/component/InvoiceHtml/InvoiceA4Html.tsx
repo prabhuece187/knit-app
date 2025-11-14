@@ -1,5 +1,5 @@
 import type { Invoice } from "@/schema-types/invoice-schema";
-import { formatDate } from "@/utility/utility";
+import { amountInWords, formatDate } from "@/utility/utility";
 
 interface InvoiceItem {
   id: number;
@@ -22,9 +22,19 @@ interface InvoiceCustomer {
   customer_mobile?: string;
 }
 
+export interface InvoiceTax {
+  id: number;
+  user_id: number;
+  invoice_id: number;
+  tax_type: "CGST" | "SGST" | "IGST";
+  tax_rate: string;
+  tax_amount: string;
+}
+
 interface InvoiceWithRelations extends Invoice {
   customer?: InvoiceCustomer;
   Items?: InvoiceItem[];
+  InvoiceTaxes?: InvoiceTax[];
 }
 
 export const InvoiceA4Html = ({
@@ -177,20 +187,49 @@ export const InvoiceA4Html = ({
             <span>Taxable Amount</span>
             <span>₹{invoice.invoice_taxable_value ?? "0.00"}</span>
           </div>
-          <div className="flex justify-between px-3 py-1">
-            <span>
-              CGST @
-              {((Number(invoice.invoice_taxable_value) || 0) / 2).toFixed(2)}%
-            </span>
-            <span>₹{invoice.invoice_cgst ?? "0.00"}</span>
-          </div>
-          <div className="flex justify-between px-3 py-1">
-            <span>
-              SGST @
-              {((Number(invoice.invoice_taxable_value) || 0) / 2).toFixed(2)}%%
-            </span>
-            <span>₹{invoice.invoice_sgst ?? "0.00"}</span>
-          </div>
+          {/* Group and show taxes */}
+          {(() => {
+            const taxes = invoice.InvoiceTaxes || [];
+
+            // Group all tax types (SGST, CGST, IGST) by rate
+            const grouped = taxes.reduce((acc, t) => {
+              const rate = parseFloat(t.tax_rate) || 0;
+              if (!acc[rate]) acc[rate] = { CGST: 0, SGST: 0, IGST: 0 };
+              acc[rate][t.tax_type] = parseFloat(t.tax_amount) || 0;
+              return acc;
+            }, {} as Record<number, { CGST: number; SGST: number; IGST: number }>);
+
+            return Object.entries(grouped)
+              .sort(([a], [b]) => Number(a) - Number(b))
+              .map(([rate, values]) => {
+                const isIGST = values.IGST > 0;
+                return (
+                  <div
+                    key={rate}
+                    className="border-b border-gray-100 last:border-0"
+                  >
+                    {isIGST ? (
+                      <div className="flex justify-between px-3 py-1">
+                        <span>IGST @{rate}%</span>
+                        <span>₹{values.IGST.toFixed(2)}</span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex justify-between px-3 py-1">
+                          <span>CGST @{rate}%</span>
+                          <span>₹{values.CGST.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between px-3 py-1">
+                          <span>SGST @{rate}%</span>
+                          <span>₹{values.SGST.toFixed(2)}</span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              });
+          })()}
+
           <div className="border-t border-gray-300 my-1"></div>
           <div className="flex justify-between px-3 py-1 font-semibold">
             <span>Total Amount</span>
@@ -203,7 +242,9 @@ export const InvoiceA4Html = ({
           </div>
           <div className="px-3 py-2 border-t border-gray-200 text-gray-700">
             <div className="font-medium">Total Amount (in words)</div>
-            <div className="text-[9pt]">Two Hundred Twenty Rupees</div>
+            <div className="text-[9pt]">
+              {amountInWords(Number(invoice.invoice_total ?? 0))}
+            </div>
           </div>
         </div>
       </div>

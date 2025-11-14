@@ -14,6 +14,7 @@ import {
 import type { RootState, AppDispatch } from "@/store/Store";
 import { updateField } from "@/slice/InvoiceFormSlice";
 import {
+  selectGstBreakdown,
   selectInvoiceQtyTotal,
   selectInvoiceSubtotal,
   selectInvoiceTaxSplit,
@@ -23,7 +24,8 @@ import {
 export function InvoiceSummary() {
   const dispatch = useDispatch<AppDispatch>();
   const invoiceForm = useSelector((state: RootState) => state.invoiceForm);
-  const { amount_received = 0, round_off = false } = invoiceForm;
+  const { amount_received = 0, round_off = false } = invoiceForm; 
+  const gstBreakdown = useSelector(selectGstBreakdown);
 
   // 🧮 All computed values
   const invoice_subtotal = useSelector(selectInvoiceSubtotal);
@@ -106,6 +108,7 @@ export function InvoiceSummary() {
     dispatch(updateField({ field: "balance_amount", value: balance }));
     dispatch(updateField({ field: "round_off_amount", value: roundOffAmount }));
     dispatch(updateField({ field: "round_off_type", value: roundOffType }));
+    
   }, [
     invoice_total_quantity,
     invoice_subtotal,
@@ -126,14 +129,12 @@ export function InvoiceSummary() {
         <span>Taxable Value</span>
         <span>₹{fmt(invoice_subtotal)}</span>
       </div>
-      <div className="flex justify-between">
-        <span>SGST</span>
-        <span>₹{fmt(invoice_sgst)}</span>
-      </div>
-      <div className="flex justify-between">
-        <span>CGST</span>
-        <span>₹{fmt(invoice_cgst)}</span>
-      </div>
+      {gstBreakdown.map((tax, i) => (
+        <div key={i} className="flex justify-between">
+          <span>{tax.label}</span>
+          <span>₹ {tax.amount.toFixed(2)}</span>
+        </div>
+      ))}
 
       {/* Round Off Section */}
       <div className="flex items-center justify-between font-semibold pt-2 border-t">

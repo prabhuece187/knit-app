@@ -170,6 +170,73 @@ export const selectInvoiceTaxSplit = createSelector(
   }
 );
 
+// ---------------- GST BREAKDOWN ----------------
+export const selectGstBreakdown = createSelector(
+  [
+    (state: RootState) => state.invoiceForm.customer,
+    (state: RootState) => [...(state.invoiceForm.invoice_details ?? [])],
+    (state: RootState) => [...(state.invoiceForm.additional_charges ?? [])],
+    (state: RootState) => [...(state.invoiceForm.invoice_taxes ?? [])],
+  ],
+  (customer, rows, charges, invoiceTaxes) => {
+    const gstMap: Record<number, number> = {};
+
+    // --- Add from item rows ---
+    rows.forEach((item) => {
+      const rate = Number(item.item_tax_per) || 0;
+      const taxAmt = Number(item.item_tax_amount) || 0;
+      if (rate > 0 && taxAmt > 0) {
+        gstMap[rate] = (gstMap[rate] || 0) + taxAmt;
+      }
+    });
+
+    // --- Include invoice_taxes only when no row data (for loaded invoice) ---
+    if (rows.length === 0 && invoiceTaxes.length > 0) {
+      invoiceTaxes.forEach((t) => {
+        const rate = Number(t.tax_rate) || 0;
+        const amt = Number(t.tax_amount) || 0;
+        if (rate > 0 && amt > 0) {
+          gstMap[rate] = (gstMap[rate] || 0) + amt;
+        }
+      });
+    }
+
+    // --- Include GST from additional charges ---
+    charges.forEach((c) => {
+      if (c.tax_applicable && c.tax_applicable !== "none") {
+        const rate = Number(c.tax_applicable.replace("gst", "")) || 0;
+        const amt = Number(c.additional_charge_amount) || 0;
+        const taxAmt = to2((amt * rate) / 100);
+        gstMap[rate] = (gstMap[rate] || 0) + taxAmt;
+      }
+    });
+
+    // --- Determine state type ---
+    const isInterState = !!customer?.state_code;
+
+    // --- Build breakdown result ---
+    const gstBreakdown = Object.entries(gstMap)
+      .sort(([a], [b]) => Number(a) - Number(b))
+      .flatMap(([rate, amount]) => {
+        const numericRate = Number(rate);
+        if (isInterState) {
+          return [{ label: `IGST@${numericRate}`, amount: to2(amount) }];
+        } else {
+          const half = to2(amount / 2);
+          return [
+            { label: `SGST@${numericRate / 2}`, amount: half },
+            { label: `CGST@${numericRate / 2}`, amount: half },
+          ];
+        }
+      });
+
+    return gstBreakdown;
+  }
+);
+
+
+
+
 // ---------------- BALANCE ----------------
 export const selectBalanceAmount = createSelector(
   [selectForm, selectInvoiceTotal],

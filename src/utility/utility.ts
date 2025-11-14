@@ -1,9 +1,10 @@
+import numberToWords from "number-to-words";
+
 export function to2(val: number | null | undefined): number {
   const num = Number(val); // convert anything to number
   if (!isFinite(num)) return 0; // handle NaN, Infinity, undefined
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
-
 
 export const formatDate = (
   val?: string | number | Date,
@@ -40,3 +41,21 @@ export const formatDate = (
     }
   }
 };
+
+export function amountInWords(amount: number): string {
+  if (isNaN(amount)) return "";
+
+  const [rupees, paise] = amount.toFixed(2).split(".");
+  const capitalizeWords = (text: string) =>
+    text.replace(/\b\w/g, (c: string) => c.toUpperCase());
+
+  const words = capitalizeWords(numberToWords.toWords(Number(rupees)));
+
+  let result = `${words} Rupees`;
+  if (Number(paise) > 0) {
+    result += ` And ${capitalizeWords(
+      numberToWords.toWords(Number(paise))
+    )} Paise`;
+  }
+  return result + " Only";
+}
