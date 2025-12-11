@@ -1,9 +1,9 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-
+const baseUrl = import.meta.env.VITE_API_URL as string;
 export const InvoiceApi = createApi({
   reducerPath: "invoiceApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://knitting.coderplays.com/api/",
+    baseUrl: baseUrl,
   }),
   tagTypes: ["InvoiceTag"],
   endpoints: (build) => ({

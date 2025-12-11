@@ -59,3 +59,16 @@ export function amountInWords(amount: number): string {
   }
   return result + " Only";
 }
+
+
+// src/utility/barcode.ts
+export function generateBarcode(prefix = "ITM"): string {
+  // Example: ITM-20251114-7A3F
+  const now = new Date();
+  const yyyy = now.getFullYear().toString();
+  const mm = String(now.getMonth() + 1).padStart(2, "0");
+  const dd = String(now.getDate()).padStart(2, "0");
+  const ts = `${yyyy}${mm}${dd}`;
+  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  return `${prefix}-${ts}-${rand}`;
+}

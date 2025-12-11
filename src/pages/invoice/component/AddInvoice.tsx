@@ -18,7 +18,9 @@ import type { RootState } from "@/store/Store";
 import type { FullInvoiceFormValues } from "@/schema-types/invoice-schema";
 import { fullInvoiceSchema } from "@/schema-types/invoice-schema";
 import { selectGstBreakdown } from "@/utility/invoice-selectors";
-// import { usePostInvoiceMutation } from "@/api/InvoiceApi";
+import { usePostInvoiceMutation } from "@/api/InvoiceApi";
+import { useNavigate } from "react-router-dom";
+import CommonHeader from "@/components/common/CommonHeader";
 
 interface FormErrors {
   header?: Record<string, string>;
@@ -33,11 +35,12 @@ export default function AddInvoice() {
   };
   const { data: defaultBank } = useGetSingleBankDataQuery();
 
-  // const [postInvoice] = usePostInvoiceMutation();
+  const [postInvoice] = usePostInvoiceMutation();
 
   const { data: banksData = [] } = useGetBankListQuery();
 
   const [errors, setErrors] = useState<FormErrors>({});
+  const navigate = useNavigate();
 
   // Initialize React Hook Form
   const methods = useForm<FullInvoiceFormValues>({
@@ -74,11 +77,12 @@ export default function AddInvoice() {
     const result = fullInvoiceSchema.safeParse(invoiceToSend);
 
     if (result.success) {
-      // postInvoice(invoiceToSend);
+      postInvoice(invoiceToSend);
       console.log("✅ Invoice saved successfully:", invoiceToSend);
-
+      navigate("/invoice", { replace: true });
       setErrors({});
-    } else {
+    }
+    else {
       const formattedErrors: FormErrors = {
         header: {},
         rows: {},
@@ -109,31 +113,33 @@ export default function AddInvoice() {
   };
 
   return (
-    // ✅ Wrap everything in FormProvider
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(handleSaveInvoice)} className="space-y-6">
-        <CustomerInvoiceHeader customers={customers} errors={errors.header} />
-        <InvoiceDetailsTable rowErrors={errors.rows} />
+    <>
+      <CommonHeader name="Add Invoice" />
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(handleSaveInvoice)} className="space-y-6">
+          <CustomerInvoiceHeader customers={customers} errors={errors.header} />
+          <InvoiceDetailsTable rowErrors={errors.rows} />
 
-        <div className="grid grid-cols-12 gap-6 mt-6">
-          <div className="col-span-12 lg:col-span-7 space-y-6">
-            <NotesSummary />
-            {defaultBank && (
-              <BankDetails bank={defaultBank} banksData={banksData} />
-            )}
+          <div className="grid grid-cols-12 gap-6 mt-6">
+            <div className="col-span-12 lg:col-span-7 space-y-6">
+              <NotesSummary />
+              {defaultBank && (
+                <BankDetails bank={defaultBank} banksData={banksData} />
+              )}
+            </div>
+
+            <div className="col-span-12 lg:col-span-5 space-y-6">
+              <BillDiscount />
+              <AdditionalChargesTable rowErrors={errors.additionalCharges} />
+              <InvoiceSummary />
+            </div>
           </div>
 
-          <div className="col-span-12 lg:col-span-5 space-y-6">
-            <BillDiscount />
-            <AdditionalChargesTable rowErrors={errors.additionalCharges} />
-            <InvoiceSummary />
+          <div className="flex justify-end pt-4">
+            <Button type="submit">Save Invoice</Button>
           </div>
-        </div>
-
-        <div className="flex justify-end pt-4">
-          <Button type="submit">Save Invoice</Button>
-        </div>
-      </form>
-    </FormProvider>
+        </form>
+      </FormProvider>
+    </>
   );
 }

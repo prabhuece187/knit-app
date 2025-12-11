@@ -1,14 +1,5 @@
 import CommonHeader from "@/components/common/CommonHeader";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 import {
   fullOutwardSchema,
   outwardSchema,
@@ -19,27 +10,36 @@ import { useForm } from "react-hook-form";
 import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
+
 import {
   useGetOutwardByIdQuery,
   usePutOutwardMutation,
 } from "@/api/OutwardApi";
-import { SelectPopover } from "@/components/custom/CustomPopover";
+
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
-import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
-import { useParams } from "react-router-dom";
-import { useEffect } from "react";
 import { useGetMillListQuery } from "@/api/MillApi";
 
+import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
+import OutwardHeader from "../common/OutwardHeader";
+
+import { useParams, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+
 export default function EditOutward() {
+  const navigate = useNavigate();
   const [putOutward] = usePutOutwardMutation();
 
-  // Fetch customers and mills
+  // Fetch dropdown data
   const { data: customers = [] } = useGetCustomerListQuery("") as {
     data: Customer[];
   };
-  const { data: mills = [] } = useGetMillListQuery("") as { data: Mill[] };
 
+  const { data: mills = [] } = useGetMillListQuery("") as {
+    data: Mill[];
+  };
+
+  // Form setup
   const form = useForm<FullOutwardFormValues>({
     resolver: zodResolver(fullOutwardSchema),
     defaultValues: {
@@ -50,16 +50,17 @@ export default function EditOutward() {
 
   const { control, setValue, watch } = form;
 
-  // Get outwardId from URL
+  // Get outward ID from URL
   const { outwardId } = useParams();
 
   const { data: outward, isSuccess } = useGetOutwardByIdQuery(outwardId, {
-    skip: outwardId === undefined,
+    skip: !outwardId,
   });
 
+  // Load edit data
   useEffect(() => {
     if (isSuccess && outward) {
-      const mappedOutward = {
+      const mappedOutward: FullOutwardFormValues = {
         ...outward,
         outward_details: outward.Items.map((item: OutwardDetail) => ({
           id: item.id,
@@ -82,243 +83,48 @@ export default function EditOutward() {
   }, [isSuccess, outward, form]);
 
   function onSubmit(values: z.infer<typeof outwardSchema>) {
+    console.log("EDIT OUTWARD SENT DATA:", values);
     putOutward(values);
+    navigate("/outward", { replace: true });
   }
 
   return (
     <>
       <CommonHeader name="Edit Outward" />
-      <Card className="@container/card">
-        <CardContent className="pt-4">
-          <Form {...form}>
-            <form
-              id="outward-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8"
-            >
-              {/* MAIN FORM GRID */}
-              <div className="grid grid-cols-12 gap-4">
-                {/* Hidden User ID */}
-                <FormField
-                  control={form.control}
-                  name="user_id"
-                  render={({ field }) => <Input type="hidden" {...field} />}
-                />
 
-                {/* Customer */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <SelectPopover
-                    label="Customer"
-                    placeholder="Select customer..."
-                    options={customers}
-                    valueKey="id"
-                    labelKey="customer_name"
-                    value={form.watch("customer_id")}
-                    onValueChange={(val) => form.setValue("customer_id", val)}
-                  />
-                </div>
+      <Form {...form}>
+        <form
+          id="outward-form"
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="space-y-8"
+        >
+          {/* HEADER SAME LIKE ADD OUTWARD */}
+          <OutwardHeader
+            control={control}
+            customers={customers}
+            mills={mills}
+            watch={watch}
+            setValue={setValue}
+          />
 
-                {/* Mill */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <SelectPopover
-                    label="Mill"
-                    placeholder="Select mill..."
-                    options={mills}
-                    valueKey="id"
-                    labelKey="mill_name"
-                    value={form.watch("mill_id")}
-                    onValueChange={(val) => form.setValue("mill_id", val)}
-                  />
-                </div>
+          {/* DETAILS TABLE */}
+          <ItemsDetailsTable
+            name="outward_details"
+            control={control}
+            setValue={setValue}
+            watch={watch}
+            mode="outward"
+          />
 
-                {/* Outward No */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="outward_no"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Outward No*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Outward No." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Invoice No */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="outward_invoice_no"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Invoice No*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Invoice No." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Tin No */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="outward_tin_no"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>TIN No*</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter TIN No." {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Outward Date */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="outward_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Outward Date*</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            value={field.value ?? ""}
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Vehicle No */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="outward_vehicle_no"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Vehicle No</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Vehicle No" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Total Weight */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="total_weight"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Total Weight</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Enter Total Weight"
-                            {...field}
-                            onChange={(e) => field.onChange(+e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Total Quantity */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="total_quantity"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Total Quantity</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="Enter Total Quantity"
-                            {...field}
-                            onChange={(e) => field.onChange(+e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Status */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Status</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Status" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Yarn Send */}
-                <div className="col-span-12 sm:col-span-6 lg:col-span-3">
-                  <FormField
-                    control={form.control}
-                    name="yarn_send"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Yarn Send</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter Yarn Send" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
-
-              {/* OUTWARD DETAILS TABLE */}
-              <ItemsDetailsTable
-                name="outward_details"
-                control={control}
-                setValue={setValue}
-                watch={watch}
-                mode="outward"
-              />
-
-              {/* Form Buttons */}
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline">
-                  Cancel
-                </Button>
-                <Button type="submit">Submit</Button>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+          {/* BUTTONS */}
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline">
+              Cancel
+            </Button>
+            <Button type="submit">Update</Button>
+          </div>
+        </form>
+      </Form>
     </>
   );
 }

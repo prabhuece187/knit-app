@@ -38,9 +38,6 @@ export function DataTableRowActions<T extends { id?: number | string }>({
   if (!item.id) return null;
   const isInvoicePage = location.pathname.includes("invoice");
 
-  console.log("its run nice ", isInvoicePage);
-  console.log("its run nice ", onPrint);
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

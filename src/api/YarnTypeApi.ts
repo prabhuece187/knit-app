@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+const baseUrl = import.meta.env.VITE_API_URL as string;
 
 export const YarnTypeApi = createApi({
   reducerPath: "YarnTypeApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://knitting.coderplays.com/api/",
+    baseUrl: baseUrl,
   }),
   tagTypes: ["YarnTypeTag"],
   endpoints: (build) => ({

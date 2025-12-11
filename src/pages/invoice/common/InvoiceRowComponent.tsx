@@ -2,257 +2,260 @@
 
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { IconTrash } from "@tabler/icons-react";
+import { IconTrash, IconScan } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import { PriceInput } from "./PriceInput";
 import { TaxDiscountInput } from "./TaxDiscountInput";
-import type { AppDispatch } from "@/store/Store";
 import {
   removeItemRow,
   updateItemRow,
   selectIsItemDiscountDisabled,
 } from "@/slice/InvoiceFormSlice";
-import type { Item } from "@/schema-types/master-schema";
-import type { InvoiceRowRedux } from "@/schema-types/invoice-detail";
 import { calculateRow } from "@/utility/invoice-utils";
 import { selectCalculatedRows } from "@/utility/invoice-selectors";
+import type { AppDispatch } from "@/store/Store";
+import type { Item } from "@/schema-types/master-schema";
+import type { InvoiceRowRedux } from "@/schema-types/invoice-detail";
 
-interface InvoiceRowError {
-  [field: string]: string;
-}
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import BarcodeScanner from "@/components/common/BarcodeScanner";
 
 interface InvoiceRowComponentProps {
   index: number;
   items: Item[];
-  rowError?: InvoiceRowError;
-}
-
-// Helper to ensure discountSource type
-function normalizeDiscountSource(value: unknown): "bill" | "item" | undefined {
-  if (value === "bill" || value === "item") return value;
-  return undefined;
 }
 
 export const InvoiceRowComponent: React.FC<InvoiceRowComponentProps> =
-  React.memo(({ index, items, rowError }) => {
+  React.memo(({ index, items }) => {
     const dispatch = useDispatch<AppDispatch>();
-    const isItemDiscountDisabled = useSelector(selectIsItemDiscountDisabled);
 
-    // Always read the current row from Redux
+    // Scanner modal
+    const [scannerOpen, setScannerOpen] = React.useState(false);
+
     const calculatedRows = useSelector(selectCalculatedRows);
     const currentRow = calculatedRows[index];
+    const isItemDiscountDisabled = useSelector(selectIsItemDiscountDisabled);
 
-    // ---------------- Redux update ----------------
-    const handleReduxUpdate = <TField extends keyof InvoiceRowRedux>(
-      field: TField,
-      value: InvoiceRowRedux[TField]
+    // Normalize discountSource
+    const normalizeDiscountSource = (
+      value: unknown
+    ): "bill" | "item" | undefined =>
+      value === "bill" || value === "item" ? value : undefined;
+
+    // Update row + recalc
+    const handleReduxUpdate = <K extends keyof InvoiceRowRedux>(
+      field: K,
+      value: InvoiceRowRedux[K]
     ) => {
-      // Build updated row
-      const updatedRow: InvoiceRowRedux = {
+      const updatedRow = {
         ...currentRow,
         [field]:
           field === "discountSource" ? normalizeDiscountSource(value) : value,
-        discountSource:
-          field === "discountSource"
-            ? normalizeDiscountSource(value)
-            : normalizeDiscountSource(currentRow.discountSource),
-      };
+      } as InvoiceRowRedux;
 
-      // Update lastEdited for discount or tax
-      if (
-        ["item_discount_per", "item_discount_amount"].includes(field as string)
-      ) {
-        updatedRow.lastEdited =
-          field === "item_discount_per" ? "discountPer" : "discountAmt";
-      } else if (
-        ["item_tax_per", "item_tax_amount"].includes(field as string)
-      ) {
-        updatedRow.lastEdited = field === "item_tax_per" ? "taxPer" : "taxAmt";
+      // Handle lastEdited
+      if (field === "item_discount_per") updatedRow.lastEdited = "discountPer";
+      if (field === "item_discount_amount")
+        updatedRow.lastEdited = "discountAmt";
+
+      if (field === "item_tax_per") updatedRow.lastEdited = "taxPer";
+      if (field === "item_tax_amount") updatedRow.lastEdited = "taxAmt";
+
+      const recalculated = calculateRow(updatedRow);
+      dispatch(updateItemRow({ index, changes: recalculated }));
+    };
+
+    // 🟢 Barcode / QR Code Scan Handler
+    const handleScan = (code: string) => {
+      setScannerOpen(false);
+
+      const found = items.find((i) => i.barcode === code || i.qrcode === code);
+
+      if (!found) {
+        alert("Item not found");
+        return;
       }
 
-      // Recalculate derived fields
-      const recalculatedRow = calculateRow(updatedRow);
+      // If already selected → increase qty
+      if (currentRow.item_id === found.id) {
+        handleReduxUpdate("quantity", (currentRow.quantity ?? 0) + 1);
+        return;
+      }
 
-      // Dispatch to Redux
-      dispatch(updateItemRow({ index, changes: recalculatedRow }));
+      // Otherwise fill all fields
+      dispatch(
+        updateItemRow({
+          index,
+          changes: {
+            item_id: found.id,
+            item_description: found.description ?? "",
+            hsn_code: found.hsn_code ?? "",
+            price: found.price ?? 0,
+          },
+        })
+      );
     };
 
-    // ---------------- Handlers ----------------
-    // const handleItemChange = (selected: Item | undefined) => {
-    //   if (!selected) {
-    //     handleReduxUpdate("item_id", 0);
-    //     handleReduxUpdate("description", "");
-    //     handleReduxUpdate("hsn_code", "");
-    //     handleReduxUpdate("price", 0);
-    //     return;
-    //   }
-    //   handleReduxUpdate("item_id", selected.id ?? 0);
-    //   handleReduxUpdate("description", selected.description ?? "");
-    //   handleReduxUpdate("hsn_code", selected.hsn_code ?? "");
-    //   handleReduxUpdate("price", selected.price ?? 0);
-    // };
-
-    const handleDiscountUpdate = (
-      field: "item_discount_per" | "item_discount_amount",
-      val: number | null
-    ) => {
-      if (isItemDiscountDisabled) return;
-      handleReduxUpdate(field, Number(val));
-    };
-
-    const handleTaxUpdate = (
-      field: "item_tax_per" | "item_tax_amount",
-      val: number | null
-    ) => {
-      handleReduxUpdate(field, Number(val));
-    };
-
-    // ---------------- JSX ----------------
+    // 🔥 UI STARTS HERE
     return (
-      <TableRow>
-        {/* NO */}
-        <TableCell className="py-2">{index + 1}</TableCell>
+      <>
+        <TableRow>
+          <TableCell>{index + 1}</TableCell>
 
-        {/* ITEM + DESCRIPTION */}
-        <TableCell className="w-[400px] py-2">
-          <SelectPopover
-            label="Item"
-            placeholder="Select Item..."
-            options={items}
-            valueKey="id"
-            labelKey="item_name"
-            value={currentRow.item_id || undefined} // ensure correct type
-            hideLabel
-            onValueChange={(val: number | undefined) => {
-              const selectedItem = items.find((i) => i.id === val);
+          {/* ITEM */}
+          <TableCell className="w-[400px]">
+            <div className="flex items-start gap-2">
+              <div className="flex-1">
+                <SelectPopover
+                  label="Item"
+                  placeholder="Select Item..."
+                  options={items}
+                  valueKey="id"
+                  labelKey="item_name"
+                  value={currentRow.item_id}
+                  hideLabel
+                  onValueChange={(val) => {
+                    const selectedItem = items.find((i) => i.id === val);
+                    if (!selectedItem) return;
 
-              if (!selectedItem) {
-                // If no item selected, reset fields
-                dispatch(
-                  updateItemRow({
-                    index,
-                    changes: {
-                      item_id: 0,
-                      item_description: "",
-                      hsn_code: "",
-                      price: 0,
-                    },
-                  })
-                );
-                return;
+                    dispatch(
+                      updateItemRow({
+                        index,
+                        changes: {
+                          item_id: selectedItem.id,
+                          item_description: selectedItem.description ?? "",
+                          hsn_code: selectedItem.hsn_code ?? "",
+                          price: selectedItem.price ?? 0,
+                        },
+                      })
+                    );
+                  }}
+                />
+
+                <Input
+                  className="mt-2"
+                  placeholder="Enter Description"
+                  value={currentRow.item_description ?? ""}
+                  onChange={(e) =>
+                    handleReduxUpdate("item_description", e.target.value)
+                  }
+                />
+              </div>
+
+              {/* SCAN BUTTON */}
+              <Button
+                type="button"
+                variant="secondary"
+                className="h-10"
+                onClick={() => setScannerOpen(true)}
+              >
+                <IconScan size={20} />
+              </Button>
+            </div>
+          </TableCell>
+
+          {/* HSN */}
+          <TableCell className="w-[100px]">
+            <Input
+              value={currentRow.hsn_code ?? ""}
+              onChange={(e) => handleReduxUpdate("hsn_code", e.target.value)}
+            />
+          </TableCell>
+
+          {/* QTY */}
+          <TableCell className="w-[80px]">
+            <Input
+              type="number"
+              className="text-right"
+              value={currentRow.quantity ?? 0}
+              onChange={(e) =>
+                handleReduxUpdate("quantity", Number(e.target.value))
               }
+            />
+          </TableCell>
 
-              // Update Redux with selected item data
-              dispatch(
-                updateItemRow({
-                  index,
-                  changes: {
-                    item_id: selectedItem.id,
-                    item_description: selectedItem.description ?? "",
-                    hsn_code: selectedItem.hsn_code ?? "",
-                    price: selectedItem.price ?? 0,
-                  },
-                })
-              );
-            }}
-          />
-          <Input
-            className="mt-2"
-            placeholder="Enter Description (optional)"
-            value={currentRow.item_description ?? ""}
-            onChange={(e) =>
-              handleReduxUpdate("item_description", e.target.value)
-            }
-          />
-        </TableCell>
+          {/* PRICE */}
+          <TableCell className="w-[100px]">
+            <Input
+              type="number"
+              className="text-right"
+              value={currentRow.price ?? 0}
+              onChange={(e) =>
+                handleReduxUpdate("price", Number(e.target.value))
+              }
+            />
+          </TableCell>
 
-        {/* HSN */}
-        <TableCell className="w-[100px] py-2">
-          <Input
-            placeholder="HSN"
-            value={currentRow.hsn_code ?? ""}
-            onChange={(e) => handleReduxUpdate("hsn_code", e.target.value)}
-          />
-        </TableCell>
+          {/* DISCOUNT */}
+          <TableCell className="w-[100px]">
+            <TaxDiscountInput
+              percentageValue={currentRow.item_discount_per ?? 0}
+              amountValue={currentRow.item_discount_amount ?? 0}
+              disabled={isItemDiscountDisabled}
+              onPercentageChange={(v) =>
+                handleReduxUpdate("item_discount_per", Number(v))
+              }
+              onAmountChange={(v) =>
+                handleReduxUpdate("item_discount_amount", Number(v))
+              }
+            />
+          </TableCell>
 
-        {/* QTY */}
-        <TableCell className="w-[100px] py-2">
-          <Input
-            type="text"
-            className="text-right"
-            value={currentRow.quantity ?? 0}
-            onChange={(e) =>
-              handleReduxUpdate("quantity", Number(e.target.value))
-            }
-          />
-          {rowError?.quantity && (
-            <span className="text-red-500 text-xs">{rowError.quantity}</span>
-          )}
-        </TableCell>
+          {/* TAX */}
+          <TableCell className="w-[100px]">
+            <TaxDiscountInput
+              percentageValue={currentRow.item_tax_per ?? 0}
+              amountValue={currentRow.item_tax_amount ?? 0}
+              onPercentageChange={(v) =>
+                handleReduxUpdate("item_tax_per", Number(v))
+              }
+              onAmountChange={(v) =>
+                handleReduxUpdate("item_tax_amount", Number(v))
+              }
+            />
+          </TableCell>
 
-        {/* PRICE */}
-        <TableCell className="w-[120px] py-2">
-          <Input
-            type="text"
-            className="text-right"
-            value={currentRow.price ?? 0}
-            onChange={(e) => handleReduxUpdate("price", Number(e.target.value))}
-          />
-          {rowError?.price && (
-            <span className="text-red-500 text-xs">{rowError.price}</span>
-          )}
-        </TableCell>
+          {/* AMOUNT */}
+          <TableCell className="w-[120px]">
+            <PriceInput
+              mode="manual"
+              value={currentRow.amount ?? 0}
+              disabled
+              onValueChange={() => {}}
+            />
+          </TableCell>
 
-        {/* DISCOUNT */}
-        <TableCell className="w-[100px] py-2">
-          <TaxDiscountInput
-            percentageValue={currentRow.item_discount_per ?? 0}
-            amountValue={currentRow.item_discount_amount ?? 0}
-            disabled={isItemDiscountDisabled}
-            onPercentageChange={(val) =>
-              handleDiscountUpdate("item_discount_per", val)
-            }
-            onAmountChange={(val) =>
-              handleDiscountUpdate("item_discount_amount", val)
-            }
-          />
-        </TableCell>
+          {/* DELETE BUTTON */}
+          <TableCell className="w-[60px] text-center">
+            <Button
+              variant="destructive"
+              className="p-2"
+              onClick={() => dispatch(removeItemRow(index))}
+            >
+              <IconTrash className="h-5 w-5" />
+            </Button>
+          </TableCell>
+        </TableRow>
 
-        {/* TAX */}
-        <TableCell className="w-[100px] py-2">
-          <TaxDiscountInput
-            percentageValue={currentRow.item_tax_per ?? 0}
-            amountValue={currentRow.item_tax_amount ?? 0}
-            onPercentageChange={(val) => handleTaxUpdate("item_tax_per", val)}
-            onAmountChange={(val) => handleTaxUpdate("item_tax_amount", val)}
-          />
-        </TableCell>
+        {/* 🔍 SCANNER POPUP */}
+        <Dialog open={scannerOpen} onOpenChange={setScannerOpen}>
+          <DialogContent className="max-w-xs">
+            <DialogHeader>
+              <DialogTitle>Scan Barcode / QR Code</DialogTitle>
+            </DialogHeader>
 
-        {/* AMOUNT */}
-        <TableCell className="w-[120px] py-2">
-          <PriceInput
-            mode="manual"
-            value={currentRow.amount ?? 0}
-            onValueChange={() => {}}
-            disabled
-          />
-        </TableCell>
-
-        {/* DELETE */}
-        <TableCell className="w-[60px] text-center">
-          <Button
-            type="button"
-            variant="destructive"
-            className="p-2"
-            onClick={() => dispatch(removeItemRow(index))}
-          >
-            <IconTrash className="h-5 w-5" />
-          </Button>
-        </TableCell>
-      </TableRow>
+            <BarcodeScanner onResult={handleScan} />
+          </DialogContent>
+        </Dialog>
+      </>
     );
   });
 

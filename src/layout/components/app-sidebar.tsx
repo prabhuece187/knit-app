@@ -102,6 +102,10 @@ const data = {
           title: "Invoice",
           url: "/invoice",
         },
+        {
+          title: "Payment",
+          url: "/payment",
+        },
       ],
     },
     {

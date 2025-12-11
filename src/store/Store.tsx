@@ -10,11 +10,15 @@ import { ReportApi } from "@/api/ReportApi";
 import { MillApi } from "@/api/MillApi";
 import { InvoiceApi } from "@/api/InvoiceApi";
 import invoiceFormReducer from "@/slice/InvoiceFormSlice";
+import paymentFormReducer from "@/slice/PaymentFormSlice";
 import { BankApi } from "@/api/BankApi";
+import { PaymentApi } from "@/api/PaymentApi";
+
 
 export const store = configureStore({
   reducer: {
     invoiceForm: invoiceFormReducer,
+    paymentForm: paymentFormReducer,
     StateCode: StateSlice.reducer,
     [CustomerApi.reducerPath]: CustomerApi.reducer,
     [ItemApi.reducerPath]: ItemApi.reducer,
@@ -26,6 +30,7 @@ export const store = configureStore({
     [InvoiceApi.reducerPath]: InvoiceApi.reducer,
     [ReportApi.reducerPath]: ReportApi.reducer,
     [BankApi.reducerPath]: BankApi.reducer,
+    [PaymentApi.reducerPath]: PaymentApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -38,7 +43,8 @@ export const store = configureStore({
       OutwardApi.middleware,
       InvoiceApi.middleware,
       ReportApi.middleware,
-      BankApi.middleware
+      BankApi.middleware,
+      PaymentApi.middleware
     ),
 });
 

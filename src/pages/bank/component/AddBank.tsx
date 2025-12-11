@@ -5,7 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { bankSchema, } from "@/schema-types/master-schema";
+import { bankSchema } from "@/schema-types/master-schema";
 import {
   Form,
   FormControl,
@@ -26,8 +26,6 @@ import CommonHeader from "@/components/common/CommonHeader";
 import { usePostBankMutation } from "@/api/BankApi";
 import { Checkbox } from "@/components/ui/checkbox";
 
-// type BankFormValues = z.infer<typeof bankSchema>;
-
 export default function AddBank({
   open,
   setOpen,
@@ -37,27 +35,27 @@ export default function AddBank({
 }) {
   const [postBank] = usePostBankMutation();
 
-const form = useForm({
-  resolver: zodResolver(bankSchema),
-  defaultValues: {
-    id: undefined,
-    user_id: 0,
-    bank_name: "",
-    branch_name: "",
-    account_holder_name: "",
-    account_number: "",
-    ifsc_code: "",
-    bank_city: "",
-    bank_state: "",
-    bank_email: "",
-    bank_mobile: "",
-    bank_address: "",
-    is_default: false, // ✅ matches schema
-  },
-});
-  
-  
+  const form = useForm({
+    resolver: zodResolver(bankSchema),
+    defaultValues: {
+      id: undefined,
+      user_id: 1,
+      bank_name: "",
+      branch_name: "",
+      account_holder_name: "",
+      account_number: "",
+      ifsc_code: "",
+      bank_city: "",
+      bank_state: "",
+      bank_email: "",
+      bank_mobile: "",
+      bank_address: "",
+      is_default: false,
+    },
+  });
+
   function onSubmit(values: z.infer<typeof bankSchema>) {
+    console.log("its run");
     postBank(values);
     setOpen(false);
   }
@@ -73,9 +71,13 @@ const form = useForm({
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit, (errors) =>
+              console.log(errors)
+            )}
+            className="space-y-6"
+          >
             <div className="grid grid-cols-6 gap-4">
-              {/* Hidden User ID */}
               <div className="col-span-3" hidden>
                 <FormField
                   control={form.control}
@@ -92,7 +94,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Bank Name */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -109,7 +110,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Branch Name */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -126,7 +126,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Account Holder Name */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -146,7 +145,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Account Number */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -163,7 +161,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* IFSC Code */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -180,7 +177,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* City */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -197,7 +193,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* State */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -214,7 +209,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Email */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -231,7 +225,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Mobile */}
               <div className="col-span-3">
                 <FormField
                   control={form.control}
@@ -248,7 +241,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Default Bank */}
               <div className="col-span-3 flex items-center space-x-2 mt-2">
                 <FormField
                   control={form.control}
@@ -271,7 +263,6 @@ const form = useForm({
                 />
               </div>
 
-              {/* Address */}
               <div className="col-span-6">
                 <FormField
                   control={form.control}

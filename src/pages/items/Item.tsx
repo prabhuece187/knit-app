@@ -33,35 +33,35 @@ export default function State() {
 
   const [open, setOpen] = useState(false);
 
-  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const columns = getItemColumns(setOpen, setSelectedItemId);
+    const columns = getItemColumns(setOpen, setSelectedId);
 
   return (
     <>
-        <DataTableCard
-          name={"State"}
-          columns={columns}
-          data={itemData}
-          searchColumns={searchColumns}
-          loading={stateLoading}
-          open={open}
-          setOpen={setOpen}
-          isError={isError}
-          trigger={
-            <Button
-              onClick={() => {
-                setSelectedItemId(null);
-                setOpen(true);
-              }}
-            >
-              Add Item
-            </Button>
-          }
-        />
+      <DataTableCard
+        name={"State"}
+        columns={columns}
+        data={itemData}
+        searchColumns={searchColumns}
+        loading={stateLoading}
+        open={open}
+        setOpen={setOpen}
+        isError={isError}
+        trigger={
+          <Button
+            onClick={() => {
+              setSelectedId(null);
+              setOpen(true);
+            }}
+          >
+            Add Item
+          </Button>
+        }
+      />
 
-      {selectedItemId ? (
-        <EditItem id={selectedItemId} open={open} setOpen={setOpen} />
+      {selectedId ? (
+        <EditItem id={selectedId} open={open} setOpen={setOpen} />
       ) : (
         <AddItem open={open} setOpen={setOpen} />
       )}

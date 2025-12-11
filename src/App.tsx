@@ -24,6 +24,8 @@ import AddInvoice from "./pages/invoice/component/AddInvoice";
 import Bank from "./pages/bank/Bank";
 import EditInvoice from "./pages/invoice/component/EditInvoice";
 import PrintInvoice from "./pages/invoice/component/PrintInvoice";
+import Payment from "./pages/payment/Payment";
+import AddPayment from "./pages/payment/component/AddPayment";
 
 function App() {
   return (
@@ -58,7 +60,14 @@ function App() {
               <Route path="invoice" element={<Invoice />} />
               <Route path="addinvoice" element={<AddInvoice />} />
               <Route path="/editinvoice/:invoiceId" element={<EditInvoice />} />
-              <Route path="/printinvoice/:invoiceId" element={<PrintInvoice />} />
+              <Route
+                path="/printinvoice/:invoiceId"
+                element={<PrintInvoice />}
+              />
+
+              {/* Payment */}
+              <Route path="payment" element={<Payment />} />
+              <Route path="addpayment" element={<AddPayment />} />
 
               {/* Report */}
               <Route path="over-all-report" element={<OverAllReport />} />

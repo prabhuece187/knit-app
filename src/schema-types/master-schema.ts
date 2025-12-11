@@ -49,6 +49,8 @@ export const itemSchema = z.object({
   unit: z.string().optional(),
   description: z.string().optional(),
   price: z.number().optional(),
+  barcode: z.string().optional(),
+  qrcode: z.string().optional(),
 });
 
 export type Item = z.infer<typeof itemSchema>;
