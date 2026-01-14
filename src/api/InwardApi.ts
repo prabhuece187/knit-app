@@ -1,3 +1,4 @@
+import type { LinkJobCardResponse } from "@/pages/inward/component/JobCardSelectModal";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const InwardApi = createApi({
@@ -43,6 +44,23 @@ export const InwardApi = createApi({
       }),
       invalidatesTags: ["InwardTag"],
     }),
+    getInwardList: build.query({
+      query: () => ({
+        url: `inward_list`,
+        method: "GET",
+      }),
+      providesTags: ["InwardTag"],
+    }),
+    postlinkJobCard: build.mutation<
+      LinkJobCardResponse,
+      { inwardDetailId: number; job_card_id: number }
+    >({
+      query: ({ inwardDetailId, job_card_id }) => ({
+        url: `/inward-details/${inwardDetailId}/link-job-card`,
+        method: "POST",
+        body: { job_card_id },
+      }),
+    }),
   }),
 });
 
@@ -51,4 +69,6 @@ export const {
   useGetInwardByIdQuery,
   usePostInwardMutation,
   usePutInwardMutation,
+  useGetInwardListQuery,
+  usePostlinkJobCardMutation,
 } = InwardApi;

@@ -3,12 +3,11 @@ import {
   FormItem,
   FormControl,
   FormMessage,
-//   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import type { Customer, Mill } from "@/schema-types/master-schema";
-import type { Control, UseFormWatch, UseFormSetValue } from "react-hook-form";
+import type { Control, UseFormSetValue, UseFormWatch } from "react-hook-form";
 import type { FullOutwardFormValues } from "@/schema-types/outward-schema";
 
 interface OutwardHeaderProps {
@@ -28,12 +27,12 @@ export default function OutwardHeader({
 }: OutwardHeaderProps) {
   return (
     <div className="grid grid-cols-12 gap-6">
-      {/* ----------- LEFT SECTION ----------- */}
+      {/* LEFT */}
       <div className="col-span-12 lg:col-span-6">
         <div className="p-4 border rounded grid grid-cols-2 gap-4">
           {/* Customer */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Customer
             </label>
             <SelectPopover
@@ -54,7 +53,7 @@ export default function OutwardHeader({
 
           {/* Mill */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Mill
             </label>
             <SelectPopover
@@ -74,177 +73,193 @@ export default function OutwardHeader({
           </div>
 
           {/* Outward No */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Outward No*
-            </label>
-            <FormField
-              control={control}
-              name="outward_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Enter Outward No" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="outward_no"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Outward No*
+                </label>
+                <FormControl>
+                  <Input {...field} placeholder="Outward No" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {/* Invoice No */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Invoice No*
-            </label>
-            <FormField
-              control={control}
-              name="outward_invoice_no"
-              render={({ field }) => (
-                <FormItem className="text-center">
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Invoice No"
-                      value={field.value ?? ""} // FIX 1: prevent undefined
-                      onChange={(e) => field.onChange(e.target.value)} // FIX 2: always string
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="outward_invoice_no"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Invoice No*
+                </label>
+                <FormControl>
+                  <Input {...field} placeholder="Invoice No" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {/* Inward Id */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Inward Id*
-            </label>
-            <FormField
-              control={control}
-              name="inward_id"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Enter Inward Id" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="inward_id"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Inward ID*
+                </label>
+                <FormControl>
+                  <Input {...field} type="number" placeholder="Inward ID" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </div>
 
-      {/* ----------- RIGHT SECTION ----------- */}
+      {/* RIGHT */}
       <div className="col-span-12 lg:col-span-6">
         <div className="p-4 border rounded grid grid-cols-2 gap-4">
-          {/* TIN No */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              TIN No*
-            </label>
-            <FormField
-              control={control}
-              name="outward_tin_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Enter TIN No" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
           {/* Outward Date */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Outward Date*
-            </label>
-            <FormField
-              control={control}
-              name="outward_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      type="date"
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="outward_date"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Outward Date*
+                </label>
+                <FormControl>
+                  <Input
+                    type="date"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(e.target.value)}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
           {/* Vehicle No */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Vehicle No
-            </label>
-            <FormField
-              control={control}
-              name="outward_vehicle_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Enter Vehicle No" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          <FormField
+            control={control}
+            name="vehicle_no"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Vehicle No
+                </label>
+                <FormControl>
+                  <Input {...field} placeholder="Vehicle No" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          {/* Status */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Status
-            </label>
-            <FormField
-              control={control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      placeholder="Enter Status"
-                      value={field.value ?? ""}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === "" ? "" : Number(e.target.value)
-                        )
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {/* Process Type */}
+          <FormField
+            control={control}
+            name="process_type"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Process Type
+                </label>
+                <FormControl>
+                  <Input {...field} placeholder="Process Type" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-          {/* Yarn Send */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Yarn Send
-            </label>
-            <FormField
-              control={control}
-              name="yarn_send"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Enter Yarn Send" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
+          {/* Expected GSM */}
+          <FormField
+            control={control}
+            name="expected_gsm"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Expected GSM
+                </label>
+                <FormControl>
+                  <Input
+                    type="number"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    placeholder="GSM"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Expected DIA */}
+          <FormField
+            control={control}
+            name="expected_dia"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Expected DIA
+                </label>
+                <FormControl>
+                  <Input
+                    type="number"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(Number(e.target.value))}
+                    placeholder="DIA"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Job Card No */}
+          <FormField
+            control={control}
+            name="job_card_no"
+            render={({ field }) => (
+              <FormItem>
+                <label className="block text-sm mb-1 text-center">
+                  Job Card No
+                </label>
+                <FormControl>
+                  <Input {...field} placeholder="Job card No" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Remarks */}
+          <FormField
+            control={control}
+            name="remarks"
+            render={({ field }) => (
+              <FormItem className="col-span-2">
+                <label className="block text-sm mb-1 text-center">
+                  Remarks
+                </label>
+                <FormControl>
+                  <Input {...field} placeholder="Remarks" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </div>
     </div>

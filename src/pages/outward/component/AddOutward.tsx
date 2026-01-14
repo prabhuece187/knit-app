@@ -13,11 +13,11 @@ import { usePostOutwardMutation } from "@/api/OutwardApi";
 
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
-import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
 import { useGetMillListQuery } from "@/api/MillApi";
 import OutwardHeader from "../common/OutwardHeader";
 import CommonHeader from "@/components/common/CommonHeader";
 import { useNavigate } from "react-router-dom";
+import { OutwardDetailsTable } from "../common/OutwardDetailsTable";
 
 export default function AddOutward() {
   const [postOutward] = usePostOutwardMutation();
@@ -69,12 +69,11 @@ export default function AddOutward() {
           />
 
           {/* OUTWARD DETAILS TABLE */}
-          <ItemsDetailsTable
+          <OutwardDetailsTable
             name="outward_details"
             control={control}
             setValue={setValue}
             watch={watch}
-            mode="outward"
           />
 
           {/* Form Buttons */}

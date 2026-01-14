@@ -118,3 +118,60 @@ export const bankSchema = z.object({
 });
 
 export type Bank = z.infer<typeof bankSchema>;
+
+// =======================  Job master ============================
+
+export const jobMasterBaseSchema = z.object({
+  user_id: z.number().optional(),
+
+  job_card_no: z.string().min(1, "Job No is required"),
+
+  job_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date"),
+
+  inward_id: z.number().min(1, "Select Inward"),
+
+  customer_id: z.number().min(1, "Select Customer"),
+
+  mill_id: z.number().min(1, "Select Mill"),
+
+  approx_job_weight: z
+    .number()
+    .positive("Weight must be greater than 0")
+    .optional(),
+
+  expected_delivery_date: z.string().optional(),
+
+  remarks: z.string().optional(),
+
+  status: z.enum(["open", "completed", "cancelled"]),
+});
+
+export const createJobMasterSchema = jobMasterBaseSchema;
+export type CreateJobMaster = z.infer<typeof createJobMasterSchema>;
+
+export const jobMasterSchema = jobMasterBaseSchema.extend({
+  id: z.number(), // ✅ REQUIRED
+});
+
+export type JobMaster = z.infer<typeof jobMasterSchema>;
+
+// =======================  Knitting Machine ============================
+
+export const knittingMachineSchema = z.object({
+  id: z.number().optional(),
+  user_id: z.number().optional(),
+
+  machine_no: z.string().min(1, "Machine No is required"),
+  brand: z.string().optional(),
+  machine_name: z.string().optional(),
+  feeder: z.number().nullable().optional(),
+  model: z.string().optional(),
+
+  dia: z.number().nullable().optional(),
+  gauge: z.number().nullable().optional(),
+
+  // 🔥 REQUIRED, NOT OPTIONAL
+  status: z.enum(["active", "maintenance", "inactive"]),
+});
+
+export type KnittingMachine = z.infer<typeof knittingMachineSchema>;

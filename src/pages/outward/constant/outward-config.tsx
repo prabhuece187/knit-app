@@ -33,15 +33,15 @@ export function getOutwardColumns(
       ),
     },
     {
-      accessorKey: "outward_invoice_no",
+      accessorKey: "supplier_invoice_no",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Invoice No" />
+        <DataTableColumnHeader column={column} title="Supplier Invoice" />
       ),
     },
     {
-      accessorKey: "outward_tin_no",
+      accessorKey: "vehicle_no",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Tin No" />
+        <DataTableColumnHeader column={column} title="Vehicle No" />
       ),
     },
     {
@@ -55,33 +55,39 @@ export function getOutwardColumns(
           : "-",
     },
     {
+      accessorKey: "lot_no",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Lot No" />
+      ),
+    },
+    {
+      accessorKey: "no_of_bags",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="No. of Bags" />
+      ),
+    },
+    {
       accessorKey: "total_weight",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Total Weight" />
       ),
     },
     {
-      accessorKey: "total_quantity",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Total Quantity" />
-      ),
-    },
-    {
-      accessorKey: "outward_vehicle_no",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Vehicle No." />
-      ),
-    },
-    {
-      accessorKey: "status",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
-      ),
-    },
-    {
       accessorKey: "yarn_send",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Yarn Send" />
+      ),
+    },
+    {
+      accessorKey: "sent_by",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Sent By" />
+      ),
+    },
+    {
+      accessorKey: "remarks",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Remarks" />
       ),
     },
     {

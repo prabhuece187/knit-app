@@ -3,8 +3,10 @@ import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { inwardSchema, type Inward } from "@/schema-types/inward-schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
-export function getInwardColumns( handleEdit: (inward: Inward) => void,
-  handleDelete: (inward: Inward) => void): ColumnDef<Inward>[] {
+export function getInwardColumns(
+  handleEdit: (inward: Inward) => void,
+  handleDelete: (inward: Inward) => void
+): ColumnDef<Inward>[] {
   return [
     {
       accessorKey: "id",
@@ -12,36 +14,35 @@ export function getInwardColumns( handleEdit: (inward: Inward) => void,
         <DataTableColumnHeader column={column} title="ID" />
       ),
     },
+
     {
       accessorKey: "customer.customer_name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Customer" />
       ),
     },
+
     {
       accessorKey: "mill.mill_name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Mill" />
       ),
     },
+
     {
       accessorKey: "inward_no",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Inward No" />
       ),
     },
+
     {
-      accessorKey: "inward_invoice_no",
+      accessorKey: "supplier_invoice_no",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Invoice No" />
+        <DataTableColumnHeader column={column} title="Supplier Invoice No" />
       ),
     },
-    {
-      accessorKey: "inward_tin_no",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Tin No" />
-      ),
-    },
+
     {
       accessorKey: "inward_date",
       header: ({ column }) => (
@@ -52,30 +53,49 @@ export function getInwardColumns( handleEdit: (inward: Inward) => void,
           ? new Date(row.original.inward_date).toLocaleDateString()
           : "-",
     },
+
+    {
+      accessorKey: "vehicle_no",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Vehicle No" />
+      ),
+    },
+
+    {
+      accessorKey: "lot_no",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Lot No" />
+      ),
+    },
+
+    {
+      accessorKey: "no_of_bags",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Bags" />
+      ),
+    },
+
     {
       accessorKey: "total_weight",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Total Weight" />
       ),
     },
+
     {
-      accessorKey: "total_quantity",
+      accessorKey: "received_by",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Total Quantity" />
+        <DataTableColumnHeader column={column} title="Received By" />
       ),
     },
+
     {
-      accessorKey: "inward_vehicle_no",
+      accessorKey: "remarks",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Vehicle No." />
+        <DataTableColumnHeader column={column} title="Remarks" />
       ),
     },
-    {
-      accessorKey: "status",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Status" />
-      ),
-    },
+
     {
       id: "actions",
       cell: ({ row }) => (

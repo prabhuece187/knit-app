@@ -26,6 +26,15 @@ import EditInvoice from "./pages/invoice/component/EditInvoice";
 import PrintInvoice from "./pages/invoice/component/PrintInvoice";
 import Payment from "./pages/payment/Payment";
 import AddPayment from "./pages/payment/component/AddPayment";
+import ProductionReturn from "./pages/pro-return/ProductionReturn";
+import JobMaster from "./pages/job-master/JobMaster";
+import KnittingMachine from "./pages/machine/KnittingMachine";
+import KnittingProduction from "./pages/production/KnittingProduction";
+import AddKnittingProduction from "./pages/production/component/AddKnittingProduction";
+import EditKnittingProduction from "./pages/production/component/EditKnittingProduction";
+import ProductionRework from "./pages/pro-rework/ProductionRework";
+import JobLedgerReport from "./pages/report/JobLedgerReport";
+import WastageReport from "./pages/report/WastageReport";
 
 function App() {
   return (
@@ -44,6 +53,7 @@ function App() {
               <Route path="states" element={<State />} />
               <Route path="mills" element={<Mill />} />
               <Route path="yarn_types" element={<YarnType />} />
+              <Route path="knitting-machine" element={<KnittingMachine />} />
 
               {/* Inward */}
               <Route path="inward" element={<Inward />} />
@@ -55,6 +65,26 @@ function App() {
               <Route path="outward" element={<Outward />} />
               <Route path="addoutward" element={<AddOutward />} />
               <Route path="/editoutward/:outwardId" element={<EditOutward />} />
+
+              {/* Job Master */}
+              <Route path="job-master" element={<JobMaster />} />
+
+              {/* Production Return */}
+              <Route path="pro-return" element={<ProductionReturn />} />
+
+              {/* Production  */}
+              <Route path="knit-pro" element={<KnittingProduction />} />
+              <Route
+                path="add-knitting-production"
+                element={<AddKnittingProduction />}
+              />
+              <Route
+                path="/knitting_production_edit/:id"
+                element={<EditKnittingProduction />}
+              />
+
+              {/* Production Rework */}
+              <Route path="pro-rework" element={<ProductionRework />} />
 
               {/* Invoice */}
               <Route path="invoice" element={<Invoice />} />
@@ -75,6 +105,9 @@ function App() {
                 path="over-all-detail-report"
                 element={<OverAllDetailReport />}
               />
+
+              <Route path="job-ledger" element={<JobLedgerReport />} />
+              <Route path="wastage" element={<WastageReport />} />
 
               {/* Add-on Service */}
               <Route path="customers/:id" element={<IndividualData />} />

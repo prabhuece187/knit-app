@@ -33,9 +33,9 @@ export default function State() {
 
   const [open, setOpen] = useState(false);
 
-   const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-    const columns = getItemColumns(setOpen, setSelectedId);
+  const columns = getItemColumns(setOpen, setSelectedId);
 
   return (
     <>

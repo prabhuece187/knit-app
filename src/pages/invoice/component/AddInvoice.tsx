@@ -81,8 +81,7 @@ export default function AddInvoice() {
       console.log("✅ Invoice saved successfully:", invoiceToSend);
       navigate("/invoice", { replace: true });
       setErrors({});
-    }
-    else {
+    } else {
       const formattedErrors: FormErrors = {
         header: {},
         rows: {},

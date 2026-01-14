@@ -66,7 +66,7 @@ export type OutwardReport = {
   outward_date: string;
   total_quantity: number;
   total_weight: number;
-  yarn_send: string | null; 
+  yarn_send: string | null;
   customer: {
     id: number;
     customer_name: string;
@@ -75,7 +75,7 @@ export type OutwardReport = {
     id: number;
     mill_name: string;
   } | null;
-  outward_details?: OutwardDetail[]; 
+  outward_details?: OutwardDetail[];
 };
 
 export type InwardReport = {
@@ -92,8 +92,8 @@ export type InwardReport = {
     id: number;
     mill_name: string;
   } | null;
-  inward_details?: InwardDetail[]; 
-  outwards?: OutwardReport[]; 
+  inward_details?: InwardDetail[];
+  outwards?: OutwardReport[];
 };
 
 export type Totals = {
@@ -111,9 +111,30 @@ export type Totals = {
   };
 };
 
-
 export type Tab = {
   name: string;
   icon?: React.ElementType;
   content: React.ReactNode;
 };
+
+export const JobLedgerSchema = z.object({
+  job_card_id: z.number(),
+  yarn_issued_kg: z.number(),
+  fabric_produced_kg: z.number(),
+  fabric_returned_kg: z.number(),
+  fabric_reworked_kg: z.number(),
+  fabric_outward_kg: z.number(),
+  wip_balance_kg: z.number(),
+  wastage_kg: z.number(),
+});
+
+export const WastageRowSchema = z.object({
+  job_card_id: z.number(),
+  produced: z.number(),
+  outward: z.number(),
+  reworked: z.number(),
+  wastage: z.number(),
+});
+
+export type JobLedger = z.infer<typeof JobLedgerSchema>;
+export type WastageRow = z.infer<typeof WastageRowSchema>;

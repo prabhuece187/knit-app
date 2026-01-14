@@ -1,3 +1,4 @@
+import type { JobLedger, WastageRow } from "@/schema-types/report-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const ReportApi = createApi({
@@ -151,6 +152,20 @@ export const ReportApi = createApi({
       }),
       invalidatesTags: ["ReportTag"],
     }),
+    postJobLedgerReport: build.mutation<JobLedger, { job_card_id: number }>({
+      query: (data) => ({
+        url: "reports/job-ledger",
+        method: "POST",
+        body: data,
+        headers: { "Content-Type": "application/json" },
+      }),
+    }),
+    postWastageReport: build.mutation<WastageRow[], void>({
+      query: () => ({
+        url: "reports/wastage",
+        method: "POST",
+      }),
+    }),
   }),
 });
 
@@ -168,4 +183,6 @@ export const {
   usePostMillIndividualItemMutation,
   usePostYarnTypeLedgerMutation,
   usePostYarnTypeIndividualCustomerMutation,
+  usePostJobLedgerReportMutation,
+  usePostWastageReportMutation,
 } = ReportApi;

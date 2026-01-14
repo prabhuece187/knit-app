@@ -20,9 +20,10 @@ import { Button } from "@/components/ui/button";
 import { usePostInwardMutation } from "@/api/InwardApi";
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
-import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
+// import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
 import { useGetMillListQuery } from "@/api/MillApi";
 import { InwardHeader } from "../common/InwardHeader";
+import { InwardDetailsTable } from "../common/InwardDetailsTable";
 
 export default function AddInward() {
   const [postInward] = usePostInwardMutation();
@@ -32,7 +33,6 @@ export default function AddInward() {
   const { data: customers = [] } = useGetCustomerListQuery("") as {
     data: Customer[];
   };
-  console.log(customers);
 
   const { data: mills = [] } = useGetMillListQuery("") as { data: Mill[] };
 
@@ -78,12 +78,13 @@ export default function AddInward() {
           {/* </div> */}
 
           {/* INWARD DETAILS TABLE */}
-          <ItemsDetailsTable
+          <InwardDetailsTable
             name="inward_details"
             control={control}
             setValue={setValue}
             watch={watch}
-            mode="inward"
+            isEdit={false}
+            // mode="inward"
           />
 
           {/* Form Buttons */}

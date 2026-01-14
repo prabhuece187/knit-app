@@ -1,27 +1,36 @@
 import CommonHeader from "@/components/common/CommonHeader";
 import { Form, FormField } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+
 import {
   fullInwardSchema,
-  inwardSchema,
   type FullInwardFormValues,
   type InwardDetail,
 } from "@/schema-types/inward-schema";
+
 import { useForm } from "react-hook-form";
-import type z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import type z from "zod";
+
 import { Button } from "@/components/ui/button";
+
 import { useGetInwardByIdQuery, usePutInwardMutation } from "@/api/InwardApi";
 
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
 import { useGetMillListQuery } from "@/api/MillApi";
 
-import { ItemsDetailsTable } from "@/components/common/ItemDetailsTable";
 import { InwardHeader } from "../common/InwardHeader";
 
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { InwardDetailsTable } from "../common/InwardDetailsTable";
+
+type InwardDetailWithJob = InwardDetail & {
+  job_master?: {
+    job_card_no: string;
+  };
+};
 
 export default function EditInward() {
   const [putInward] = usePutInwardMutation();
@@ -39,6 +48,7 @@ export default function EditInward() {
     defaultValues: {
       user_id: 1,
       inward_date: new Date().toISOString().split("T")[0],
+      inward_details: [],
     },
   });
 
@@ -50,50 +60,66 @@ export default function EditInward() {
     skip: inwardId === undefined,
   });
 
+  /**
+   * -------------------------------------------------
+   * MAP DATABASE RESULT -> FORM FORMAT
+   * -------------------------------------------------
+   */
   useEffect(() => {
     if (isSuccess && inward) {
-      const mappedInward = {
-        ...inward,
-        inward_details: inward.Items.map((item: InwardDetail) => ({
-          id: item.id,
-          inward_id: item.inward_id,
-          item_id: item.item_id,
-          yarn_type_id: item.yarn_type_id,
-          yarn_dia: item.yarn_dia,
-          yarn_gsm: item.yarn_gsm,
-          yarn_gauge: item.yarn_gauge,
-          inward_qty: item.inward_qty,
-          inward_weight: item.inward_weight,
-          inward_detail_date: item.inward_detail_date,
-          yarn_colour: item.yarn_colour,
-        })),
-      };
+      const mappedDetails = inward.Items.map((item: InwardDetailWithJob) => ({
+        id: item.id,
+        inward_id: item.inward_id,
+        item_id: item.item_id,
+        yarn_type_id: item.yarn_type_id,
+        shade: item.shade ?? "",
+        bag_no: item.bag_no ?? "",
+        gross_weight: item.gross_weight,
+        tare_weight: item.tare_weight,
+        net_weight: item.net_weight,
+        uom: item.uom ?? "KG",
+        yarn_gauge: item.yarn_gauge,
+        yarn_dia: item.yarn_dia,
+        yarn_gsm: item.yarn_gsm,
+        remarks: item.remarks ?? "",
+        job_card_id: item.job_card_id ?? null,
+        job_card_no: item.job_master?.job_card_no ?? "",
+      }));
 
-      form.reset(mappedInward);
+      form.reset({
+        ...inward,
+        inward_details: mappedDetails,
+      });
     }
   }, [isSuccess, inward, form]);
 
-  function onSubmit(values: z.infer<typeof inwardSchema>) {
+  /**
+   * -------------------------------------------------
+   * SUBMIT
+   * -------------------------------------------------
+   */
+  function onSubmit(values: z.infer<typeof fullInwardSchema>) {
     putInward(values);
   }
 
   return (
     <>
       <CommonHeader name="Edit Inward" />
+
       <Form {...form}>
         <form
           id="inward-form"
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8"
         >
-          {/* Hidden User ID */}
+          {/* Hidden user_id */}
           <FormField
             control={form.control}
             name="user_id"
             render={({ field }) => <Input type="hidden" {...field} />}
           />
 
-          {/* 🔥 SAME HEADER AS ADD PAGE */}
+          {/*  Header (same as add page) */}
           <InwardHeader
             control={control}
             customers={customers}
@@ -102,13 +128,13 @@ export default function EditInward() {
             setValue={setValue}
           />
 
-          {/* Details Table */}
-          <ItemsDetailsTable
+          {/* Item Details Table */}
+          <InwardDetailsTable
             name="inward_details"
             control={control}
             setValue={setValue}
             watch={watch}
-            mode="inward"
+            isEdit={true}
           />
 
           {/* Buttons */}

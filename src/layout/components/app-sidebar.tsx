@@ -69,6 +69,10 @@ const data = {
           url: "/mills",
         },
         {
+          title: "Knitting Machine",
+          url: "/knitting-machine",
+        },
+        {
           title: "States",
           url: "/states",
         },
@@ -88,8 +92,24 @@ const data = {
           url: "/inward",
         },
         {
+          title: "Job Card",
+          url: "/job-master",
+        },
+        {
           title: "Outward",
           url: "/outward",
+        },
+        {
+          title: "Production",
+          url: "/knit-pro",
+        },
+        {
+          title: "Production Return",
+          url: "/pro-return",
+        },
+        {
+          title: "Production Rework",
+          url: "/pro-rework",
         },
       ],
     },
@@ -120,6 +140,14 @@ const data = {
         {
           title: "Detail Report",
           url: "/over-all-detail-report",
+        },
+        {
+          title: "JobLedger Report",
+          url: "/job-ledger",
+        },
+        {
+          title: "Wastage Report",
+          url: "/Wastage",
         },
       ],
     },

@@ -3,30 +3,33 @@ import type { Item } from "./master-schema";
 
 // =======================  Inward ============================
 export const inwardSchema = z.object({
-  id: z.coerce.number().optional(),
-  customer_id: z.number().min(1, {
-    message: "Please Enter Customer Name.",
-  }),
+  id: z.number().optional(),
+
   user_id: z.number().optional(),
-  mill_id: z.number().min(1, {
-    message: "Please Enter Mill Name.",
-  }),
-  inward_no: z.string().min(1, {
-    message: "Please Enter the Inward No.",
-  }),
-  inward_invoice_no: z.coerce
-    .string()
-    .min(1, { message: "Please Enter the Invoice No." }),
-  inward_tin_no: z.coerce
-    .string()
-    .min(1, { message: "Please Enter the Tin No.." }),
+
+  customer_id: z.number().min(1, { message: "Customer is required" }),
+
+  mill_id: z.number().min(1, { message: "Mill is required" }),
+
+  inward_no: z.string().min(1, { message: "Inward No is required" }),
+
   inward_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
-  total_weight: z.number().optional(),
-  total_quantity: z.number().optional(),
-  inward_vehicle_no: z.string().optional(),
-  status: z.string().optional(),
+
+  supplier_invoice_no: z.string().optional(),
+
+  vehicle_no: z.string().optional(),
+
+  total_weight: z.number().min(0.1, { message: "Total weight required" }),
+
+  lot_no: z.string().optional(),
+
+  no_of_bags: z.number().min(1, { message: "No of bags required" }),
+
+  remarks: z.string().optional(),
+
+  received_by: z.string().min(1, { message: "Received By is required" }),
 });
 
 export type Inward = z.infer<typeof inwardSchema>;
@@ -35,20 +38,26 @@ export type Inward = z.infer<typeof inwardSchema>;
 export const inwardDetailSchema = z.object({
   id: z.number().optional(),
   inward_id: z.number().optional(),
-  item_id: z.number().min(1, {
-    message: "Please Enter the Item .",
-  }),
   user_id: z.number().optional(),
-  yarn_type_id: z.number().optional(),
-  yarn_gauge: z.string(),
-  inward_detail_date: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
-  inward_qty: z.number(),
-  inward_weight: z.number(),
-  yarn_dia: z.number(),
-  yarn_gsm: z.number(),
-  yarn_colour: z.string().optional(),
+
+  item_id: z.number().min(1, { message: "Item required" }),
+  yarn_type_id: z.number().min(1, { message: "Yarn Type required" }),
+
+  shade: z.string().optional(),
+  bag_no: z.string().optional(),
+
+  gross_weight: z.number().min(0.1, { message: "Gross required" }),
+  tare_weight: z.number().min(0, { message: "Tare required" }),
+  net_weight: z.number().min(0.1, { message: "Net required" }),
+
+  uom: z.string().min(1, { message: "UOM required" }),
+
+  yarn_gauge: z.string().optional(),
+  yarn_dia: z.number().optional(),
+  yarn_gsm: z.number().optional(),
+  job_card_id: z.number().nullable(),
+  job_card_no: z.string().optional(),
+  remarks: z.string().optional(),
 });
 
 export type InwardDetail = z.infer<typeof inwardDetailSchema>;

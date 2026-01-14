@@ -30,12 +30,12 @@ export function InwardHeader({
 }: InwardHeaderProps) {
   return (
     <div className="grid grid-cols-12 gap-6">
-      {/* ---------------- LEFT SECTION ---------------- */}
+      {/* LEFT SECTION */}
       <div className="col-span-12 lg:col-span-6">
         <div className="p-4 border rounded grid grid-cols-2 gap-4">
           {/* Customer */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Customer
             </label>
             <SelectPopover
@@ -56,7 +56,7 @@ export function InwardHeader({
 
           {/* Mill */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Mill
             </label>
             <SelectPopover
@@ -77,7 +77,7 @@ export function InwardHeader({
 
           {/* Inward No */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Inward No*
             </label>
             <FormField
@@ -86,7 +86,7 @@ export function InwardHeader({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Enter Inward No." {...field} />
+                    <Input placeholder="Enter Inward No" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,18 +94,18 @@ export function InwardHeader({
             />
           </div>
 
-          {/* Invoice No */}
+          {/* Supplier Invoice No */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Invoice No*
+            <label className="block text-sm font-medium mb-1 text-center">
+              Supplier Invoice No
             </label>
             <FormField
               control={control}
-              name="inward_invoice_no"
+              name="supplier_invoice_no"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Enter Invoice No." {...field} />
+                    <Input placeholder="Enter Supplier Invoice No" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -115,31 +115,12 @@ export function InwardHeader({
         </div>
       </div>
 
-      {/* ---------------- RIGHT SECTION ---------------- */}
+      {/* RIGHT SECTION */}
       <div className="col-span-12 lg:col-span-6">
         <div className="p-4 border rounded grid grid-cols-2 gap-4">
-          {/* Tin No */}
-          <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              TIN No*
-            </label>
-            <FormField
-              control={control}
-              name="inward_tin_no"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Enter TIN No." {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
           {/* Inward Date */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Inward Date*
             </label>
             <FormField
@@ -148,11 +129,7 @@ export function InwardHeader({
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input
-                      type="date"
-                      value={field.value ?? ""}
-                      onChange={(e) => field.onChange(e.target.value)}
-                    />
+                    <Input type="date" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -162,12 +139,12 @@ export function InwardHeader({
 
           {/* Vehicle No */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
+            <label className="block text-sm font-medium mb-1 text-center">
               Vehicle No
             </label>
             <FormField
               control={control}
-              name="inward_vehicle_no"
+              name="vehicle_no"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
@@ -179,18 +156,75 @@ export function InwardHeader({
             />
           </div>
 
-          {/* Status */}
+          {/* Lot No */}
           <div>
-            <label className="block text-center text-sm font-medium mb-1">
-              Status
+            <label className="block text-sm font-medium mb-1 text-center">
+              Lot No
             </label>
             <FormField
               control={control}
-              name="status"
+              name="lot_no"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Enter Status" {...field} />
+                    <Input placeholder="Lot No" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* No of Bags */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-center">
+              No of Bags*
+            </label>
+            <FormField
+              control={control}
+              name="no_of_bags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="number" placeholder="0" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Total Weight */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-center">
+              Total Weight*
+            </label>
+            <FormField
+              control={control}
+              name="total_weight"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input type="number" placeholder="0.00" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          {/* Received By */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-center">
+              Received By*
+            </label>
+            <FormField
+              control={control}
+              name="received_by"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Enter Person Name" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

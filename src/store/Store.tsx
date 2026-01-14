@@ -13,6 +13,11 @@ import invoiceFormReducer from "@/slice/InvoiceFormSlice";
 import paymentFormReducer from "@/slice/PaymentFormSlice";
 import { BankApi } from "@/api/BankApi";
 import { PaymentApi } from "@/api/PaymentApi";
+import { ProductionReturnApi } from "@/api/ProductionReturnApi";
+import { JobMasterApi } from "@/api/JobMasterApi";
+import { KnittingMachineApi } from "@/api/KnittingMachineApi";
+import { KnittingProductionApi } from "@/api/KnittingProductionApi";
+import { KnittingReworkApi } from "@/api/ProductionReworkApi";
 
 
 export const store = configureStore({
@@ -31,6 +36,11 @@ export const store = configureStore({
     [ReportApi.reducerPath]: ReportApi.reducer,
     [BankApi.reducerPath]: BankApi.reducer,
     [PaymentApi.reducerPath]: PaymentApi.reducer,
+    [ProductionReturnApi.reducerPath]: ProductionReturnApi.reducer,
+    [JobMasterApi.reducerPath]: JobMasterApi.reducer,
+    [KnittingMachineApi.reducerPath]: KnittingMachineApi.reducer,
+    [KnittingProductionApi.reducerPath]: KnittingProductionApi.reducer,
+    [KnittingReworkApi.reducerPath]: KnittingReworkApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -44,7 +54,12 @@ export const store = configureStore({
       InvoiceApi.middleware,
       ReportApi.middleware,
       BankApi.middleware,
-      PaymentApi.middleware
+      PaymentApi.middleware,
+      ProductionReturnApi.middleware,
+      JobMasterApi.middleware,
+      KnittingMachineApi.middleware,
+      KnittingProductionApi.middleware,
+      KnittingReworkApi.middleware
     ),
 });
 
