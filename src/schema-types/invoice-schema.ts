@@ -212,3 +212,50 @@ export type InvoiceRow = z.infer<typeof invoiceRowSchema>;
 export type InvoiceRedux = Invoice & {
   bill_lastEdited?: "billDiscountPer" | "billDiscountAmt";
 };
+
+
+// -------------------------
+// Invoice Query Type
+// -------------------------
+export const invoiceQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  search: z.string().optional(),
+});
+
+export type InvoiceQuery = z.infer<typeof invoiceQuerySchema>;
+
+// -------------------------
+// Invoice With Relations
+// -------------------------
+export type InvoiceWithRelations = {
+  id: number;
+  customer_id: number;
+  invoice_number: string;
+  invoice_date: string;
+  invoice_total: number;
+  balance_amount: number;
+  status?: string;
+  customer?: {
+    id?: number;
+    customer_name?: string;
+  };
+  bank?: {
+    id?: number;
+    bank_name?: string;
+  };
+};
+
+// -------------------------
+// Invoice Search Columns
+// -------------------------
+export const invoiceSearchColumns: string[] = [
+  "invoice_number",
+  "customer.customer_name",
+  "invoice_date",
+  "invoice_total",
+  "balance_amount",
+  "status",
+];

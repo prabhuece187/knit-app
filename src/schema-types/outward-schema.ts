@@ -70,3 +70,32 @@ export type ItemWithDetails = Item & {
   yarn_gauge?: string;
   yarn_colour?: string;
 };
+
+// ======================= Query ============================
+
+export const outwardQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  search: z.string().optional(),
+});
+
+export type OutwardQuery = z.infer<typeof outwardQuerySchema>;
+
+// ======================= With Relations ============================
+
+export type OutwardWithRelations = Outward & {
+  customer?: {
+    id?: number;
+    customer_name?: string;
+  };
+  mill?: {
+    id?: number;
+    mill_name?: string;
+  };
+  inward?: {
+    id?: number;
+    inward_no?: string;
+  };
+};

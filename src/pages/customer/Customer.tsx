@@ -1,80 +1,86 @@
-import { useGetCustomerQuery } from "@/api/CustomerApi";
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useMemo, useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
 
 import AddCustomer from "./component/AddCustomer";
-import { getCustomerColumns, searchColumns } from "./constant/customer-config";
 import EditCustomer from "./component/EditCustomer";
-// import { useOutletContext } from "react-router-dom";
-import type { Customer, customerSchema } from "@/schema-types/master-schema";
-import type z from "zod";
 
-export type APIResponseCustomer = z.infer<typeof customerSchema>;
+import {
+  getCustomerColumns,
+} from "./constant/customer-config";
+import type { Customer } from "@/schema-types/master-schema";
+import type { CustomerQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetCustomerQuery } from "@/api/CustomerApi";
 
 export default function Customer() {
-  // Listing Customer Values
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
+  const [open, setOpen] = useState(false);
+  const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(
+    null,
+  );
 
-  // const { setSidebarContent } = useOutletContext<OutletContext>();
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<CustomerQuery, Customer>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
 
   const {
     data: response,
-    isLoading: customerLoading,
+    isLoading,
     isError,
   } = useGetCustomerQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
   );
 
-  const rawData = useMemo<APIResponseCustomer[]>(() => {
-    return Array.isArray(response?.data)
-      ? response.data
-      : response?.data
-      ? [response.data]
-      : [];
-  }, [response?.data]);
+  const handleEdit = useCallback((id: number) => {
+    setSelectedCustomerId(id);
+    setOpen(true);
+  }, []);
 
-  const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const handleAdd = useCallback(() => {
+    setSelectedCustomerId(null);
+    setOpen(true);
+  }, []);
 
-  const columns = getCustomerColumns(setOpen, setSelectedId);
+  const columns = useMemo(() => getCustomerColumns(handleEdit), [handleEdit]);
+
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add Customer</Button>,
+    [handleAdd],
+  );
 
   return (
     <>
-      <DataTableCard
-        name={"Customer"}
+      <EnhancedDataTableCard
+        name="Customers"
         columns={columns}
-        data={rawData}
-        searchColumns={searchColumns}
-        loading={customerLoading}
-        open={open}
-        setOpen={setOpen}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
         isError={isError}
-        trigger={
-          <Button
-            onClick={() => {
-              setSelectedId(null);
-              setOpen(true);
-            }}
-          >
-            + Add Customer
-          </Button>
-        }
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search customers..."
+        searchValue={searchTerm}
+        module="customer"
+        trigger={triggerButton}
       />
 
-      {selectedId ? (
-        <EditCustomer id={selectedId} open={open} setOpen={setOpen} />
+      {selectedCustomerId ? (
+        <EditCustomer id={selectedCustomerId} open={open} setOpen={setOpen} />
       ) : (
         <AddCustomer open={open} setOpen={setOpen} />
       )}

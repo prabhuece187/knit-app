@@ -1,96 +1,79 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import DataTableCard from "@/components/custom/DataTableCard";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+import { getJobMasterColumns } from "./constant/job-master-config";
+import {
+  type Customer,
+  type JobMasterQuery,
+  type JobMasterWithRelations,
+  type Mill,
+} from "@/schema-types/master-schema";
+import { useDataTable } from "@/hooks/useDataTable";
 import { useGetJobsQuery } from "@/api/JobMasterApi";
 
-import {
-  getJobMasterColumns,
-  searchColumns,
-} from "./constant/job-master-config";
 import EditJobMaster from "./component/EditJobMaster";
 import AddJobMaster from "./component/AddJobMaster";
 import { useGetCustomerListQuery } from "@/api/CustomerApi";
-import {
-  jobMasterSchema,
-  type Customer,
-  type JobMaster,
-  type Mill,
-} from "@/schema-types/master-schema";
 import { useGetMillListQuery } from "@/api/MillApi";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import type { Inward } from "@/schema-types/inward-schema";
 import { useGetInwardListQuery } from "@/api/InwardApi";
+import type { Inward } from "@/schema-types/inward-schema";
 
 export default function JobMaster() {
   const [open, setOpen] = useState(false);
   const [selectedJobId, setSelectedJobId] = useState<number | null>(null);
 
-  // const { data, isLoading, isError } = useGetJobsQuery({
-  //   limit: 10,
-  //   offset: 0,
-  //   curpage: 1,
-  //   searchInput: "",
-  // });
-
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
-
   const {
-    data: response,
-    isLoading: isJobLoading,
-    isError,
-  } = useGetJobsQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
-  );
-
-  const { data: customers = [] } = useGetCustomerListQuery("") as {
-    data: Customer[];
-  };
-
-  const { data: mills = [] } = useGetMillListQuery("") as { data: Mill[] };
-  const { data: inwards = [] } = useGetInwardListQuery("") as {
-    data: Inward[];
-  };
-
-  const jobData = response ?? [];
-
-  const form = useForm<JobMaster>({
-    resolver: zodResolver(jobMasterSchema),
-    defaultValues: {
-      // user_id: 1,
-      job_date: new Date().toISOString().split("T")[0],
-    },
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<JobMasterQuery, JobMasterWithRelations>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
   });
 
-  console.log(form);
-  console.log(jobData);
+         const { data: customers = [] } = useGetCustomerListQuery("") as {
+           data: Customer[];
+         };
 
-  const columns = getJobMasterColumns(setOpen, setSelectedJobId);
+         const { data: mills = [] } = useGetMillListQuery("") as {
+           data: Mill[];
+         };
+         const { data: inwards = [] } = useGetInwardListQuery("") as {
+           data: Inward[];
+         };
+
+  const { data, isLoading, isError } = useGetJobsQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
+
+  const columns = useMemo(
+    () => getJobMasterColumns(setOpen, setSelectedJobId),
+    [],
+  );
 
   return (
     <>
-      <DataTableCard
+      <EnhancedDataTableCard
         name="Job Master"
         columns={columns}
-        data={jobData}
-        searchColumns={searchColumns}
-        loading={isJobLoading}
+        data={data?.data ?? []}
+        meta={data?.meta ?? pagination}
+        loading={isLoading}
         isError={isError}
-        open={open}
-        setOpen={setOpen}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchValue={searchTerm}
+        searchPlaceholder="Search job / inward / customer / mill..."
         trigger={
           <Button
             onClick={() => {
@@ -120,7 +103,8 @@ export default function JobMaster() {
           mills={mills}
           inwards={inwards}
         />
-      )}
+      )
+      }
     </>
   );
 }

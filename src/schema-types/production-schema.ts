@@ -57,3 +57,19 @@ export const fullKnittingProductionSchema = knittingProductionSchema.extend({
 export type FullKnittingProductionFormValues = z.infer<
   typeof fullKnittingProductionSchema
 >;
+
+/* ======================== Query Schema ======================== */
+
+export const knittingProductionQuerySchema = z.object({
+  page: z.number().optional(),
+  limit: z.number().optional(),
+  search: z.string().optional(),
+});
+
+export type KnittingProductionQuery = {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sort_by?: string;
+  sort_order?: "asc" | "desc";
+};

@@ -1,5 +1,4 @@
 import z from "zod";
-
 // =======================  customer ============================
 export const customerSchema = z.object({
   id: z.coerce.number().optional(),
@@ -22,6 +21,20 @@ export const customerSchema = z.object({
 
 export type Customer = z.infer<typeof customerSchema>;
 
+export const customerQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  customer_name: z.string().optional(),
+  customer_mobile: z.string().optional(),
+  customer_email: z.string().optional(),
+  state_name: z.string().optional(),
+});
+
+export type CustomerQuery = z.infer<typeof customerQuerySchema>;
+
 // =======================  State ============================
 
 export const stateSchema = z.object({
@@ -36,6 +49,18 @@ export const stateSchema = z.object({
 });
 
 export type State = z.infer<typeof stateSchema>;
+
+export const stateQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  state_name: z.string().optional(),
+  state_code: z.string().optional(),
+});
+
+export type StateQuery = z.infer<typeof stateQuerySchema>;
 
 // =======================  Item ============================
 
@@ -55,6 +80,21 @@ export const itemSchema = z.object({
 
 export type Item = z.infer<typeof itemSchema>;
 
+// Item-specific query schema (extends pagination options)
+export const itemQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  // Search / filters
+  item_name: z.string().optional(),
+  hsn_code: z.string().optional(),
+  unit: z.string().optional(),
+});
+
+export type ItemQuery = z.infer<typeof itemQuerySchema>;
+
 // =======================  Mill ============================
 
 export const millSchema = z.object({
@@ -69,6 +109,18 @@ export const millSchema = z.object({
 });
 
 export type Mill = z.infer<typeof millSchema>;
+
+export const millQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  mill_name: z.string().optional(),
+  mobile_number: z.string().optional(),
+});
+
+export type MillQuery = z.infer<typeof millQuerySchema>;
 
 // =======================  Yarn Type ============================
 
@@ -87,6 +139,18 @@ export type SidebarRightData = {
   name: string;
   detail: string;
 };
+
+export const yarnTypeQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  // search / filters
+  yarn_type: z.string().optional(),
+});
+
+export type YarnTypeQuery = z.infer<typeof yarnTypeQuerySchema>;
 
 // ======================== Dynamic Add ==========================
 export type LabelType =
@@ -118,6 +182,18 @@ export const bankSchema = z.object({
 });
 
 export type Bank = z.infer<typeof bankSchema>;
+
+export const bankQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  // search
+  bank_name: z.string().optional(),
+});
+
+export type BankQuery = z.infer<typeof bankQuerySchema>;
 
 // =======================  Job master ============================
 
@@ -155,6 +231,32 @@ export const jobMasterSchema = jobMasterBaseSchema.extend({
 
 export type JobMaster = z.infer<typeof jobMasterSchema>;
 
+
+export const jobMasterQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  search: z.string().optional(),
+});
+
+export type JobMasterQuery = z.infer<typeof jobMasterQuerySchema>;
+
+export type JobMasterWithRelations = JobMaster & {
+  inward?: {
+    id?: number;
+    inward_no?: string;
+  };
+  customer?: {
+    id?: number;
+    customer_name?: string;
+  };
+  mill?: {
+    id?: number;
+    mill_name?: string;
+  };
+};
+
 // =======================  Knitting Machine ============================
 
 export const knittingMachineSchema = z.object({
@@ -175,3 +277,19 @@ export const knittingMachineSchema = z.object({
 });
 
 export type KnittingMachine = z.infer<typeof knittingMachineSchema>;
+
+export const knittingMachineQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  
+  // Serch fields
+  machine_no: z.string().optional(),
+  brand: z.string().optional(),
+  dia: z.string().optional(),
+  gauge: z.string().optional(),
+  status: z.string().optional(),
+});
+
+export type KnittingMachineQuery = z.infer<typeof knittingMachineQuerySchema>;

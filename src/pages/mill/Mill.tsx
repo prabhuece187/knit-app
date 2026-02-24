@@ -1,70 +1,79 @@
-
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { getMillColumns, searchColumns } from "./constant/mill-config"; // You’ll need to create this
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+
 import AddMill from "./component/AddMill";
 import EditMill from "./component/EditMill";
+
+import { getMillColumns } from "./constant/mill-config";
+import type { Mill } from "@/schema-types/master-schema";
+import type { MillQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
 import { useGetMillQuery } from "@/api/MillApi";
+
 export default function Mill() {
-  // Listing Mill Values
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
-
-  const {
-    data: response,
-    isLoading: millLoading,
-    isError,
-  } = useGetMillQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
-  );
-
-  const millData = response?.data ?? [];
-
   const [open, setOpen] = useState(false);
   const [selectedMillId, setSelectedMillId] = useState<number | null>(null);
 
-  const columns = getMillColumns(setOpen, setSelectedMillId);
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<MillQuery, Mill>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
+
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useGetMillQuery({ ...queryParams }, { refetchOnMountOrArgChange: true });
+
+  const handleEdit = useCallback((id: number) => {
+    setSelectedMillId(id);
+    setOpen(true);
+  }, []);
+
+  const handleAdd = useCallback(() => {
+    setSelectedMillId(null);
+    setOpen(true);
+  }, []);
+
+  const columns = useMemo(() => getMillColumns(handleEdit), [handleEdit]);
+
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add Mill</Button>,
+    [handleAdd],
+  );
 
   return (
     <>
-        <DataTableCard
-          name={"Mill"}
-          columns={columns}
-          data={millData}
-          searchColumns={searchColumns}
-          loading={millLoading}
-          open={open}
-          setOpen={setOpen}
-          isError={isError}
-          trigger={
-            <Button
-              onClick={() => {
-                setSelectedMillId(null);
-                setOpen(true);
-              }}
-            >
-              Add Mill
-            </Button>
-          }
-        />
+      <EnhancedDataTableCard
+        name="Mills"
+        columns={columns}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
+        isError={isError}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search mills..."
+        searchValue={searchTerm}
+        module="mill"
+        trigger={triggerButton}
+      />
 
       {selectedMillId ? (
-        <EditMill
-          id={selectedMillId}
-          open={open}
-          setOpen={setOpen}
-        />
+        <EditMill id={selectedMillId} open={open} setOpen={setOpen} />
       ) : (
         <AddMill open={open} setOpen={setOpen} />
       )}

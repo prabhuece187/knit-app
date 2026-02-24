@@ -1,69 +1,61 @@
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { getInwardColumns, searchColumns } from "./constant/inward-config";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+import { getInwardColumns } from "./constant/inward-config";
+import {
+  type InwardQuery,
+  type InwardWithRelations,
+} from "@/schema-types/inward-schema";
+import { useDataTable } from "@/hooks/useDataTable";
 import { useGetInwardQuery } from "@/api/InwardApi";
-import { Link, useNavigate } from "react-router-dom";
-import type { Inward } from "@/schema-types/inward-schema";
+import { useNavigate } from "react-router-dom";
 
 export default function Inward() {
-  // Pagination & Search Defaults
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
-
-  // Fetch inward data
-  const {
-    data: response,
-    isLoading: inwardLoading,
-    isError,
-  } = useGetInwardQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
-  );
-
   const navigate = useNavigate();
 
-  const handleEdit = (inward: Inward) => {
-    navigate(`/editinward/${inward.id}`);
-  };
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<InwardQuery, InwardWithRelations>({
+    searchField: "search", // ✅ MATCH BACKEND
+    initialLimit: 10,
+    initialPage: 1,
+  });
 
-  const handleDelete = (inward: Inward) => {
-    console.log("Delete", inward);
-  };
+  const { data, isLoading, isError } = useGetInwardQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
 
-  const inwardData = response?.data ?? [];
+  const handleEdit = useCallback(
+    (id: number) => navigate(`/editinward/${id}`),
+    [navigate],
+  );
 
-  const [open, setOpen] = useState(false);
-  // const [selectedInwardId] = useState<number | null>(null);
-
-  const columns = getInwardColumns(handleEdit, handleDelete);
+  const columns = useMemo(() => getInwardColumns(handleEdit), [handleEdit]);
 
   return (
-    <>
-        <DataTableCard
-          name={"Inward"}
-          columns={columns}
-          data={inwardData}
-          searchColumns={searchColumns}
-          loading={inwardLoading}
-          open={open}
-          setOpen={setOpen}
-          isError={isError}
-          trigger={
-            <Button>
-              <Link to="/addinward">Add Inward</Link>
-            </Button>
-          }
-        />
-    </>
+    <EnhancedDataTableCard
+      name="Inward"
+      columns={columns}
+      data={data?.data ?? []}
+      meta={data?.meta ?? pagination}
+      loading={isLoading}
+      isError={isError}
+      onPageChange={handlePageChange}
+      onLimitChange={handleLimitChange}
+      onSortChange={handleSortChange}
+      onSearchChange={handleSearchChange}
+      searchValue={searchTerm}
+      searchPlaceholder="Search inward / customer / mill..."
+      trigger={
+        <Button onClick={() => navigate("/addinward")}>Add Inward</Button>
+      }
+    />
   );
 }

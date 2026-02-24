@@ -1,4 +1,3 @@
-// src/pages/payment/constant/payment-config.ts
 import type { useDeletePaymentMutation } from "@/api/PaymentApi";
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
@@ -7,9 +6,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 export function getPaymentColumns(
-  // setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  // setSelectedId: React.Dispatch<React.SetStateAction<number | null>>,
-  deletePayment: ReturnType<typeof useDeletePaymentMutation>[0]
+  deletePayment: ReturnType<typeof useDeletePaymentMutation>[0],
 ): ColumnDef<InvoicePayment>[] {
   return [
     {
@@ -50,9 +47,7 @@ export function getPaymentColumns(
         <DataTableColumnHeader column={column} title="Customer Name" />
       ),
       cell: ({ row }) => {
-        // Try first invoice's customer
         const customer = row.original.invoices?.[0]?.customer;
-        // Fallback to payment-level customer_name
         return customer?.customer_name ?? row.original.customer_name ?? "-";
       },
     },
@@ -76,15 +71,10 @@ export function getPaymentColumns(
       cell: ({ row }) => (
         <DataTableRowActions<InvoicePayment>
           row={row}
-          // onEdit={(payment) => {
-          //   setSelectedId(Number(payment.id));
-          //   setOpen(true);
-          // }}
           onDelete={async (payment) => {
             if (!payment.id) return;
             if (!confirm("Are you sure you want to delete this payment?"))
               return;
-
             try {
               await deletePayment(payment.id).unwrap();
               alert("Payment deleted successfully");
@@ -99,7 +89,6 @@ export function getPaymentColumns(
   ];
 }
 
-// 🔍 Searchable columns
 export const searchColumns: (keyof InvoicePayment)[] = [
   "payment_no",
   "customer_name",

@@ -5,8 +5,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 export function getYarnTypeColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedYarnTypeId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<YarnType>[] {
   return [
     {
@@ -22,9 +22,10 @@ export function getYarnTypeColumns(
       ),
       cell: ({ row }) => {
         const id = row.original.id;
+        if (!id) return null;
 
-        if (!id) return null; // secure the ID here
         const encodedId = btoa(id.toString());
+
         return (
           <Link
             to={`/yarn_types/${encodedId}`}
@@ -40,18 +41,14 @@ export function getYarnTypeColumns(
       cell: ({ row }) => (
         <DataTableRowActions<YarnType>
           row={row}
-          onEdit={(item) => {
-            setSelectedYarnTypeId(Number(item.id));
-            setOpen(true);
-          }}
-          onDelete={(item) => {
-            console.log("Delete", item);
-          }}
+          onEdit={(item) => onEdit(Number(item.id))}
+          onDelete={(item) => onDelete?.(Number(item.id))}
         />
       ),
     },
   ];
 }
+
 
 export const searchColumns = yarnTypeSchema.keyof()
   .options as (keyof YarnType)[];

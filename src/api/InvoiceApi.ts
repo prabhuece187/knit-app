@@ -1,3 +1,5 @@
+import type { Invoice, InvoiceQuery } from "@/schema-types/invoice-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const InvoiceApi = createApi({
@@ -7,11 +9,15 @@ export const InvoiceApi = createApi({
   }),
   tagTypes: ["InvoiceTag"],
   endpoints: (build) => ({
-    getInvoice: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `invoice?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
-        method: "GET",
-      }),
+    getInvoice: build.query<
+          PaginatedResponse<Invoice>,
+          InvoiceQuery
+        >({
+          query: (params) => ({
+            url: "invoice",
+            method: "GET",
+            params,
+          }),
       providesTags: ["InvoiceTag"],
     }),
     getInvoiceById: build.query({

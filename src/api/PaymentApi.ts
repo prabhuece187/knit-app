@@ -1,4 +1,5 @@
-import type { InvoiceItem } from "@/schema-types/paymennt-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
+import type { InvoiceItem, InvoicePayment, PaymentQuery } from "@/schema-types/paymennt-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const PaymentApi = createApi({
@@ -8,10 +9,11 @@ export const PaymentApi = createApi({
   }),
   tagTypes: ["PaymentTag"],
   endpoints: (build) => ({
-    getPayment: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `payments?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+    getPayment: build.query<PaginatedResponse<InvoicePayment>, PaymentQuery>({
+      query: (params) => ({
+        url: "payments",
         method: "GET",
+        params,
       }),
       providesTags: ["PaymentTag"],
     }),

@@ -5,8 +5,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 export function getMillColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedMillId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<Mill>[] {
   return [
     {
@@ -22,8 +22,8 @@ export function getMillColumns(
       ),
       cell: ({ row }) => {
         const id = row.original.id;
+        if (!id) return null;
 
-        if (!id) return null; // secure the ID here
         const encodedId = btoa(id.toString());
         return (
           <Link
@@ -58,13 +58,8 @@ export function getMillColumns(
       cell: ({ row }) => (
         <DataTableRowActions<Mill>
           row={row}
-          onEdit={(item) => {
-            setSelectedMillId(Number(item.id));
-            setOpen(true);
-          }}
-          onDelete={(item) => {
-            console.log("Delete", item);
-          }}
+          onEdit={(mill) => onEdit(Number(mill.id))}
+          onDelete={(mill) => onDelete?.(Number(mill.id))}
         />
       ),
     },

@@ -24,3 +24,20 @@ export const knittingReworkSchema = z.object({
 });
 
 export type KnittingRework = z.infer<typeof knittingReworkSchema>;
+
+/* ---------- Query Schema (Pagination + Search) ---------- */
+export const knittingReworkQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  search: z.string().optional(),
+});
+
+export type KnittingReworkQuery = z.infer<typeof knittingReworkQuerySchema>;
+
+/* ---------- With Relations ---------- */
+export type KnittingReworkWithRelations = KnittingRework & {
+  production_return?: { id?: number; return_no?: string };
+  job_master?: { id?: number; job_card_no?: string };
+};

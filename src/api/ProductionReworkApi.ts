@@ -1,4 +1,5 @@
-import type { KnittingRework } from "@/schema-types/rework-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
+import type { KnittingRework, KnittingReworkQuery } from "@/schema-types/rework-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
@@ -10,11 +11,14 @@ export const KnittingReworkApi = createApi({
   endpoints: (build) => ({
     // LIST
     getReworks: build.query<
-      { data: KnittingRework[]; total: number },
-      { limit: number; offset: number; curpage: number; searchInput: string }
+      PaginatedResponse<KnittingRework>,
+      KnittingReworkQuery
     >({
-      query: ({ limit, offset, curpage, searchInput }) =>
-        `knitting_rework/?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+      query: (params) => ({
+        url: "knitting_rework",
+        method: "GET",
+        params,
+      }),
       providesTags: ["KRTag"],
     }),
 
@@ -56,7 +60,7 @@ export const KnittingReworkApi = createApi({
     }),
 
     // NEXT REWORK NO
-    getNextReworkNo: build.query<{ next_rework_no:  string }, void>({
+    getNextReworkNo: build.query<{ next_rework_no: string }, void>({
       query: () => "knitting_rework_create/next-no", // backend → reworkCreate()
       providesTags: ["KRTag"],
     }),

@@ -1,16 +1,14 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import { type Invoice } from "@/schema-types/invoice-schema";
 import type { ColumnDef } from "@tanstack/react-table";
-// import { useNavigate } from "react-router-dom";
+import type { Invoice } from "@/schema-types/invoice-schema";
 
 export function getInvoiceColumns(
   handleEdit: (invoice: Invoice) => void,
   handleDelete: (invoice: Invoice) => void,
   navigate?: (path: string) => void,
-  handlePrint?: (invoice: Invoice) => void
+  handlePrint?: (invoice: Invoice) => void,
 ): ColumnDef<Invoice>[] {
-  // const navigate = useNavigate();
   const defaultHandlePrint = (invoice: Invoice) => {
     if (navigate) navigate(`/printinvoice/${invoice.id}`);
   };
@@ -69,7 +67,6 @@ export function getInvoiceColumns(
           row={row}
           onEdit={handleEdit}
           onDelete={handleDelete}
-          // ✅ use provided handler if available, otherwise fallback
           onPrint={handlePrint || defaultHandlePrint}
         />
       ),
@@ -77,18 +74,12 @@ export function getInvoiceColumns(
   ];
 }
 
-// -------------------------
-// Search Columns
-// -------------------------
-// Use TypeScript type keyof instead of Zod keyOf()
-type InvoiceKeys = keyof Invoice;
-
-// List the fields you want to allow search on
-export const searchColumns: InvoiceKeys[] = [
+// Searchable fields
+export const searchColumns: (keyof Invoice)[] = [
   "id",
   "invoice_number",
   "invoice_date",
   "invoice_total",
   "balance_amount",
-  "customer_id", // or "customer_name" depending on your flattened data
+  "customer_id",
 ];

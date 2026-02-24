@@ -1,15 +1,11 @@
-// src/tables/knitting-production-columns.ts
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import {
-  knittingProductionSchema,
-  type KnittingProduction,
-} from "@/schema-types/production-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import type { KnittingProduction } from "@/schema-types/production-schema";
 
 export function getKnittingProductionColumns(
   handleEdit: (row: KnittingProduction) => void,
-  handleDelete: (row: KnittingProduction) => void
+  handleDelete: (row: KnittingProduction) => void,
 ): ColumnDef<KnittingProduction>[] {
   return [
     {
@@ -75,7 +71,7 @@ export function getKnittingProductionColumns(
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions<KnittingProduction>
+        <DataTableRowActions
           row={row}
           onEdit={handleEdit}
           onDelete={handleDelete}
@@ -85,5 +81,11 @@ export function getKnittingProductionColumns(
   ];
 }
 
-export const searchColumns = knittingProductionSchema.keyof()
-  .options as (keyof KnittingProduction)[];
+/* ======================== Search Columns ======================== */
+
+export const searchColumns: (keyof KnittingProduction)[] = [
+  "production_no",
+  "shift",
+  "operator_name",
+  "remarks",
+];

@@ -1,67 +1,107 @@
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { getItemColumns, searchColumns } from "./constant/item-config";
-import EditItem from "./component/EditItem";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+
 import AddItem from "./component/AddItem";
+import EditItem from "./component/EditItem";
+
+import { getItemColumns } from "./constant/item-config";
+import type { Item, ItemQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
 import { useGetItemQuery } from "@/api/ItemApi";
 
-export default function State() {
-  //  Listing Customer Values
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
+// -----------------------
+// Helper function to fetch items (optional, if you want manual fetch)
+// -----------------------
+// Not needed if using RTK Query directly in useGetItemQuery
 
+export default function Item() {
+  // -----------------------
+  // Dialog state
+  // -----------------------
+  const [open, setOpen] = useState(false);
+  const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+
+  // -----------------------
+  // Data table hook (handles pagination, filters, search, sort)
+  // -----------------------
   const {
-    data: response, // fallback to [] if undefined
-    isLoading: stateLoading,
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<ItemQuery, Item>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
+
+  // -----------------------
+  // RTK Query: fetch items
+  // -----------------------
+  const {
+    data: response,
+    isLoading,
     isError,
   } = useGetItemQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
+    { ...queryParams }, // ✅ spread to ensure new reference each render
+    { refetchOnMountOrArgChange: true }, // ✅ ensures new page triggers fetch
   );
 
-  const itemData = response?.data ?? [];
+  // -----------------------
+  // Dialog handlers
+  // -----------------------
+  const handleEdit = useCallback((id: number) => {
+    setSelectedItemId(id);
+    setOpen(true);
+  }, []);
 
-  const [open, setOpen] = useState(false);
+  const handleAdd = useCallback(() => {
+    setSelectedItemId(null);
+    setOpen(true);
+  }, []);
 
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  // -----------------------
+  // Columns & trigger button
+  // -----------------------
+  const columns = useMemo(() => getItemColumns(handleEdit), [handleEdit]);
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add Item</Button>,
+    [handleAdd],
+  );
 
-  const columns = getItemColumns(setOpen, setSelectedId);
+  // -----------------------
+  // Debugging
+  // -----------------------
+  console.log("Fetching page:", pagination.page, "limit:", pagination.limit);
+  console.log("Query Params:", queryParams);
+  console.log("Items fetched:", response?.data?.length);
 
   return (
     <>
-      <DataTableCard
-        name={"State"}
+      <EnhancedDataTableCard
+        name="Items"
         columns={columns}
-        data={itemData}
-        searchColumns={searchColumns}
-        loading={stateLoading}
-        open={open}
-        setOpen={setOpen}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
         isError={isError}
-        trigger={
-          <Button
-            onClick={() => {
-              setSelectedId(null);
-              setOpen(true);
-            }}
-          >
-            Add Item
-          </Button>
-        }
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search items by name..."
+        searchValue={searchTerm}
+        module="item"
+        trigger={triggerButton}
       />
 
-      {selectedId ? (
-        <EditItem id={selectedId} open={open} setOpen={setOpen} />
+      {selectedItemId ? (
+        <EditItem id={selectedItemId} open={open} setOpen={setOpen} />
       ) : (
         <AddItem open={open} setOpen={setOpen} />
       )}

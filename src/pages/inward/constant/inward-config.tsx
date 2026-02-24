@@ -1,31 +1,16 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import { inwardSchema, type Inward } from "@/schema-types/inward-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { type InwardWithRelations } from "@/schema-types/inward-schema";
 
 export function getInwardColumns(
-  handleEdit: (inward: Inward) => void,
-  handleDelete: (inward: Inward) => void
-): ColumnDef<Inward>[] {
+  handleEdit: (id: number) => void,
+): ColumnDef<InwardWithRelations>[] {
   return [
     {
       accessorKey: "id",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="ID" />
-      ),
-    },
-
-    {
-      accessorKey: "customer.customer_name",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Customer" />
-      ),
-    },
-
-    {
-      accessorKey: "mill.mill_name",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Mill" />
       ),
     },
 
@@ -37,76 +22,30 @@ export function getInwardColumns(
     },
 
     {
-      accessorKey: "supplier_invoice_no",
+      accessorFn: (row) => row.customer?.customer_name ?? "-",
+      id: "customer",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Supplier Invoice No" />
+        <DataTableColumnHeader column={column} title="Customer" />
       ),
     },
 
     {
-      accessorKey: "inward_date",
+      accessorFn: (row) => row.mill?.mill_name ?? "-",
+      id: "mill",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Inward Date" />
-      ),
-      cell: ({ row }) =>
-        row.original.inward_date
-          ? new Date(row.original.inward_date).toLocaleDateString()
-          : "-",
-    },
-
-    {
-      accessorKey: "vehicle_no",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Vehicle No" />
-      ),
-    },
-
-    {
-      accessorKey: "lot_no",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Lot No" />
-      ),
-    },
-
-    {
-      accessorKey: "no_of_bags",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Bags" />
-      ),
-    },
-
-    {
-      accessorKey: "total_weight",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Total Weight" />
-      ),
-    },
-
-    {
-      accessorKey: "received_by",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Received By" />
-      ),
-    },
-
-    {
-      accessorKey: "remarks",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Remarks" />
+        <DataTableColumnHeader column={column} title="Mill" />
       ),
     },
 
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions<Inward>
+        <DataTableRowActions
           row={row}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          onEdit={() => handleEdit(row.original.id!)}
         />
       ),
     },
   ];
 }
 
-export const searchColumns = inwardSchema.keyof().options as (keyof Inward)[];

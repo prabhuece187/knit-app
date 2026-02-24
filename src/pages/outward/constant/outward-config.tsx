@@ -1,12 +1,11 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import { outwardSchema, type Outward } from "@/schema-types/outward-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { type OutwardWithRelations } from "@/schema-types/outward-schema";
 
 export function getOutwardColumns(
-  handleEdit: (outward: Outward) => void,
-  handleDelete: (outward: Outward) => void
-): ColumnDef<Outward>[] {
+  handleEdit: (id: number) => void,
+): ColumnDef<OutwardWithRelations>[] {
   return [
     {
       accessorKey: "id",
@@ -14,36 +13,52 @@ export function getOutwardColumns(
         <DataTableColumnHeader column={column} title="ID" />
       ),
     },
+
     {
-      accessorKey: "customer.customer_name",
+      accessorFn: (row) => row.customer?.customer_name ?? "-",
+      id: "customer",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Customer" />
       ),
     },
+
     {
-      accessorKey: "mill.mill_name",
+      accessorFn: (row) => row.mill?.mill_name ?? "-",
+      id: "mill",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Mill" />
       ),
     },
+
+    {
+      accessorFn: (row) => row.inward?.inward_no ?? "-",
+      id: "inward",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Inward No" />
+      ),
+    },
+
     {
       accessorKey: "outward_no",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Outward No" />
       ),
     },
+
     {
-      accessorKey: "supplier_invoice_no",
+      accessorKey: "outward_invoice_no",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Supplier Invoice" />
+        <DataTableColumnHeader column={column} title="Invoice No" />
       ),
     },
+
     {
       accessorKey: "vehicle_no",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Vehicle No" />
       ),
     },
+
     {
       accessorKey: "outward_date",
       header: ({ column }) => (
@@ -54,53 +69,36 @@ export function getOutwardColumns(
           ? new Date(row.original.outward_date).toLocaleDateString()
           : "-",
     },
-    {
-      accessorKey: "lot_no",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Lot No" />
-      ),
-    },
-    {
-      accessorKey: "no_of_bags",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="No. of Bags" />
-      ),
-    },
+
     {
       accessorKey: "total_weight",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Total Weight" />
       ),
     },
+
     {
-      accessorKey: "yarn_send",
+      accessorKey: "process_type",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Yarn Send" />
+        <DataTableColumnHeader column={column} title="Process Type" />
       ),
     },
-    {
-      accessorKey: "sent_by",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Sent By" />
-      ),
-    },
+
     {
       accessorKey: "remarks",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Remarks" />
       ),
     },
+
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions<Outward>
+        <DataTableRowActions
           row={row}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
+          onEdit={() => handleEdit(row.original.id!)}
         />
       ),
     },
   ];
 }
-
-export const searchColumns = outwardSchema.keyof().options as (keyof Outward)[];

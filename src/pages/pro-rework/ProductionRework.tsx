@@ -1,48 +1,69 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import DataTableCard from "@/components/custom/DataTableCard";
-
-import EditProductionRework from "./component/EditProductionRework";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+import { useDataTable } from "@/hooks/useDataTable";
 
 import { useGetReworksQuery } from "@/api/ProductionReworkApi";
-import {
-  getKnittingReworkColumns,
-  searchColumns,
-} from "./constant/pro-rework-config";
+import { getKnittingReworkColumns } from "./constant/pro-rework-config";
+import type {
+  KnittingReworkQuery,
+  KnittingReworkWithRelations,
+} from "@/schema-types/rework-schema";
+
 import AddProductionRework from "./component/AddProductionRework";
+import EditProductionRework from "./component/EditProductionRework";
 
 export default function KnittingRework() {
   const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedRow, setSelectedRow] = useState<
+    KnittingReworkWithRelations | undefined
+  >(undefined);
 
-  const { data, isLoading, isError } = useGetReworksQuery({
-    limit: 10,
-    offset: 0,
-    curpage: 1,
-    searchInput: "",
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<KnittingReworkQuery, KnittingReworkWithRelations>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
   });
 
-  const reworkData = data?.data ?? [];
+   const { data, isLoading, isError } = useGetReworksQuery(
+     { ...queryParams },
+     { refetchOnMountOrArgChange: true },
+   );
 
-  const columns = getKnittingReworkColumns(setOpen, setSelectedId);
+  const columns = useMemo(
+    () => getKnittingReworkColumns(setOpen, setSelectedRow),
+    [],
+  );
 
   return (
     <>
-      <DataTableCard
+      <EnhancedDataTableCard
         name="Knitting Rework"
         columns={columns}
-        data={reworkData}
-        searchColumns={searchColumns}
+        data={data?.data ?? []}
+        meta={data?.meta ?? pagination}
         loading={isLoading}
         isError={isError}
-        open={open}
-        setOpen={setOpen}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchValue={searchTerm}
+        searchPlaceholder="Search rework / return / job..."
         trigger={
           <Button
             onClick={() => {
-              setSelectedId(null);
+              setSelectedRow(undefined);
               setOpen(true);
             }}
           >
@@ -51,11 +72,11 @@ export default function KnittingRework() {
         }
       />
 
-      {selectedId && reworkData.find((r) => r.id === selectedId) ? (
+      {selectedRow ? (
         <EditProductionRework
-          data={reworkData.find((r) => r.id === selectedId)!}
           open={open}
           setOpen={setOpen}
+          data={selectedRow}
         />
       ) : (
         <AddProductionRework open={open} setOpen={setOpen} />

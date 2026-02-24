@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { JobMaster } from "@/schema-types/master-schema";
+import type { JobMaster, JobMasterQuery } from "@/schema-types/master-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
 
@@ -8,10 +9,11 @@ export const JobMasterApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl }),
   tagTypes: ["JobTag"],
   endpoints: (build) => ({
-    getJobs: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `job-master?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+    getJobs: build.query<PaginatedResponse<JobMaster>, JobMasterQuery>({
+      query: (params) => ({
+        url: "job-master",
         method: "GET",
+        params,
       }),
       providesTags: ["JobTag"],
     }),

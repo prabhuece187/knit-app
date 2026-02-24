@@ -1,4 +1,6 @@
 // src/api/KnittingProductionApi.ts
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
+import type { KnittingProduction, KnittingProductionQuery } from "@/schema-types/production-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
@@ -10,10 +12,14 @@ export const KnittingProductionApi = createApi({
   }),
   tagTypes: ["KnittingProductionTag"],
   endpoints: (build) => ({
-    getKnittingProduction: build.query({
-      query: ({ limit, curpage, searchInput }) => ({
-        url: `knitting_production?limit=${limit}&curpage=${curpage}&searchInput=${searchInput}`,
+    getKnittingProduction: build.query<
+      PaginatedResponse<KnittingProduction>,
+      KnittingProductionQuery
+    >({
+      query: (params) => ({
+        url: "knitting_production",
         method: "GET",
+        params,
       }),
       providesTags: ["KnittingProductionTag"],
     }),

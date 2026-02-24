@@ -1,78 +1,103 @@
-
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useMemo, useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
 
-import { getBankColumns, bankSearchColumns } from "./constant/bank-config";
-import type { Bank, bankSchema } from "@/schema-types/master-schema";
-import type z from "zod";
-import { useGetBankQuery } from "@/api/BankApi";
-import EditBank from "./component/EditBank";
 import AddBank from "./component/AddBank";
+import EditBank from "./component/EditBank";
 
-export type APIResponseBank = z.infer<typeof bankSchema>;
+import { getBankColumns } from "./constant/bank-config";
+import type { Bank, BankQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetBankQuery } from "@/api/BankApi";
 
 export default function Bank() {
-  // Listing Bank Values
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
+  // -----------------------
+  // Dialog state
+  // -----------------------
+  const [open, setOpen] = useState(false);
+  const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
 
+  // -----------------------
+  // Data table hook (pagination, search, sort)
+  // -----------------------
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<BankQuery, Bank>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
+
+  // -----------------------
+  // RTK Query: fetch banks
+  // -----------------------
   const {
     data: response,
-    isLoading: bankLoading,
+    isLoading,
     isError,
   } = useGetBankQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
+    { ...queryParams }, // ensure new reference
+    { refetchOnMountOrArgChange: true },
   );
 
-  const rawData = useMemo<APIResponseBank[]>(() => {
-    return Array.isArray(response?.data)
-      ? response.data
-      : response?.data
-      ? [response.data]
-      : [];
-  }, [response?.data]);
+  // -----------------------
+  // Dialog handlers
+  // -----------------------
+  const handleEdit = useCallback((id: number) => {
+    setSelectedBankId(id);
+    setOpen(true);
+  }, []);
 
-  const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const handleAdd = useCallback(() => {
+    setSelectedBankId(null);
+    setOpen(true);
+  }, []);
 
-  const columns = getBankColumns(setOpen, setSelectedId);
+  // -----------------------
+  // Columns & trigger button
+  // -----------------------
+  const columns = useMemo(() => getBankColumns(handleEdit), [handleEdit]);
+
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add Bank</Button>,
+    [handleAdd],
+  );
+
+  // -----------------------
+  // Debugging (optional)
+  // -----------------------
+  console.log("Fetching page:", pagination.page, "limit:", pagination.limit);
+  console.log("Query Params:", queryParams);
+  console.log("Banks fetched:", response?.data?.length);
 
   return (
     <>
-      <DataTableCard
-        name={"Bank"}
+      <EnhancedDataTableCard
+        name="Banks"
         columns={columns}
-        data={rawData}
-        searchColumns={bankSearchColumns}
-        loading={bankLoading}
-        open={open}
-        setOpen={setOpen}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
         isError={isError}
-        trigger={
-          <Button
-            onClick={() => {
-              setSelectedId(null);
-              setOpen(true);
-            }}
-          >
-            + Add Bank
-          </Button>
-        }
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search bank..."
+        searchValue={searchTerm}
+        module="bank"
+        trigger={triggerButton}
       />
 
-      {selectedId ? (
-        <EditBank id={selectedId} open={open} setOpen={setOpen} />
+      {selectedBankId ? (
+        <EditBank id={selectedBankId} open={open} setOpen={setOpen} />
       ) : (
         <AddBank open={open} setOpen={setOpen} />
       )}

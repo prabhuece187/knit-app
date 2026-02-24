@@ -1,73 +1,80 @@
-import { useGetYarnTypeQuery } from "@/api/YarnTypeApi";
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+
 import AddYarnType from "./component/AddYarnType";
 import EditYarnType from "./component/EditYarnType";
-import { getYarnTypeColumns, searchColumns } from "./constant/yarntype-config";
+
+import { getYarnTypeColumns } from "./constant/yarntype-config";
+import type { YarnType, YarnTypeQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetYarnTypeQuery } from "@/api/YarnTypeApi";
 
 export default function YarnType() {
-  // Listing Yarn Type Values
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
+  const [open, setOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  // 🔥 SAME STRUCTURE AS ITEM
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<YarnTypeQuery, YarnType>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
 
   const {
     data: response,
-    isLoading: yarnTypeLoading,
+    isLoading,
     isError,
   } = useGetYarnTypeQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
   );
 
-  const yarnTypeData = response?.data ?? [];
+  const handleEdit = useCallback((id: number) => {
+    setSelectedId(id);
+    setOpen(true);
+  }, []);
 
-  const [open, setOpen] = useState(false);
-
-  const [selectedYarnTypeId, setSelectedYarnTypeId] = useState<number | null>(
-    null
-  );
-
-  const columns = getYarnTypeColumns(setOpen, setSelectedYarnTypeId);
+  const columns = useMemo(() => getYarnTypeColumns(handleEdit), [handleEdit]);
 
   return (
     <>
-        <DataTableCard
-          name={"Yarn Type"}
-          columns={columns}
-          data={yarnTypeData}
-          searchColumns={searchColumns}
-          loading={yarnTypeLoading}
-          open={open}
-          setOpen={setOpen}
-          isError={isError}
-          trigger={
-            <Button
-              onClick={() => {
-                setSelectedYarnTypeId(null);
-                setOpen(true);
-              }}
-            >
-              Add Yarn Type
-            </Button>
-          }
-        />
+      <EnhancedDataTableCard
+        name="Yarn Types"
+        columns={columns}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
+        isError={isError}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchValue={searchTerm}
+        searchPlaceholder="Search yarn type..."
+        trigger={
+          <Button
+            onClick={() => {
+              setSelectedId(null);
+              setOpen(true);
+            }}
+          >
+            Add Yarn Type
+          </Button>
+        }
+      />
 
-      {selectedYarnTypeId ? (
-        <EditYarnType
-          id={selectedYarnTypeId}
-          open={open}
-          setOpen={setOpen}
-        />
+      {selectedId ? (
+        <EditYarnType id={selectedId} open={open} setOpen={setOpen} />
       ) : (
         <AddYarnType open={open} setOpen={setOpen} />
       )}

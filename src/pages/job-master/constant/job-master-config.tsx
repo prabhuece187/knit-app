@@ -1,13 +1,13 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import type { ColumnDef } from "@tanstack/react-table";
-import { jobMasterSchema, type JobMaster } from "@/schema-types/master-schema";
+import { type JobMasterWithRelations } from "@/schema-types/master-schema";
 import { Link } from "react-router-dom";
 
 export function getJobMasterColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedJobId: React.Dispatch<React.SetStateAction<number | null>>
-): ColumnDef<JobMaster>[] {
+  setSelectedJobId: React.Dispatch<React.SetStateAction<number | null>>,
+): ColumnDef<JobMasterWithRelations>[] {
   return [
     {
       accessorKey: "id",
@@ -36,22 +36,24 @@ export function getJobMasterColumns(
     },
 
     {
-      accessorKey: "inward.inward_no",
+      accessorFn: (row) => row.inward?.inward_no ?? "-",
+      id: "inward",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Inward No" />
       ),
     },
 
-    // ✅ FIXED CUSTOMER COLUMN
     {
-      accessorKey: "customer.customer_name",
+      accessorFn: (row) => row.customer?.customer_name ?? "-",
+      id: "customer",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Customer" />
       ),
     },
 
     {
-      accessorKey: "mill.mill_name",
+      accessorFn: (row) => row.mill?.mill_name ?? "-",
+      id: "mill",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Mill" />
       ),
@@ -87,8 +89,8 @@ export function getJobMasterColumns(
           status === "open"
             ? "bg-green-100 text-green-700"
             : status === "completed"
-            ? "bg-blue-100 text-blue-700"
-            : "bg-red-100 text-red-700";
+              ? "bg-blue-100 text-blue-700"
+              : "bg-red-100 text-red-700";
 
         return (
           <span className={`px-2 py-1 rounded text-xs font-medium ${color}`}>
@@ -101,18 +103,14 @@ export function getJobMasterColumns(
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions<JobMaster>
+        <DataTableRowActions<JobMasterWithRelations>
           row={row}
           onEdit={() => {
             setSelectedJobId(row.original.id);
             setOpen(true);
           }}
-          onDelete={(item) => console.log("Delete", item)}
         />
       ),
     },
   ];
 }
-
-export const searchColumns = jobMasterSchema.keyof()
-  .options as (keyof JobMaster)[];

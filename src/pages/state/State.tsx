@@ -1,78 +1,82 @@
-import { useGetStateQuery } from "@/api/StateApi";
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState} from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import {  getStateColumns, searchColumns } from "./constant/state-config";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+
+import { getStateColumns } from "./constant/state-config";
 import AddState from "./component/AddState";
 import EditState from "./component/EditState";
 
+import type { State } from "@/schema-types/master-schema";
+import type { StateQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetStateQuery } from "@/api/StateApi";
+
 export default function State() {
-  //  Listing Customer Values
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
+  const [open, setOpen] = useState(false);
+  const [selectedStateId, setSelectedStateId] = useState<number | null>(null);
 
   const {
-    data: response, // fallback to [] if undefined
-    isLoading: stateLoading,
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<StateQuery, State>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
+
+  const {
+    data: response,
+    isLoading,
     isError,
-  } = useGetStateQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
+  } = useGetStateQuery({ ...queryParams }, { refetchOnMountOrArgChange: true });
+
+  const handleEdit = useCallback((id: number) => {
+    setSelectedStateId(id);
+    setOpen(true);
+  }, []);
+
+  const handleAdd = useCallback(() => {
+    setSelectedStateId(null);
+    setOpen(true);
+  }, []);
+
+  const columns = useMemo(() => getStateColumns(handleEdit), [handleEdit]);
+
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add State</Button>,
+    [handleAdd],
   );
-
-  const stateData = response?.data ?? [];
-
-  const [open, setOpen] = useState(false);
-
-  const [selectedStateId, setSelectedStateId] = useState<number | null>(
-    null
-  );
-
-    const columns = getStateColumns(setOpen, setSelectedStateId);
 
   return (
     <>
-        <DataTableCard
-          name={"State"}
-          columns={columns}
-          data={stateData}
-          searchColumns={searchColumns}
-          loading={stateLoading}
-          open={open}
-          setOpen={setOpen}
-          isError={isError}
-          trigger={
-            <Button
-              onClick={() => {
-                setSelectedStateId(null);
-                setOpen(true);
-              }}
-            >
-              Add State
-            </Button>
-          }
-        />
+      <EnhancedDataTableCard
+        name="States"
+        columns={columns}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
+        isError={isError}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search states..."
+        searchValue={searchTerm}
+        module="state"
+        trigger={triggerButton}
+      />
 
       {selectedStateId ? (
-        <EditState
-          StateId={selectedStateId}
-          open={open}
-          setOpen={setOpen}
-        />
+        <EditState StateId={selectedStateId} open={open} setOpen={setOpen} />
       ) : (
         <AddState open={open} setOpen={setOpen} />
       )}
     </>
   );
 }
-
-

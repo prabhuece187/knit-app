@@ -1,3 +1,5 @@
+import type { Customer, CustomerQuery } from "@/schema-types/master-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const CustomerApi = createApi({
@@ -7,10 +9,11 @@ export const CustomerApi = createApi({
   }),
   tagTypes: ["CustomerTag"],
   endpoints: (build) => ({
-    getCustomer: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `customers?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+    getCustomer: build.query<PaginatedResponse<Customer>, CustomerQuery>({
+      query: (params) => ({
+        url: "customers",
         method: "GET",
+        params, // ✅ RTK Query builds query string
       }),
       providesTags: ["CustomerTag"],
     }),

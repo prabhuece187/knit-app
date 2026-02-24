@@ -4,8 +4,8 @@ import { stateSchema, type State } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
 
 export function getStateColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedStateId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<State>[] {
   return [
     {
@@ -31,13 +31,8 @@ export function getStateColumns(
       cell: ({ row }) => (
         <DataTableRowActions<State>
           row={row}
-          onEdit={(item) => {
-            setSelectedStateId(Number(item.id));
-            setOpen(true);
-          }}
-          onDelete={(item) => {
-            console.log("Delete", item);
-          }}
+          onEdit={(state) => onEdit(Number(state.id))}
+          onDelete={(state) => onDelete?.(Number(state.id))}
         />
       ),
     },

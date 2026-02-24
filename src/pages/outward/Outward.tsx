@@ -1,68 +1,61 @@
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+import { getOutwardColumns } from "./constant/outward-config";
+import {
+  type OutwardQuery,
+  type OutwardWithRelations,
+} from "@/schema-types/outward-schema";
+import { useDataTable } from "@/hooks/useDataTable";
 import { useGetOutwardQuery } from "@/api/OutwardApi";
-import { Link, useNavigate } from "react-router-dom";
-import type { Outward } from "@/schema-types/outward-schema";
-import { getOutwardColumns, searchColumns } from "./constant/outward-config";
+import { useNavigate } from "react-router-dom";
 
 export default function Outward() {
-  // Pagination & Search Defaults
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
-
-  // Fetch outward data
-  const {
-    data: response,
-    isLoading: outwardLoading,
-    isError,
-  } = useGetOutwardQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
-  );
-
   const navigate = useNavigate();
 
-  const handleEdit = (outward: Outward) => {
-    navigate(`/editoutward/${outward.id}`);
-  };
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<OutwardQuery, OutwardWithRelations>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
 
-  const handleDelete = (outward: Outward) => {
-    console.log("Delete", outward);
-  };
+  const { data, isLoading, isError } = useGetOutwardQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
 
-  const outwardData = response?.data ?? [];
+  const handleEdit = useCallback(
+    (id: number) => navigate(`/editoutward/${id}`),
+    [navigate],
+  );
 
-  const [open, setOpen] = useState(false);
-
-  const columns = getOutwardColumns(handleEdit, handleDelete);
+  const columns = useMemo(() => getOutwardColumns(handleEdit), [handleEdit]);
 
   return (
-    <>
-        <DataTableCard
-          name={"Outward"}
-          columns={columns}
-          data={outwardData}
-          searchColumns={searchColumns}
-          loading={outwardLoading}
-          open={open}
-          setOpen={setOpen}
-          isError={isError}
-          trigger={
-            <Button>
-              <Link to="/addoutward">Add Outward</Link>
-            </Button>
-          }
-        />
-    </>
+    <EnhancedDataTableCard
+      name="Outward"
+      columns={columns}
+      data={data?.data ?? []}
+      meta={data?.meta ?? pagination}
+      loading={isLoading}
+      isError={isError}
+      onPageChange={handlePageChange}
+      onLimitChange={handleLimitChange}
+      onSortChange={handleSortChange}
+      onSearchChange={handleSearchChange}
+      searchValue={searchTerm}
+      searchPlaceholder="Search outward / invoice / customer / mill..."
+      trigger={
+        <Button onClick={() => navigate("/addoutward")}>Add Outward</Button>
+      }
+    />
   );
 }

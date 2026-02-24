@@ -1,3 +1,5 @@
+import type { YarnType, YarnTypeQuery } from "@/schema-types/master-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 
@@ -8,10 +10,11 @@ export const YarnTypeApi = createApi({
   }),
   tagTypes: ["YarnTypeTag"],
   endpoints: (build) => ({
-    getYarnType: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `yarn_types?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+    getYarnType: build.query<PaginatedResponse<YarnType>, YarnTypeQuery>({
+      query: (params) => ({
+        url: "yarn_types",
         method: "GET",
+        params, // ✅ RTK Query builds query string
       }),
       providesTags: ["YarnTypeTag"],
     }),

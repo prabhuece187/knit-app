@@ -1,12 +1,6 @@
-// -----------------------------------------
-// Imports
-// -----------------------------------------
 import { z } from "zod";
 import type { Customer } from "./master-schema";
 
-// -----------------------------------------
-// Zod Schema (Form Validation)
-// -----------------------------------------
 export const fullPaymentSchema = z.object({
   payment_date: z.string().min(1, "Payment date is required"),
 
@@ -20,10 +14,6 @@ export const fullPaymentSchema = z.object({
 
   total_amount: z.number().min(1, "Total amount must be greater than zero"),
 
-  // cheque_date: z.string().optional(),
-
-  // cheque_status: z.enum(["cleared", "pending", "bounced"]).optional(),
-
   note: z.string().optional(),
 
   payment_details: z
@@ -31,16 +21,13 @@ export const fullPaymentSchema = z.object({
       z.object({
         invoice_id: z.number().min(1, "Missing invoice id"),
         amount: z.number().min(1, "Amount must be greater than zero"),
-      })
+      }),
     )
     .min(1, "Select at least one invoice"),
 });
 
 export type FullPaymentSchema = z.infer<typeof fullPaymentSchema>;
 
-// -----------------------------------------
-// Invoice item inside payment process (UI only)
-// -----------------------------------------
 export interface InvoiceItem {
   id: number;
   invoice_number: string;
@@ -52,21 +39,15 @@ export interface InvoiceItem {
 
   customer?: Customer;
 
-  apply_amount?: number; // UI only
-  is_selected?: boolean; // UI only
+  apply_amount?: number;
+  is_selected?: boolean;
 }
 
-// -----------------------------------------
-// DB child table
-// -----------------------------------------
 export interface PaymentDetail {
   invoice_id: number;
   amount: number;
 }
 
-// -----------------------------------------
-// Payment master record (for API responses)
-// -----------------------------------------
 export interface InvoicePayment {
   id?: number;
 
@@ -86,13 +67,9 @@ export interface InvoicePayment {
 
   payment_details: PaymentDetail[];
 
-  // Not saved — for UI usage
   invoices?: InvoiceItem[];
 }
 
-// -----------------------------------------
-// Redux Payment Form State (UI state)
-// -----------------------------------------
 export interface PaymentFormState {
   customer_id: number;
   payment_date: string;
@@ -108,3 +85,25 @@ export interface PaymentFormState {
 }
 
 export type PaymentFormFields = keyof PaymentFormState;
+
+export interface PaymentQuery {
+  limit: number;
+  curpage: number;
+  search?: string;
+}
+
+export interface Payment {
+  id: number;
+  payment_no?: string;
+  customer_id: number;
+  customer_name?: string;
+  payment_date: string;
+  payment_type: "cash" | "neft" | "cheque";
+  total_amount: number;
+  reference_no?: string;
+  invoices?: InvoiceItem[];
+  payment_details?: {
+    invoice_id: number;
+    amount: number;
+  }[];
+}

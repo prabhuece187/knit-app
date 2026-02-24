@@ -1,59 +1,80 @@
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useMemo, useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
 
-import {
-  getKnittingMachineColumns,
-  knittingMachineSearchColumns,
-} from "./constant/knitting-machine-config";
-
-import { useGetKnittingMachineQuery } from "@/api/KnittingMachineApi";
 import AddKnittingMachine from "./component/AddKnittingMachine";
 import EditKnittingMachine from "./component/EditKnittingMachine";
 
+import {
+  getKnittingMachineColumns,
+} from "./constant/knitting-machine-config";
+
+import type { KnittingMachine } from "@/schema-types/master-schema";
+import type { KnittingMachineQuery } from "@/schema-types/master-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetKnittingMachineQuery } from "@/api/KnittingMachineApi";
+
 export default function KnittingMachine() {
-  const limit = 10;
-  const offset = 0;
-  const curpage = 1;
-  const searchInput = "";
-
-  const { data, isLoading, isError } = useGetKnittingMachineQuery({
-    limit,
-    offset,
-    curpage,
-    searchInput,
-  });
-
-  const rawData = useMemo(() => {
-    return Array.isArray(data?.data) ? data.data : [];
-  }, [data]);
-
   const [open, setOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const columns = getKnittingMachineColumns(setOpen, setSelectedId);
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<KnittingMachineQuery, KnittingMachine>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
+  });
+
+  const { data, isLoading, isError } = useGetKnittingMachineQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
+
+  const handleEdit = useCallback((id: number) => {
+    setSelectedId(id);
+    setOpen(true);
+  }, []);
+
+  const handleAdd = useCallback(() => {
+    setSelectedId(null);
+    setOpen(true);
+  }, []);
+
+  const columns = useMemo(
+    () => getKnittingMachineColumns(handleEdit),
+    [handleEdit],
+  );
+
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add Machine</Button>,
+    [handleAdd],
+  );
 
   return (
     <>
-      <DataTableCard
-        name="Knitting Machine"
+      <EnhancedDataTableCard
+        name="Knitting Machines"
         columns={columns}
-        data={rawData}
-        searchColumns={knittingMachineSearchColumns}
+        data={data?.data ?? []}
+        meta={data?.meta ?? pagination}
         loading={isLoading}
         isError={isError}
-        open={open}
-        setOpen={setOpen}
-        trigger={
-          <Button
-            onClick={() => {
-              setSelectedId(null);
-              setOpen(true);
-            }}
-          >
-            + Add Machine
-          </Button>
-        }
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search machines..."
+        searchValue={searchTerm}
+        module="knitting-machine"
+        trigger={triggerButton}
       />
 
       {selectedId ? (

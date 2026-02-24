@@ -1,3 +1,5 @@
+import type { Item, ItemQuery } from "@/schema-types/master-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const ItemApi = createApi({
@@ -7,10 +9,11 @@ export const ItemApi = createApi({
   }),
   tagTypes: ["ItemTag"],
   endpoints: (build) => ({
-    getItem: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `items?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+    getItem: build.query<PaginatedResponse<Item>, ItemQuery>({
+      query: (params) => ({
+        url: "items",
         method: "GET",
+        params, // ✅ RTK Query builds query string
       }),
       providesTags: ["ItemTag"],
     }),

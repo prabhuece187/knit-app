@@ -78,3 +78,32 @@ export type ItemWithDetails = Item & {
   yarn_gauge?: string;
   yarn_colour?: string;
 };
+
+export const inwardQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("id"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+
+  // ✅ unified search
+  searchInput: z.string().optional(),
+});
+
+export type InwardQuery = z.infer<typeof inwardQuerySchema>;
+
+export type InwardWithRelations = Inward & {
+  customer?: {
+    id?: number;
+    customer_name?: string;
+  };
+  mill?: {
+    id?: number;
+    mill_name?: string;
+  };
+};
+
+export const inwardSearchColumns: string[] = [
+  "inward_no",
+  "customer.customer_name",
+  "mill.mill_name",
+];

@@ -5,8 +5,8 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 export function getBankColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<Bank>[] {
   return [
     {
@@ -23,7 +23,9 @@ export function getBankColumns(
       cell: ({ row }) => {
         const id = row.original.id;
         if (!id) return null;
+
         const encodedId = btoa(id.toString());
+
         return (
           <Link
             to={`/banks/${encodedId}`}
@@ -37,7 +39,7 @@ export function getBankColumns(
     {
       accessorKey: "branch_name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Branch Name" />
+        <DataTableColumnHeader column={column} title="Branch" />
       ),
     },
     {
@@ -49,13 +51,13 @@ export function getBankColumns(
     {
       accessorKey: "account_number",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Account Number" />
+        <DataTableColumnHeader column={column} title="Account No" />
       ),
     },
     {
       accessorKey: "ifsc_code",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="IFSC Code" />
+        <DataTableColumnHeader column={column} title="IFSC" />
       ),
     },
     {
@@ -70,7 +72,6 @@ export function getBankColumns(
         <DataTableColumnHeader column={column} title="State" />
       ),
     },
-
     {
       accessorKey: "is_default",
       header: ({ column }) => (
@@ -83,42 +84,17 @@ export function getBankColumns(
           <span className="text-gray-400">No</span>
         ),
     },
-    // {
-    //   accessorKey: "bank_email",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Email" />
-    //   ),
-    // },
-    // {
-    //   accessorKey: "bank_mobile",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Mobile" />
-    //   ),
-    // },
-    // {
-    //   accessorKey: "bank_address",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Address" />
-    //   ),
-    // },
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions
+        <DataTableRowActions<Bank>
           row={row}
-          onEdit={(bank) => {
-            setSelectedId(Number(bank.id));
-            setOpen(true);
-          }}
-          onDelete={(bank) => {
-            console.log("Delete", bank);
-            // add delete logic here
-          }}
+          onEdit={(bank) => onEdit(Number(bank.id))}
+          onDelete={(bank) => onDelete?.(Number(bank.id))}
         />
       ),
     },
   ];
 }
 
-// Optional: for search/filter columns
-export const bankSearchColumns: (keyof Bank)[] = bankSchema.keyof().options;
+export const bankSearchColumns = bankSchema.keyof().options as (keyof Bank)[];

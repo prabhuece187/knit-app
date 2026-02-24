@@ -1,3 +1,5 @@
+import type { Outward, OutwardQuery } from "@/schema-types/outward-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const OutwardApi = createApi({
@@ -7,11 +9,12 @@ export const OutwardApi = createApi({
   }),
   tagTypes: ["OutwardTag"],
   endpoints: (build) => ({
-    getOutward: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `outward?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
-        method: "GET",
-      }),
+    getOutward:build.query<PaginatedResponse<Outward>, OutwardQuery>({
+          query: (params) => ({
+            url: "outwards",
+            method: "GET",
+            params,
+          }),
       providesTags: ["OutwardTag"],
     }),
     getOutwardById: build.query({

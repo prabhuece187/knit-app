@@ -1,14 +1,13 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import { itemSchema, type Item } from "@/schema-types/master-schema";
+import { itemSchema } from "@/schema-types/master-schema";
+import type { Item } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
-// Define TS type based on Zod schema
-
 export function getItemColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedItemId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<Item>[] {
   return [
     {
@@ -24,9 +23,10 @@ export function getItemColumns(
       ),
       cell: ({ row }) => {
         const id = row.original.id;
+        if (!id) return null;
 
-        if (!id) return null; // secure the ID here
         const encodedId = btoa(id.toString());
+
         return (
           <Link
             to={`/items/${encodedId}`}
@@ -60,13 +60,8 @@ export function getItemColumns(
       cell: ({ row }) => (
         <DataTableRowActions<Item>
           row={row}
-          onEdit={(item) => {
-            setSelectedItemId(Number(item.id));
-            setOpen(true);
-          }}
-          onDelete={(item) => {
-            console.log("Delete", item);
-          }}
+          onEdit={(item) => onEdit(Number(item.id))}
+          onDelete={(item) => onDelete?.(Number(item.id))}
         />
       ),
     },

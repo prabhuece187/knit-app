@@ -1,12 +1,15 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
-import { knittingMachineSchema, type KnittingMachine } from "@/schema-types/master-schema";
+import {
+  knittingMachineSchema,
+  type KnittingMachine,
+} from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 export function getKnittingMachineColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<KnittingMachine>[] {
   return [
     {
@@ -23,6 +26,7 @@ export function getKnittingMachineColumns(
       cell: ({ row }) => {
         const id = row.original.id;
         if (!id) return null;
+
         const encodedId = btoa(id.toString());
         return (
           <Link
@@ -61,20 +65,15 @@ export function getKnittingMachineColumns(
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions
+        <DataTableRowActions<KnittingMachine>
           row={row}
-          onEdit={(machine) => {
-            setSelectedId(Number(machine.id));
-            setOpen(true);
-          }}
-          onDelete={(machine) => {
-            console.log("Delete", machine);
-          }}
+          onEdit={(machine) => onEdit(Number(machine.id))}
+          onDelete={(machine) => onDelete?.(Number(machine.id))}
         />
       ),
     },
   ];
 }
 
-export const knittingMachineSearchColumns: (keyof KnittingMachine)[] =
-  knittingMachineSchema.keyof().options;
+export const knittingMachineSearchColumns = knittingMachineSchema.keyof()
+  .options as (keyof KnittingMachine)[];

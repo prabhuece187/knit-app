@@ -1,62 +1,101 @@
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+
+import { useDataTable } from "@/hooks/useDataTable";
 import { useGetKnittingProductionQuery } from "@/api/KnittingProductionApi";
-import { Link, useNavigate } from "react-router-dom";
 
-import type { KnittingProduction } from "@/schema-types/production-schema";
-import {
-  getKnittingProductionColumns,
-  searchColumns,
-} from "./constant/knitting-production-config";
+import type { KnittingProduction, KnittingProductionQuery } from "@/schema-types/production-schema";
+
+import { getKnittingProductionColumns } from "./constant/knitting-production-config";
 
 export default function KnittingProduction() {
-  const limit = 10;
-  const offset = 0;
-  const curpage = 1;
-  const searchInput = "";
+  const navigate = useNavigate();
+
+  // const [open, setOpen] = useState(false);
+
+  /* =========================
+     useDataTable (Standard)
+  ========================= */
 
   const {
-    data: response,
-    isLoading,
-    isError,
-  } = useGetKnittingProductionQuery({
-    limit,
-    offset,
-    curpage,
-    searchInput,
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<KnittingProductionQuery, KnittingProduction>({
+    searchField: "search", // keeping your old backend param name
+    initialLimit: 10,
+    initialPage: 1,
   });
 
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
+  /* =========================
+     API Call (Same Logic)
+  ========================= */
 
-  const handleEdit = (row: KnittingProduction) => {
-    navigate(`/knitting_production_edit/${row.id}`);
-  };
+  const { data, isLoading, isError } = useGetKnittingProductionQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
 
-  const handleDelete = (row: KnittingProduction) => {
+  /* =========================
+     Handlers
+  ========================= */
+
+  const handleEdit = useCallback(
+    (row: KnittingProduction) => {
+      navigate(`/knitting_production_edit/${row.id}`);
+    },
+    [navigate],
+  );
+
+  const handleDelete = useCallback((row: KnittingProduction) => {
     console.log("Delete", row);
-  };
+  }, []);
 
-  const data = response?.data ?? [];
-  const columns = getKnittingProductionColumns(handleEdit, handleDelete);
+  /* =========================
+     Columns
+  ========================= */
+
+  const columns = useMemo(
+    () => getKnittingProductionColumns(handleEdit, handleDelete),
+    [handleEdit, handleDelete],
+  );
+
+  const triggerButton = useMemo(
+    () => (
+      <Button onClick={() => navigate("/add-knitting-production")}>
+        Add Production
+      </Button>
+    ),
+    [navigate],
+  );
+
+  /* =========================
+     UI
+  ========================= */
 
   return (
-    <DataTableCard
+    <EnhancedDataTableCard
       name="Knitting Production"
       columns={columns}
-      data={data}
-      searchColumns={searchColumns}
+      data={data?.data ?? []}
+      meta={data?.meta ?? pagination}
       loading={isLoading}
-      open={open}
-      setOpen={setOpen}
       isError={isError}
-      trigger={
-        <Button>
-          <Link to="/add-knitting-production">Add Production</Link>
-        </Button>
-      }
+      onPageChange={handlePageChange}
+      onLimitChange={handleLimitChange}
+      onSortChange={handleSortChange}
+      onSearchChange={handleSearchChange}
+      searchPlaceholder="Search production..."
+      searchValue={searchTerm}
+      module="knitting-production"
+      trigger={triggerButton}
     />
   );
 }

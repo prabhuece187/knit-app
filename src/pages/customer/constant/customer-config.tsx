@@ -5,42 +5,27 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 
 export function getCustomerColumns(
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedId: React.Dispatch<React.SetStateAction<number | null>>
+  onEdit: (id: number) => void,
+  onDelete?: (id: number) => void,
 ): ColumnDef<Customer>[] {
   return [
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Id" />
+        <DataTableColumnHeader column={column} title="ID" />
       ),
     },
-    // {
-    //   accessorKey: "customer_name",
-    //   header: ({ column }) => (
-    //     <DataTableColumnHeader column={column} title="Customer Name" />
-    //   ),
-    //   cell: ({ row }) => (
-
-    //     <Link
-    //       to={`/customers/${row.original.id}/${encoded}`}
-    //       className="text-blue-600 hover:underline font-medium"
-    //     >
-    //       {row.original.customer_name}
-    //     </Link>
-    //   ),
-    // },
     {
       accessorKey: "customer_name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Customer Name" />
       ),
       cell: ({ row }) => {
-        // const encodedType = btoa("Customer");
         const id = row.original.id;
+        if (!id) return null;
 
-        if (!id) return null; // secure the ID here
         const encodedId = btoa(id.toString());
+
         return (
           <Link
             to={`/customers/${encodedId}`}
@@ -51,7 +36,6 @@ export function getCustomerColumns(
         );
       },
     },
-
     {
       accessorKey: "state_name",
       header: ({ column }) => (
@@ -61,13 +45,13 @@ export function getCustomerColumns(
     {
       accessorKey: "customer_gst_no",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Gst Number" />
+        <DataTableColumnHeader column={column} title="GST Number" />
       ),
     },
     {
       accessorKey: "customer_mobile",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Mobile Number" />
+        <DataTableColumnHeader column={column} title="Mobile" />
       ),
     },
     {
@@ -77,25 +61,12 @@ export function getCustomerColumns(
       ),
     },
     {
-      accessorKey: "customer_address",
-      header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Address" />
-      ),
-    },
-    {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions
+        <DataTableRowActions<Customer>
           row={row}
-          onEdit={(customer) => {
-            console.log("Edit", customer.id);
-            setSelectedId(Number(customer.id));
-            setOpen(true);
-          }}
-          onDelete={(customer) => {
-            // handle delete logic here
-            console.log("Delete", customer);
-          }}
+          onEdit={(customer) => onEdit(Number(customer.id))}
+          onDelete={(customer) => onDelete?.(Number(customer.id))}
         />
       ),
     },

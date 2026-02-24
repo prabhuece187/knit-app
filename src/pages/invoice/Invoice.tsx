@@ -1,74 +1,79 @@
-// src/pages/Invoice.tsx
+"use client";
 
-import DataTableCard from "@/components/custom/DataTableCard";
-import { useState } from "react";
+import { useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
-import { getInvoiceColumns, searchColumns } from "./constant/invoice-config";
-import { useGetInvoiceQuery } from "@/api/InvoiceApi"; // 👈 make sure this exists
-import { Link, useNavigate } from "react-router-dom";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+import { useNavigate } from "react-router-dom";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetInvoiceQuery } from "@/api/InvoiceApi";
+import { getInvoiceColumns } from "./constant/invoice-config";
 import type { Invoice } from "@/schema-types/invoice-schema";
+import type {
+  InvoiceQuery,
+  InvoiceWithRelations,
+} from "@/schema-types/invoice-schema";
 
-export default function Invoice() {
-  // Pagination & Search Defaults
-  const limit: number = 10;
-  const offset: number = 0;
-  const curpage: number = 1;
-  const searchInput: string = "";
-
-  // Fetch invoice data
-  const {
-    data: response,
-    isLoading: invoiceLoading,
-    isError,
-  } = useGetInvoiceQuery(
-    {
-      limit,
-      offset,
-      curpage,
-      searchInput,
-    },
-    {
-      skip: limit === 0 && offset === 0 && curpage === 0 && searchInput === "",
-    }
-  );
-
+export default function InvoiceModule() {
   const navigate = useNavigate();
 
-  const handleEdit = (invoice: Invoice) => {
-    navigate(`/editinvoice/${invoice.id}`);
-  };
+  // Setup pagination, search, sorting
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<InvoiceQuery, InvoiceWithRelations>({
+    searchField: "search", // matches backend search param
+    initialLimit: 10,
+    initialPage: 1,
+  });
 
-  const handleDelete = (invoice: Invoice) => {
-    console.log("Delete", invoice);
-  };
+  // Fetch invoice data
+  const { data, isLoading, isError } = useGetInvoiceQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
 
-  const invoiceData = response?.data ?? [];
+  // Edit handler
+  const handleEdit = useCallback(
+    (invoice: Invoice) => {
+      navigate(`/editinvoice/${invoice.id}`);
+    },
+    [navigate],
+  );
 
-  const [open, setOpen] = useState(false);
+  // Delete handler
+  const handleDelete = useCallback((invoice: Invoice) => {
+    console.log("Delete invoice", invoice);
+  }, []);
 
-  const columns = getInvoiceColumns(
-    handleEdit,
-    handleDelete,
-    navigate
+  // Memoize columns
+  const columns = useMemo(
+    () => getInvoiceColumns(handleEdit, handleDelete, navigate),
+    [handleEdit, handleDelete, navigate],
   );
 
   return (
-    <>
-      <DataTableCard
-        name={"Invoice"}
-        columns={columns}
-        data={invoiceData}
-        searchColumns={searchColumns}
-        loading={invoiceLoading}
-        open={open}
-        setOpen={setOpen}
-        isError={isError}
-        trigger={
-          <Button>
-            <Link to="/addinvoice">Add Invoice</Link>
-          </Button>
-        }
-      />
-    </>
+    <EnhancedDataTableCard
+      name="Invoice"
+      columns={columns}
+      data={data?.data ?? []}
+      meta={data?.meta ?? pagination}
+      loading={isLoading}
+      isError={isError}
+      searchValue={searchTerm}
+      searchPlaceholder="Search invoice / customer..."
+      onPageChange={handlePageChange}
+      onLimitChange={handleLimitChange}
+      onSortChange={handleSortChange}
+      onSearchChange={handleSearchChange}
+      trigger={
+        <Button onClick={() => navigate("/addinvoice")}>Add Invoice</Button>
+      }
+    />
   );
 }

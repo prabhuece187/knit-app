@@ -1,60 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
-import DataTableCard from "@/components/custom/DataTableCard";
-import AddProductionReturn from "./component/AddProductionReturn";
-import { useGetReturnsQuery } from "@/api/ProductionReturnApi";
-import EditProductionReturn from "./component/EditProductionReturn";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
+import { getProductionReturnColumns } from "./constant/pro-return-config";
+
 import {
-  getProductionReturnColumns,
-  searchColumns,
-} from "./constant/pro-return-config";
+  type ProductionReturnQuery,
+  type ProductionReturnWithRelations,
+} from "@/schema-types/production-return-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetReturnsQuery } from "@/api/ProductionReturnApi";
+
+import AddProductionReturn from "./component/AddProductionReturn";
+import EditProductionReturn from "./component/EditProductionReturn";
 
 export default function ProductionReturn() {
   const [open, setOpen] = useState(false);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
 
-  const { data, isLoading, isError } = useGetReturnsQuery({
-    limit: 10,
-    offset: 0,
-    curpage: 1,
-    searchInput: "",
+  // ✅ Store full row instead of id
+  const [selectedRow, setSelectedRow] = useState<
+    ProductionReturnWithRelations | undefined
+  >(undefined);
+
+  const {
+    pagination,
+    searchTerm,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    queryParams,
+  } = useDataTable<ProductionReturnQuery, ProductionReturnWithRelations>({
+    searchField: "search",
+    initialLimit: 10,
+    initialPage: 1,
   });
 
-  const returnData = data?.data ?? [];
-  
+  const { data, isLoading, isError } = useGetReturnsQuery(
+    { ...queryParams },
+    { refetchOnMountOrArgChange: true },
+  );
 
-  const columns = getProductionReturnColumns(setOpen, setSelectedId);
+  // ✅ Pass setSelectedRow instead of setSelectedId
+  const columns = useMemo(
+    () => getProductionReturnColumns(setOpen, setSelectedRow),
+    [],
+  );
 
   return (
     <>
-      <DataTableCard
-        name="Fabric Return"
+      <EnhancedDataTableCard
+        name="Production Return"
         columns={columns}
-        data={returnData}
-        searchColumns={searchColumns}
+        data={data?.data ?? []}
+        meta={data?.meta ?? pagination}
         loading={isLoading}
         isError={isError}
-        open={open}
-        setOpen={setOpen}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchValue={searchTerm}
+        searchPlaceholder="Search return / job..."
         trigger={
           <Button
             onClick={() => {
-              setSelectedId(null);
+              setSelectedRow(undefined); // ✅ Clear selected row
               setOpen(true);
             }}
           >
-            Add Fabric Return
+            Add Return
           </Button>
         }
       />
 
-      {selectedId && returnData.find((r) => r.id === selectedId) ? (
+      {selectedRow ? (
         <EditProductionReturn
-          data={returnData.find((r) => r.id === selectedId)!}
           open={open}
           setOpen={setOpen}
+          data={selectedRow} // ✅ PASS DATA
         />
       ) : (
         <AddProductionReturn open={open} setOpen={setOpen} />

@@ -1,3 +1,5 @@
+import type { Mill, MillQuery } from "@/schema-types/master-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 const baseUrl = import.meta.env.VITE_API_URL as string;
 export const MillApi = createApi({
@@ -7,10 +9,11 @@ export const MillApi = createApi({
   }),
   tagTypes: ["MillTag"],
   endpoints: (build) => ({
-    getMill: build.query({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `mills?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+    getMill: build.query<PaginatedResponse<Mill>, MillQuery>({
+      query: (params) => ({
+        url: "mills",
         method: "GET",
+        params, 
       }),
       providesTags: ["MillTag"],
     }),

@@ -88,8 +88,16 @@ export default function EditProductionReturn({
   }, [data, nextNoData, form]);
 
   const onSubmit = async (values: ProductionReturn) => {
-    if (!data?.id) return; // <-- safe guard
-    await updateReturn({ id: data.id, ...values });
+    if (!data?.id) return;
+
+    const { id, ...rest } = values;
+    console.log(id);
+
+    await updateReturn({
+      id: data.id,
+      ...rest,
+    });
+
     setOpen(false);
   };
 

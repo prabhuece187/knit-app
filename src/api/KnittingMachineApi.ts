@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import type { KnittingMachine } from "@/schema-types/master-schema";
+import type { KnittingMachine, KnittingMachineQuery } from "@/schema-types/master-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
 
@@ -11,12 +12,13 @@ export const KnittingMachineApi = createApi({
   tagTypes: ["KnittingMachineTag"],
   endpoints: (build) => ({
     getKnittingMachine: build.query<
-      { data: KnittingMachine[] },
-      { limit: number; offset: number; curpage: number; searchInput: string }
+      PaginatedResponse<KnittingMachine>,
+      KnittingMachineQuery
     >({
-      query: ({ limit, offset, curpage, searchInput }) => ({
-        url: `knitting-machines?limit=${limit}&offset=${offset}&curpage=${curpage}&searchInput=${searchInput}`,
+      query: (params) => ({
+        url: "knitting-machines",
         method: "GET",
+        params, // ✅ RTK Query builds query string
       }),
       providesTags: ["KnittingMachineTag"],
     }),

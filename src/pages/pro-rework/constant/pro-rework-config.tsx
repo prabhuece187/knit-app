@@ -1,15 +1,14 @@
 import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import type { ColumnDef } from "@tanstack/react-table";
-import {
-  knittingReworkSchema,
-  type KnittingRework,
-} from "@/schema-types/rework-schema";
+import type { KnittingReworkWithRelations } from "@/schema-types/rework-schema";
 
 export function getKnittingReworkColumns(
   setOpen: React.Dispatch<React.SetStateAction<boolean>>,
-  setSelectedReworkId: React.Dispatch<React.SetStateAction<number | null>>
-): ColumnDef<KnittingRework>[] {
+  setSelectedRow: React.Dispatch<
+    React.SetStateAction<KnittingReworkWithRelations | undefined>
+  >,
+): ColumnDef<KnittingReworkWithRelations>[] {
   return [
     {
       accessorKey: "id",
@@ -24,27 +23,29 @@ export function getKnittingReworkColumns(
       ),
     },
     {
-      accessorKey: "production_return.return_no",
+      accessorFn: (row) => row.production_return?.return_no ?? "-",
+      id: "return_no",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Return No" />
       ),
     },
     {
-      accessorKey: "job_master.job_card_no",
+      accessorFn: (row) => row.job_master?.job_card_no ?? "-",
+      id: "job",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Job Card No" />
+        <DataTableColumnHeader column={column} title="Job No" />
       ),
     },
     {
       accessorKey: "rework_date",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Rework Date" />
+        <DataTableColumnHeader column={column} title="Date" />
       ),
     },
     {
       accessorKey: "rework_weight",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="Rework Weight" />
+        <DataTableColumnHeader column={column} title="Weight" />
       ),
     },
     {
@@ -58,14 +59,11 @@ export function getKnittingReworkColumns(
     {
       id: "actions",
       cell: ({ row }) => (
-        <DataTableRowActions<KnittingRework>
+        <DataTableRowActions<KnittingReworkWithRelations>
           row={row}
-          onEdit={(item) => {
-            setSelectedReworkId(Number(item.id));
+          onEdit={() => {
+            setSelectedRow(row.original);
             setOpen(true);
-          }}
-          onDelete={(item) => {
-            console.log("Delete", item);
           }}
         />
       ),
@@ -73,5 +71,9 @@ export function getKnittingReworkColumns(
   ];
 }
 
-export const searchColumns = knittingReworkSchema.keyof()
-  .options as (keyof KnittingRework)[];
+export const searchColumns = [
+  "rework_no",
+  "rework_date",
+  "rework_weight",
+  "remarks",
+] as const;
