@@ -15,13 +15,13 @@ export function getStateColumns(
       ),
     },
     {
-      accessorKey: "state_name",
+      accessorKey: "name",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="State Name" />
       ),
     },
     {
-      accessorKey: "state_code",
+      accessorKey: "stateCode",
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="State Code" />
       ),

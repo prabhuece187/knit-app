@@ -88,8 +88,10 @@ function EnhancedDataTableCard<T extends object>({
     pageIndex,
     pageSize,
     pageCount,
-    onPageChange: onPageChange ?? (() => {}),
+    onPageChange: onPageChange ?? (() => { }),
   });
+
+  console.log("isError", isError);
 
   return (
     <>
@@ -99,22 +101,22 @@ function EnhancedDataTableCard<T extends object>({
         {(mergedConfig.enableSearch ||
           mergedConfig.enableFilters ||
           mergedConfig.enableColumnVisibility) && (
-          <div className="flex items-center gap-2">
-            <DataTableSearch
-              searchValue={localSearchValue}
-              onSearchChange={setLocalSearchValue}
-              placeholder={searchPlaceholder}
-              config={mergedConfig}
-            />
+            <div className="flex items-center gap-2">
+              <DataTableSearch
+                searchValue={localSearchValue}
+                onSearchChange={setLocalSearchValue}
+                placeholder={searchPlaceholder}
+                config={mergedConfig}
+              />
 
-            <DataTableFilters
-              filterComponents={filterComponents}
-              config={mergedConfig}
-            />
+              <DataTableFilters
+                filterComponents={filterComponents}
+                config={mergedConfig}
+              />
 
-            <DataTableControls table={table} config={mergedConfig} />
-          </div>
-        )}
+              <DataTableControls table={table} config={mergedConfig} />
+            </div>
+          )}
 
         {loading ? (
           <div className="flex justify-center py-8 text-muted-foreground">
