@@ -36,8 +36,6 @@ export default function State() {
     isError,
   } = useGetStateQuery({ ...queryParams }, { refetchOnMountOrArgChange: true });
 
-  console.log("response", response);
-  console.log("isError", isError);
 
   const handleEdit = useCallback((id: number) => {
     setSelectedStateId(id);

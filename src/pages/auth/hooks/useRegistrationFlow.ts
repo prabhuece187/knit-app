@@ -5,7 +5,7 @@ import {
   useCompleteSurveyMutation,
   useGetRegistrationStatusQuery,
   useGetSavedProfessionalDetailsQuery,
-} from "@/api/authApi";
+} from "@/pages/auth/api/AuthApi";
 import { getUserFriendlyError } from "../utils/authErrors";
 import {
   REGISTRATION_STEPS,
@@ -80,7 +80,9 @@ export function useRegistrationFlow({
           break;
         case BACKEND_REGISTRATION_STEPS.PROFESSIONAL_DETAILS_ADDED:
           setCurrentStep(REGISTRATION_STEPS.SURVEY);
-          setIsReviewMode(true);
+          // setIsReviewMode(true);
+          setIsReviewMode(false);
+
           break;
         case BACKEND_REGISTRATION_STEPS.REGISTRATION_COMPLETE:
           setCurrentStep(REGISTRATION_STEPS.COMPLETE);

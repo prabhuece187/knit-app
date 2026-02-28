@@ -1,15 +1,14 @@
 import { type UseFormReturn } from "react-hook-form";
-import { useState } from "react";
+import { useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Form } from "@/components/ui/form";
 import { SelectPopover } from "@/components/custom/CustomPopover";
-import ProfileImageUpload from "@/components/custom/ProfileImageUpload";
+import ProfileImageUpload from "../../../../components/custom/ProfileImageUpload";
 import { useGetActiveCategoriesQuery } from "@/api/CategoryApi";
 import { useGetSubCategoriesByCategoryQuery } from "@/api/SubCategoryApi";
 import {
   type Step1Registration,
-  type Category,
   type SubCategory,
 } from "../../types/registration.types";
 
@@ -22,21 +21,20 @@ export default function ProfessionalDetailsForm({
   form,
   isReviewMode = false,
 }: ProfessionalDetailsFormProps) {
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
-    null
-  );
+  const categoryId = form.watch("categoryId");
 
   const { data: categories = [] } = useGetActiveCategoriesQuery();
   const { data: subCategories = [] } = useGetSubCategoriesByCategoryQuery(
-    selectedCategoryId || 0,
-    { skip: !selectedCategoryId }
+    categoryId || 0,
+    { skip: !categoryId }
   );
 
-  const handleCategoryChange = (category: { id: number }) => {
-    setSelectedCategoryId(category.id);
-    form.setValue("categoryId", category.id);
-    form.setValue("subCategoryId", 0); // Reset subcategory
-  };
+  // React to category change (SelectPopover updates form via Controller; we sync subcategory here)
+  useEffect(() => {
+    if (categoryId) {
+      form.setValue("subCategoryId", 0);
+    }
+  }, [categoryId, form]);
 
   return (
     <Form {...form}>
@@ -117,12 +115,11 @@ export default function ProfessionalDetailsForm({
             <SelectPopover
               label="Category *"
               placeholder="Select your category..."
-              options={categories as Category[]}
+              options={categories}
               valueKey="id"
               labelKey="name"
               name="categoryId"
               control={form.control}
-              onValueChange={handleCategoryChange}
             />
             {form.formState.errors.categoryId && (
               <p className="text-sm text-red-500">

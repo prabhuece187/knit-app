@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 import Layout from "./layout/Layout";
 import Dashboard from "./pages/dashboard/Dashboard";
@@ -32,86 +32,114 @@ import EditKnittingProduction from "./pages/production/component/EditKnittingPro
 import ProductionRework from "./pages/pro-rework/ProductionRework";
 import JobLedgerReport from "./pages/report/JobLedgerReport";
 import WastageReport from "./pages/report/WastageReport";
+import SessionExpired from "./pages/auth/components/sessionExpired";
+import NotFound from "@/components/custom/NotFound";
+import Error401 from "@/components/custom/Error401";
+import Error500 from "@/components/custom/Error500";
+
+import { useAppSelector } from "@/store/Store";
+import AdminLoginPage from "./pages/auth/pages/AdminLoginPage";
+import Login from "./pages/Login";
 
 function App() {
+
+  const { accessToken, sessionExpired } = useAppSelector((state) => state.auth);
+
   return (
+    <>
+      {sessionExpired && <SessionExpired />}
+      <Routes>
 
-    <Routes>
-      <Route path="/" element={<Layout />}>
-        {/* Dashboard */}
-        <Route index element={<Dashboard />} />
+        <Route path="/404" element={<NotFound />} />
+        <Route path="/401" element={<Error401 />} />
+        <Route path="/500" element={<Error500 />} />
 
-        {/* Master */}
-        <Route path="banks" element={<Bank />} />
-        <Route path="customers" element={<Customer />} />
-        <Route path="items" element={<Item />} />
-        <Route path="states" element={<State />} />
-        <Route path="mills" element={<Mill />} />
-        <Route path="yarn_types" element={<YarnType />} />
-        <Route path="knitting-machine" element={<KnittingMachine />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
 
-        {/* Inward */}
-        <Route path="inward" element={<Inward />} />
-        <Route path="addinward" element={<AddInward />} />
-        {/* this id set same as params inwardId */}
-        <Route path="/editinward/:inwardId" element={<EditInward />} />
 
-        {/* Outward */}
-        <Route path="outward" element={<Outward />} />
-        <Route path="addoutward" element={<AddOutward />} />
-        <Route path="/editoutward/:outwardId" element={<EditOutward />} />
-
-        {/* Job Master */}
-        <Route path="job-master" element={<JobMaster />} />
-
-        {/* Production Return */}
-        <Route path="pro-return" element={<ProductionReturn />} />
-
-        {/* Production  */}
-        <Route path="knit-pro" element={<KnittingProduction />} />
         <Route
-          path="add-knitting-production"
-          element={<AddKnittingProduction />}
-        />
-        <Route
-          path="/knitting_production_edit/:id"
-          element={<EditKnittingProduction />}
-        />
+          path="/"
+          element={accessToken ? <Layout /> : <Navigate to="/login" replace />}
+        >
+          {/* <Route path="/" element={<Layout />}> */}
+          {/* Dashboard */}
+          <Route index element={<Dashboard />} />
 
-        {/* Production Rework */}
-        <Route path="pro-rework" element={<ProductionRework />} />
+          {/* Master */}
+          <Route path="banks" element={<Bank />} />
+          <Route path="customers" element={<Customer />} />
+          <Route path="items" element={<Item />} />
+          <Route path="states" element={<State />} />
+          <Route path="mills" element={<Mill />} />
+          <Route path="yarn_types" element={<YarnType />} />
+          <Route path="knitting-machine" element={<KnittingMachine />} />
 
-        {/* Invoice */}
-        <Route path="invoice" element={<Invoice />} />
-        <Route path="addinvoice" element={<AddInvoice />} />
-        <Route path="/editinvoice/:invoiceId" element={<EditInvoice />} />
-        <Route
-          path="/printinvoice/:invoiceId"
-          element={<PrintInvoice />}
-        />
+          {/* Inward */}
+          <Route path="inward" element={<Inward />} />
+          <Route path="addinward" element={<AddInward />} />
+          {/* this id set same as params inwardId */}
+          <Route path="/editinward/:inwardId" element={<EditInward />} />
 
-        {/* Payment */}
-        <Route path="payment" element={<Payment />} />
-        <Route path="addpayment" element={<AddPayment />} />
+          {/* Outward */}
+          <Route path="outward" element={<Outward />} />
+          <Route path="addoutward" element={<AddOutward />} />
+          <Route path="/editoutward/:outwardId" element={<EditOutward />} />
 
-        {/* Report */}
-        <Route path="over-all-report" element={<OverAllReport />} />
-        <Route
-          path="over-all-detail-report"
-          element={<OverAllDetailReport />}
-        />
+          {/* Job Master */}
+          <Route path="job-master" element={<JobMaster />} />
 
-        <Route path="job-ledger" element={<JobLedgerReport />} />
-        <Route path="wastage" element={<WastageReport />} />
+          {/* Production Return */}
+          <Route path="pro-return" element={<ProductionReturn />} />
 
-        {/* Add-on Service */}
-        <Route path="customers/:id" element={<IndividualData />} />
-        <Route path="items/:id" element={<IndividualData />} />
-        <Route path="mills/:id" element={<IndividualData />} />
-        <Route path="yarn_types/:id" element={<IndividualData />} />
-        <Route path="banks/:id" element={<IndividualData />} />
-      </Route>
-    </Routes>
+          {/* Production  */}
+          <Route path="knit-pro" element={<KnittingProduction />} />
+          <Route
+            path="add-knitting-production"
+            element={<AddKnittingProduction />}
+          />
+          <Route
+            path="/knitting_production_edit/:id"
+            element={<EditKnittingProduction />}
+          />
+
+          {/* Production Rework */}
+          <Route path="pro-rework" element={<ProductionRework />} />
+
+          {/* Invoice */}
+          <Route path="invoice" element={<Invoice />} />
+          <Route path="addinvoice" element={<AddInvoice />} />
+          <Route path="/editinvoice/:invoiceId" element={<EditInvoice />} />
+          <Route
+            path="/printinvoice/:invoiceId"
+            element={<PrintInvoice />}
+          />
+
+          {/* Payment */}
+          <Route path="payment" element={<Payment />} />
+          <Route path="addpayment" element={<AddPayment />} />
+
+          {/* Report */}
+          <Route path="over-all-report" element={<OverAllReport />} />
+          <Route
+            path="over-all-detail-report"
+            element={<OverAllDetailReport />}
+          />
+
+          <Route path="job-ledger" element={<JobLedgerReport />} />
+          <Route path="wastage" element={<WastageReport />} />
+
+          {/* Add-on Service */}
+          <Route path="customers/:id" element={<IndividualData />} />
+          <Route path="items/:id" element={<IndividualData />} />
+          <Route path="mills/:id" element={<IndividualData />} />
+          <Route path="yarn_types/:id" element={<IndividualData />} />
+          <Route path="banks/:id" element={<IndividualData />} />
+        </Route>
+
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
 
   );
 }

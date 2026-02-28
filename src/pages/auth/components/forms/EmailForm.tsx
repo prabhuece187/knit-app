@@ -16,7 +16,7 @@ export default function EmailForm({
   onSubmit,
   isLoading = false,
 }: // defaultEmail = "",
-EmailFormProps) {
+  EmailFormProps) {
   const form = useForm<EmailFormData>({
     resolver: zodResolver(emailSchema),
     // defaultValues: {

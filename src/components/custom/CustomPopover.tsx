@@ -20,7 +20,8 @@ import { cn } from "@/lib/utils";
 import DynamicAdd from "../common/DynamicAdd";
 import { Controller, type Control, type FieldPath } from "react-hook-form";
 
-type SelectOption = Record<string, string | number>;
+type SelectOption = Record<string, string | number | boolean>;
+
 
 interface SelectPopoverProps<
   TOption extends SelectOption,

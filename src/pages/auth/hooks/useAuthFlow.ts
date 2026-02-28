@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { useAppDispatch } from "@/store/hooks";
-import { addTokensAndUser } from "@/slice/authSlice";
-import { useAdminRequestOtpMutation, useAdminValidateOtpMutation, useRequestOtpMutation, useValidateOtpMutation } from "@/api/authApi";
+import { useAppDispatch } from "@/store/Store";
+import { addTokensAndUser } from "@/slice/AuthSlice";
+import { useAdminRequestOtpMutation, useAdminValidateOtpMutation, useRequestOtpMutation, useValidateOtpMutation } from "../api/AuthApi";
 import {
   getUserFriendlyError,
   classifyError,
@@ -123,6 +123,7 @@ export function useAuthFlow(role?: "admin" | "user"): UseAuthFlowReturn {
       setTimeout(() => {
         navigate("/dashboard");
       }, 1000);
+
     } catch (err: unknown) {
       const errorMessage = getUserFriendlyError(err, "Failed to validate OTP");
       const errorType = classifyError(

@@ -11,21 +11,39 @@ import {
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
-
-
-
+import { removeTokensAndUser } from "@/slice/AuthSlice"
+import { useAppDispatch, useAppSelector } from "@/store/Store"
+import { useLogoutMutation } from "@/pages/auth/api/AuthApi"
 
 export function NavUser({
   user,
 }: {
   user: {
-    name: string
-    email: string
-    avatar: string
-  }
+    id: number;
+    name: string;
+    email: string;
+    avatar: string;
+  };
 }) {
   const { isMobile } = useSidebar()
+
+  const dispatch = useAppDispatch();
+  const [logout, { isLoading }] = useLogoutMutation();
+  const { refreshToken } = useAppSelector((state) => state.auth);
+
+  const handleLogout = async () => {
+    try {
+      await logout({
+        refreshToken: refreshToken,
+        userId: user.id.toString(),
+      }).unwrap();
+      dispatch(removeTokensAndUser());
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Even if API call fails, clear local state
+      dispatch(removeTokensAndUser());
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -88,9 +106,9 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout} disabled={isLoading}>
               <LogOut />
-              Log out
+              {isLoading ? "Logging out..." : "Logout"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

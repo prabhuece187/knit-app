@@ -1,15 +1,21 @@
 import { fetchBaseQuery } from "@reduxjs/toolkit/query";
 import { Mutex } from "async-mutex";
-import { addTokensAndUser, setSessionExpired } from "@/slice/AuthSlice";
-import type { User } from "@/slice/AuthSlice";
-
-import type { QueryReturnValue } from "@reduxjs/toolkit/query";
 import type { BaseQueryFn, FetchArgs } from "@reduxjs/toolkit/query";
+import {
+  formatErrorMessage,
+  showErrorToast,
+  showSuccessToast,
+} from "@/utility/format-error-message";
 import type { RootState } from "@/store/Store";
+import {
+  addTokensAndUser,
+  removeTokensAndUser,
+  setSessionExpired,
+} from "@/slice/AuthSlice";
 
 const mutex = new Mutex();
-const baseUrl = import.meta.env.VITE_API_URL as string;
 
+const baseUrl = import.meta.env.VITE_API_URL;
 
 const baseQuery = fetchBaseQuery({
   baseUrl,
@@ -17,37 +23,44 @@ const baseQuery = fetchBaseQuery({
     const state = getState() as RootState;
     const accessToken = state.auth?.accessToken;
     if (accessToken) {
-      headers.set("authorization", accessToken ? `Bearer ${accessToken}` : "");
+      headers.set("authorization", `Bearer ${accessToken}`);
     }
     return headers;
   },
+  responseHandler: async (response) => {
+    const text = await response.text();
+    try {
+      return text ? JSON.parse(text) : response;
+    } catch {
+      return text;
+    }
+  },
 });
 
-const customFetchBase: BaseQueryFn<FetchArgs, unknown, unknown> = async (
+const CustomFetchBase: BaseQueryFn<FetchArgs, unknown, unknown> = async (
   args,
   api,
   extraOptions
 ) => {
-  await mutex.waitForUnlock(); // Wait for any ongoing refresh to finish
-
-  let result: QueryReturnValue = await baseQuery(args, api, extraOptions);
+  await mutex.waitForUnlock();
+  let result: any = await baseQuery(args, api, extraOptions);
 
   if (result?.error?.status === 401) {
     if (!mutex.isLocked()) {
-      const release = await mutex.acquire(); // Acquire the mutex
+      const release = await mutex.acquire();
       try {
         const state = api.getState() as RootState;
+        console.log("state", state);
         const refreshToken = state.auth?.refreshToken;
-        const employeeId = state.auth?.user?.id;
 
         if (refreshToken) {
           const refreshResult = await baseQuery(
             {
-              url: "/auth/refresh",
+              url: "/Account/refresh",
               method: "POST",
               body: {
                 refreshToken,
-                userId: employeeId,
+                token: state.auth?.accessToken,
               },
             },
             api,
@@ -55,42 +68,57 @@ const customFetchBase: BaseQueryFn<FetchArgs, unknown, unknown> = async (
           );
 
           if (refreshResult.data) {
-            // Update tokens in state
             api.dispatch(
               addTokensAndUser(
                 refreshResult.data as {
                   accessToken: string;
                   refreshToken: string;
-                  user: User;
                 }
               )
             );
-
-            // Retry the original query
             result = await baseQuery(args, api, extraOptions);
           } else {
-            // Handle refresh token failure (e.g., session expired)
             api.dispatch(setSessionExpired(true));
+            api.dispatch(removeTokensAndUser());
           }
-        } else {
-          // No refresh token available, session expired
-          api.dispatch(setSessionExpired(true));
         }
-      } catch (error) {
-        console.error("Error during token refresh:", error);
-        api.dispatch(setSessionExpired(true));
       } finally {
-        release(); // Always release the mutex
+        release();
       }
     } else {
-      // If the mutex is locked, wait for the refresh process to complete
       await mutex.waitForUnlock();
-      // Retry the original query with the new tokens
       result = await baseQuery(args, api, extraOptions);
+    }
+  }
+
+  if (result?.error) {
+    const message = formatErrorMessage(result.error);
+    showErrorToast(message);
+  } else {
+    const method = result?.meta?.request?.method?.toUpperCase();
+    const requestUrl = result?.meta?.request?.url ?? "";
+
+    const excludedUrls = ["/account/login", "/Account/refresh"];
+    const isExcluded = excludedUrls.some((url) => requestUrl.includes(url));
+
+    if (!isExcluded) {
+      const responseData: any = result.data;
+      const customMessage =
+        responseData?.message || responseData?.data?.message;
+
+      if (customMessage) {
+        showSuccessToast(customMessage);
+      } else if (method === "POST") {
+        showSuccessToast("Created successfully");
+      } else if (method === "PUT") {
+        showSuccessToast("Updated successfully");
+      } else if (method === "DELETE") {
+        showErrorToast("Deleted successfully");
+      }
     }
   }
 
   return result;
 };
 
-export default customFetchBase;
+export default CustomFetchBase;

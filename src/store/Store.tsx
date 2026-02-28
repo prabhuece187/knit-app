@@ -30,6 +30,10 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import authReducer from "@/slice/AuthSlice";
+import { useDispatch, useSelector, type TypedUseSelectorHook } from "react-redux";
+import { AuthApi } from "@/pages/auth/api/AuthApi";
+import { CategoryApi } from "@/api/CategoryApi";
+import { SubCategoryApi } from "@/api/SubCategoryApi";
 
 
 const persistConfig = {
@@ -43,6 +47,9 @@ const rootReducer = combineReducers({
   invoiceForm: invoiceFormReducer,
   paymentForm: paymentFormReducer,
   StateCode: StateSlice.reducer,
+  [AuthApi.reducerPath]: AuthApi.reducer,
+  [CategoryApi.reducerPath]: CategoryApi.reducer,
+  [SubCategoryApi.reducerPath]: SubCategoryApi.reducer,
   [CustomerApi.reducerPath]: CustomerApi.reducer,
   [ItemApi.reducerPath]: ItemApi.reducer,
   [MillApi.reducerPath]: MillApi.reducer,
@@ -71,6 +78,9 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(
+      AuthApi.middleware,
+      CategoryApi.middleware,
+      SubCategoryApi.middleware,
       CustomerApi.middleware,
       ItemApi.middleware,
       MillApi.middleware,
@@ -93,3 +103,7 @@ export const store = configureStore({
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 export const persistor = persistStore(store);
+
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
