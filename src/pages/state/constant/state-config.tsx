@@ -2,29 +2,81 @@ import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { stateSchema, type State } from "@/schema-types/master-schema";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Badge } from "@/components/ui/badge";
+import { ServerDataTableColumnHeader } from "@/components/custom/ServerDataTableColumnHeader";
 
-export function getStateColumns(
-  onEdit: (id: number) => void,
-  onDelete?: (id: number) => void,
-): ColumnDef<State>[] {
+
+interface GetStateColumnsProps {
+  onEdit: (id: number) => void;
+  onDelete: (id: number) => void;
+  currentSortBy?: string;
+  currentSortOrder?: "asc" | "desc";
+  onSortChange?: (sortBy: string, sortOrder: "asc" | "desc") => void;
+}
+
+export function getStateColumns({
+  onEdit,
+  onDelete,
+  currentSortBy,
+  currentSortOrder,
+  onSortChange,
+}: GetStateColumnsProps): ColumnDef<State>[] {
   return [
     {
       accessorKey: "id",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="ID" />
+        <ServerDataTableColumnHeader
+          column={column}
+          title="ID"
+          sortable={true}
+          currentSortBy={currentSortBy}
+          currentSortOrder={currentSortOrder}
+          onSortChange={onSortChange}
+        />
       ),
     },
     {
       accessorKey: "name",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="State Name" />
+        <ServerDataTableColumnHeader
+          column={column}
+          title="State Name"
+          sortable={true}
+          currentSortBy={currentSortBy}
+          currentSortOrder={currentSortOrder}
+          onSortChange={onSortChange}
+        />
       ),
     },
     {
       accessorKey: "stateCode",
       header: ({ column }) => (
-        <DataTableColumnHeader column={column} title="State Code" />
+        <ServerDataTableColumnHeader
+          column={column}
+          title="State Code"
+          sortable={true}
+          currentSortBy={currentSortBy}
+          currentSortOrder={currentSortOrder}
+          onSortChange={onSortChange}
+        />
       ),
+    },
+    {
+      accessorKey: "type",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="State Type" />
+      ),
+      cell: ({ row }) => {
+        const type = row.getValue("type") as string;
+        return (
+          <Badge
+            variant={type === "STATE" ? "default" : "outline"}
+            className="capitalize"
+          >
+            {type === "UNION_TERRITORY" ? "Union Territory" : type}
+          </Badge>
+        );
+      },
     },
     {
       id: "actions",

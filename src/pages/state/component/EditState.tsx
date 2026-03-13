@@ -11,7 +11,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Dialog,
   DialogContent,
@@ -21,7 +27,7 @@ import {
   // DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useGetStateByIdQuery, usePutStateMutation } from "@/api/StateApi";
+import { useGetStateByIdQuery, usePatchStateMutation } from "@/api/StateApi";
 
 import { useEffect } from "react";
 import CommonHeader from "@/components/common/CommonHeader";
@@ -37,7 +43,7 @@ export default function EditState({
 }) {
   // const formRef = useRef<HTMLFormElement>(null);
 
-  const [putState] = usePutStateMutation();
+  const [patchState] = usePatchStateMutation();
 
   const form = useForm<z.infer<typeof stateSchema>>({
     resolver: zodResolver(stateSchema),
@@ -53,8 +59,19 @@ export default function EditState({
     }
   }, [isSuccess, member, form]);
 
+
+
   function onSubmit(values: z.infer<typeof stateSchema>) {
-    putState(values);
+    patchState(values).unwrap().then(() => {
+      form.reset();
+      setOpen(false);
+    }).catch((error) => {
+      console.log(error);
+    });
+  }
+
+  function handleCancel() {
+    form.reset();
     setOpen(false);
   }
 
@@ -62,98 +79,108 @@ export default function EditState({
 
   return (
     <>
-        <Dialog open={open} onOpenChange={setOpen}>
-          {/* <DialogTrigger></DialogTrigger> */}
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                <CommonHeader name={"Edit State"} />
-              </DialogTitle>
-              <DialogDescription></DialogDescription>
-            </DialogHeader>
-            <div className="grid grid-cols-12 px-2 py-2">
-              <div className="col-span-12">
-                <Form {...form}>
-                  <form
-                    id="customer-form"
-                    onSubmit={form.handleSubmit(onSubmit)}
-                    className="space-y-8"
-                  >
-                    <div className="grid grid-cols-6 gap-2">
-                      <div className="col-span-3" hidden>
-                        <FormField
-                          control={form.control}
-                          name="user_id"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>User Id</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="hidden"
-                                  placeholder="Enter the User Id"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+      <Dialog open={open} onOpenChange={setOpen}>
+        {/* <DialogTrigger></DialogTrigger> */}
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              <CommonHeader name={"Edit State"} />
+            </DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+          <div className="grid grid-cols-12 px-2 py-2">
+            <div className="col-span-12">
+              <Form {...form}>
+                <form
+                  id="customer-form"
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-8"
+                >
+                  <div className="grid grid-cols-6 gap-2">
 
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="state_name"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>State Name*</FormLabel>
-                              <FormControl>
-                                <Input
-                                  placeholder="Enter the State Name"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                    <div className="col-span-3">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State Name*</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter the State Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                      <div className="col-span-3">
-                        <FormField
-                          control={form.control}
-                          name="state_code"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>State Code*</FormLabel>
+                    <div className="col-span-3">
+                      <FormField
+                        control={form.control}
+                        name="stateCode"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State Code*</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Enter the State Code"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="col-span-6">
+                      <FormField
+                        control={form.control}
+                        name="type"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>State Type*</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value || undefined}
+                            >
                               <FormControl>
-                                <Input
-                                  placeholder="Enter the State Code"
-                                  {...field}
-                                />
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select state type" />
+                                </SelectTrigger>
                               </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
+                              <SelectContent>
+                                <SelectItem value="STATE">State</SelectItem>
+                                <SelectItem value="UNION_TERRITORY">
+                                  Union Territory
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                     </div>
-                    <div className="grid grid-cols-12 gap-2">
-                      <div className="col-span-12 flex justify-end">
-                        <Button type="submit" className="m-1">
-                          Cancel
-                        </Button>
-                        <Button type="submit" className="m-1">
-                          Submit
-                        </Button>
-                      </div>
+                  </div>
+                  <div className="grid grid-cols-12 gap-2">
+                    <div className="col-span-12 flex justify-end">
+                      <Button type="button" className="m-1" onClick={handleCancel}>
+                        Cancel
+                      </Button>
+                      <Button type="submit" className="m-1">
+                        Submit
+                      </Button>
                     </div>
-                  </form>
-                </Form>
-              </div>
+                  </div>
+                </form>
+              </Form>
             </div>
-          </DialogContent>
-        </Dialog>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

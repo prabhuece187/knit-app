@@ -35,10 +35,10 @@ export const StateApi = createApi({
       }),
       invalidatesTags: ["StateTag"],
     }),
-    putState: build.mutation({
+    PatchState: build.mutation({
       query: (data) => ({
         url: `states/${data.id}`,
-        method: "PUT",
+        method: "PATCH",
         body: data,
         headers: {
           "Content-Type": "application/json",
@@ -53,6 +53,13 @@ export const StateApi = createApi({
       }),
       providesTags: ["StateTag"],
     }),
+    deleteState: build.mutation({
+      query: (id) => ({
+        url: `states/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["StateTag"],
+    }),
   }),
 });
 
@@ -60,6 +67,7 @@ export const {
   useGetStateQuery,
   useGetStateByIdQuery,
   usePostStateMutation,
-  usePutStateMutation,
+  usePatchStateMutation,
   useGetStateListQuery,
-} = StateApi;
+  useDeleteStateMutation,
+} = StateApi; 

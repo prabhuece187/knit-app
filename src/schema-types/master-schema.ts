@@ -39,13 +39,13 @@ export type CustomerQuery = z.infer<typeof customerQuerySchema>;
 
 export const stateSchema = z.object({
   id: z.number().optional(),
-  user_id: z.number().min(1, { message: "Please Enter User Name.." }),
-  state_name: z.string().min(2, {
+  name: z.string().min(2, {
     message: "Please Enter the State Name.",
   }),
-  state_code: z.coerce.number().min(2, {
-    message: "Please Enter the State Code.",
+  stateCode: z.string().min(2, {
+    message: "Please Enter the State Code",
   }),
+  type: z.enum(["STATE", "UNION_TERRITORY"]),
 });
 
 export type State = z.infer<typeof stateSchema>;
