@@ -39,7 +39,6 @@ export default function AddBank({
     resolver: zodResolver(bankSchema),
     defaultValues: {
       id: undefined,
-      user_id: 1,
       bank_name: "",
       branch_name: "",
       account_holder_name: "",
@@ -73,27 +72,11 @@ export default function AddBank({
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, (errors) =>
-              console.log(errors)
+              console.log(errors),
             )}
             className="space-y-6"
           >
             <div className="grid grid-cols-6 gap-4">
-              <div className="col-span-3" hidden>
-                <FormField
-                  control={form.control}
-                  name="user_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>User ID</FormLabel>
-                      <FormControl>
-                        <Input type="hidden" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
               <div className="col-span-3">
                 <FormField
                   control={form.control}

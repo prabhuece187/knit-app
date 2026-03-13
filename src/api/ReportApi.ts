@@ -1,12 +1,10 @@
+import { baseQuery } from "@/helper/ApiFetchBase";
 import type { JobLedger, WastageRow } from "@/schema-types/report-schema";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { createApi } from "@reduxjs/toolkit/query/react";
+
 export const ReportApi = createApi({
   reducerPath: "ReportApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-    // baseUrl: "http://localhost:8000/api/",
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["ReportTag"],
   endpoints: (build) => ({
     postOverAllReport: build.mutation({

@@ -1,12 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { ProductionReturn, ProductionReturnQuery } from "@/schema-types/production-return-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { baseQuery } from "@/helper/ApiFetchBase";
 
 export const ProductionReturnApi = createApi({
   reducerPath: "ProductionReturnApi",
-  baseQuery: fetchBaseQuery({ baseUrl }),
+  baseQuery: baseQuery,
   tagTypes: ["KPRTag"],
   endpoints: (build) => ({
     getReturns: build.query<

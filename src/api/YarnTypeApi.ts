@@ -1,13 +1,11 @@
+import { baseQuery } from "@/helper/ApiFetchBase";
 import type { YarnType, YarnTypeQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { createApi  } from "@reduxjs/toolkit/query/react";
 
 export const YarnTypeApi = createApi({
   reducerPath: "YarnTypeApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["YarnTypeTag"],
   endpoints: (build) => ({
     getYarnType: build.query<PaginatedResponse<YarnType>, YarnTypeQuery>({

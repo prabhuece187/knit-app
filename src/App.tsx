@@ -35,6 +35,9 @@ import EditKnittingProduction from "./pages/production/component/EditKnittingPro
 import ProductionRework from "./pages/pro-rework/ProductionRework";
 import JobLedgerReport from "./pages/report/JobLedgerReport";
 import WastageReport from "./pages/report/WastageReport";
+import ProtectedRoute from "./routes/ProtectedRoute";
+import LoginForm from "./pages/auth/LoginForm";
+import Register from "./pages/auth/Register";
 
 function App() {
   return (
@@ -42,7 +45,16 @@ function App() {
       <Provider store={store}>
         <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
           <Routes>
-            <Route path="/" element={<Layout />}>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
               {/* Dashboard */}
               <Route index element={<Dashboard />} />
 

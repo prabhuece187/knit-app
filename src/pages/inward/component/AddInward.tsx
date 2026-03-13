@@ -2,12 +2,10 @@ import CommonHeader from "@/components/common/CommonHeader";
 import {
   Form,
   // FormControl,
-  FormField,
   // FormItem,
   // FormLabel,
   // FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   fullInwardSchema,
   inwardSchema,
@@ -39,7 +37,6 @@ export default function AddInward() {
   const form = useForm<FullInwardFormValues>({
     resolver: zodResolver(fullInwardSchema),
     defaultValues: {
-      user_id: 1,
       inward_date: new Date().toISOString().split("T")[0],
     },
   });
@@ -59,14 +56,8 @@ export default function AddInward() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8"
         >
-          {/* MAIN FORM GRID */}
-          {/* <div className="grid grid-cols-12 gap-4"> */}
-          {/* Hidden User ID */}
-          <FormField
-            control={form.control}
-            name="user_id"
-            render={({ field }) => <Input type="hidden" {...field} />}
-          />
+
+
 
           <InwardHeader
             control={control}

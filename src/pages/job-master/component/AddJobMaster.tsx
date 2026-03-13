@@ -53,7 +53,6 @@ export default function AddJobMaster({
   const form = useForm<JobMaster>({
     resolver: zodResolver(jobMasterSchema),
     defaultValues: {
-      user_id: 1,
       job_card_no: "",
       job_date: new Date().toISOString().slice(0, 10),
       expected_delivery_date: new Date().toISOString().slice(0, 10),

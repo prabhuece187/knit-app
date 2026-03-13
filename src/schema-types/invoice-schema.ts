@@ -14,7 +14,6 @@ const coerceBoolean = z
 // =======================  Invoice ============================
 export const baseInvoiceSchema = z.object({
   id: z.coerce.number().optional(),
-  user_id: z.coerce.number().optional(),
   customer_id: z.coerce
     .number()
     .min(1, { message: "Please Enter Customer Name." }),
@@ -100,7 +99,6 @@ export type Invoice = z.infer<typeof invoiceSchema>;
 export const invoiceDetailSchema = z
   .object({
     id: z.coerce.number().optional(),
-    user_id: z.coerce.number().optional(),
     invoice_id: z.coerce.number().optional(),
     item_id: z.coerce.number().min(1, { message: "Please select an Item." }),
     item_description: z
@@ -193,7 +191,6 @@ export type InvoiceItemWithDetails = Item & {
 
 export const invoiceRowSchema = z.object({
   id: z.coerce.number().optional(),
-  user_id: z.coerce.number().optional(),
   invoice_id: z.coerce.number(),
   item_id: z.coerce.number(),
   description: z.string().optional(),

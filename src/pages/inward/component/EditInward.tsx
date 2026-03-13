@@ -1,6 +1,5 @@
 import CommonHeader from "@/components/common/CommonHeader";
-import { Form, FormField } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+import { Form } from "@/components/ui/form";
 
 import {
   fullInwardSchema,
@@ -112,13 +111,6 @@ export default function EditInward() {
           onSubmit={form.handleSubmit(onSubmit)}
           className="space-y-8"
         >
-          {/* Hidden user_id */}
-          <FormField
-            control={form.control}
-            name="user_id"
-            render={({ field }) => <Input type="hidden" {...field} />}
-          />
-
           {/*  Header (same as add page) */}
           <InwardHeader
             control={control}

@@ -39,9 +39,8 @@ export default function AddKnittingProduction() {
   const form = useForm<FullKnittingProductionFormValues>({
     resolver: zodResolver(fullKnittingProductionSchema),
     defaultValues: {
-      user_id: 1,
       production_date: new Date().toISOString().split("T")[0],
-      details: [{ user_id: 1 }],
+      details: [],
     },
   });
 

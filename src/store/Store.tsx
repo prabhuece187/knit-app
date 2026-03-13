@@ -18,10 +18,12 @@ import { JobMasterApi } from "@/api/JobMasterApi";
 import { KnittingMachineApi } from "@/api/KnittingMachineApi";
 import { KnittingProductionApi } from "@/api/KnittingProductionApi";
 import { KnittingReworkApi } from "@/api/ProductionReworkApi";
-
+import authReducer from "@/slice/AuthSlice";
+import { AuthApi } from "@/api/AuthApi";
 
 export const store = configureStore({
   reducer: {
+    auth: authReducer,
     invoiceForm: invoiceFormReducer,
     paymentForm: paymentFormReducer,
     StateCode: StateSlice.reducer,
@@ -41,6 +43,7 @@ export const store = configureStore({
     [KnittingMachineApi.reducerPath]: KnittingMachineApi.reducer,
     [KnittingProductionApi.reducerPath]: KnittingProductionApi.reducer,
     [KnittingReworkApi.reducerPath]: KnittingReworkApi.reducer,
+    [AuthApi.reducerPath]: AuthApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -59,7 +62,8 @@ export const store = configureStore({
       JobMasterApi.middleware,
       KnittingMachineApi.middleware,
       KnittingProductionApi.middleware,
-      KnittingReworkApi.middleware
+      KnittingReworkApi.middleware,
+      AuthApi.middleware,
     ),
 });
 

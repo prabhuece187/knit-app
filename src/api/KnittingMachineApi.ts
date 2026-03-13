@@ -1,14 +1,12 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { KnittingMachine, KnittingMachineQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
+import { baseQuery } from "@/helper/ApiFetchBase";
 
-const baseUrl = import.meta.env.VITE_API_URL as string;
 
 export const KnittingMachineApi = createApi({
   reducerPath: "KnittingMachineApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["KnittingMachineTag"],
   endpoints: (build) => ({
     getKnittingMachine: build.query<

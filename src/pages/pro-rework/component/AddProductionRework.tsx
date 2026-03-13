@@ -66,7 +66,6 @@ export default function AddProductionRework({
       job_card_id: undefined,
       rework_weight: 0,
       remarks: "",
-      user_id: 1,
     },
   });
 

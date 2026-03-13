@@ -36,9 +36,6 @@ export default function AddState({
 
   const form = useForm<z.infer<typeof stateSchema>>({
     resolver: zodResolver(stateSchema),
-    defaultValues: {
-      user_id: 1,
-    },
   });
 
   function onSubmit(values: z.infer<typeof stateSchema>) {
@@ -68,26 +65,6 @@ export default function AddState({
                     className="space-y-8"
                   >
                     <div className="grid grid-cols-6 gap-2">
-                      <div className="col-span-3" hidden>
-                        <FormField
-                          control={form.control}
-                          name="user_id"
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormLabel>User Id</FormLabel>
-                              <FormControl>
-                                <Input
-                                  type="hidden"
-                                  placeholder="Enter the User Id"
-                                  {...field}
-                                />
-                              </FormControl>
-                              <FormMessage />
-                            </FormItem>
-                          )}
-                        />
-                      </div>
-
                       <div className="col-span-3">
                         <FormField
                           control={form.control}

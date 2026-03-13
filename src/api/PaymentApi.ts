@@ -1,12 +1,10 @@
+import { baseQuery } from "@/helper/ApiFetchBase";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import type { InvoiceItem, InvoicePayment, PaymentQuery } from "@/schema-types/paymennt-schema";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { createApi } from "@reduxjs/toolkit/query/react";
 export const PaymentApi = createApi({
   reducerPath: "PaymentApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["PaymentTag"],
   endpoints: (build) => ({
     getPayment: build.query<PaginatedResponse<InvoicePayment>, PaymentQuery>({

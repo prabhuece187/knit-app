@@ -1,20 +1,19 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { Bank, BankQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { baseQuery } from "@/helper/ApiFetchBase";
+
 export const BankApi = createApi({
   reducerPath: "BankApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["BankTag"],
   endpoints: (build) => ({
     getBank: build.query<PaginatedResponse<Bank>, BankQuery>({
-          query: (params) => ({
-            url: "banks",
-            method: "GET",
-            params, // ✅ RTK Query builds query string
-          }),
+      query: (params) => ({
+        url: "banks",
+        method: "GET",
+        params, // ✅ RTK Query builds query string
+      }),
       providesTags: ["BankTag"],
     }),
     getBankById: build.query<Bank, number>({

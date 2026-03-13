@@ -49,7 +49,6 @@ export default function EditBank({
     resolver: zodResolver(bankSchema),
     defaultValues: {
       id: undefined,
-      user_id: 0,
       bank_name: "",
       branch_name: "",
       account_holder_name: "",
@@ -109,21 +108,6 @@ useEffect(() => {
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-6 gap-4">
-              {/* Hidden User ID */}
-              <div hidden>
-                <FormField
-                  control={control}
-                  name="user_id"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        <Input type="hidden" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
 
               {/* Bank Name */}
               <div className="col-span-3">

@@ -37,11 +37,9 @@ const initialState: InvoiceFormState = {
   invoice_date: today,
   due_date: today,
   payment_terms: 0,
-  user_id: 1,
   invoice_details: [
     {
       invoice_id: 0,
-      user_id: 1,
       item_id: 0,
       item_description: "",
       hsn_code: "",

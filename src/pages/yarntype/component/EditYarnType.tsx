@@ -74,22 +74,6 @@ export default function EditYarnType({
                   className="space-y-8"
                 >
                   <div className="grid grid-cols-6 gap-2">
-                    <div className="col-span-3" hidden>
-                      <FormField
-                        control={form.control}
-                        name="user_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>User Id</FormLabel>
-                            <FormControl>
-                              <Input type="hidden" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-
                     <div className="col-span-6">
                       <FormField
                         control={form.control}

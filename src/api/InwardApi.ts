@@ -1,13 +1,11 @@
+import { baseQuery } from "@/helper/ApiFetchBase";
 import type { LinkJobCardResponse } from "@/pages/inward/component/JobCardSelectModal";
 import type { Inward, InwardQuery } from "@/schema-types/inward-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { createApi } from "@reduxjs/toolkit/query/react";
 export const InwardApi = createApi({
   reducerPath: "inwardApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["InwardTag"],
   endpoints: (build) => ({
     getInward: build.query<PaginatedResponse<Inward>, InwardQuery>({

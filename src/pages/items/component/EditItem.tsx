@@ -105,15 +105,6 @@ export default function EditItem({
               <input type="hidden" {...form.register("barcode")} />
               <input type="hidden" {...form.register("qrcode")} />
 
-              {/* USER ID */}
-              <div className="col-span-3" hidden>
-                <FormField
-                  control={form.control}
-                  name="user_id"
-                  render={({ field }) => <input type="hidden" {...field} />}
-                />
-              </div>
-
               {/* ITEM NAME */}
               <div className="col-span-3">
                 <FormField

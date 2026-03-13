@@ -45,7 +45,6 @@ export default function AddItem({
   const form = useForm<z.infer<typeof itemSchema>>({
     resolver: zodResolver(itemSchema),
     defaultValues: {
-      user_id: 1,
       barcode: "",
       qrcode: "",
     },

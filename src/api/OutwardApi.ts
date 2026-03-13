@@ -1,12 +1,10 @@
+import { baseQuery } from "@/helper/ApiFetchBase";
 import type { Outward, OutwardQuery } from "@/schema-types/outward-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { createApi } from "@reduxjs/toolkit/query/react";
 export const OutwardApi = createApi({
   reducerPath: "outwardApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["OutwardTag"],
   endpoints: (build) => ({
     getOutward:build.query<PaginatedResponse<Outward>, OutwardQuery>({

@@ -1,12 +1,11 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import type { JobMaster, JobMasterQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-
-const baseUrl = import.meta.env.VITE_API_URL as string;
+import { baseQuery } from "@/helper/ApiFetchBase";
 
 export const JobMasterApi = createApi({
   reducerPath: "JobMasterApi",
-  baseQuery: fetchBaseQuery({ baseUrl }),
+  baseQuery: baseQuery,
   tagTypes: ["JobTag"],
   endpoints: (build) => ({
     getJobs: build.query<PaginatedResponse<JobMaster>, JobMasterQuery>({

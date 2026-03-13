@@ -1,13 +1,12 @@
+import { baseQuery } from "@/helper/ApiFetchBase";
 import type { State, StateQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-const baseUrl = import.meta.env.VITE_API_URL as string;
-console.log(baseUrl);
+import { createApi } from "@reduxjs/toolkit/query/react";
+
+
 export const StateApi = createApi({
   reducerPath: "StateApi",
-  baseQuery: fetchBaseQuery({
-    baseUrl: baseUrl,
-  }),
+  baseQuery: baseQuery,
   tagTypes: ["StateTag"],
   endpoints: (build) => ({
     getState: build.query<PaginatedResponse<State>, StateQuery>({

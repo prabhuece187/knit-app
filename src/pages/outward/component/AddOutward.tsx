@@ -34,7 +34,6 @@ export default function AddOutward() {
   const form = useForm<FullOutwardFormValues>({
     resolver: zodResolver(fullOutwardSchema),
     defaultValues: {
-      user_id: 1,
       outward_invoice_no: "1",
       outward_date: new Date().toISOString().split("T")[0],
     },

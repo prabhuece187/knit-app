@@ -66,7 +66,6 @@ export default function AddProductionReturn({
   const form = useForm<ProductionReturn>({
     resolver: zodResolver(productionReturnSchema),
     defaultValues: {
-      user_id: 1,
       return_no: "",
       job_card_id: 0,
       production_id: 0,

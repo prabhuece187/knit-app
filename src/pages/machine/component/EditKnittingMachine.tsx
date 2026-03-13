@@ -101,13 +101,6 @@ export default function EditKnittingMachine({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-6 gap-3">
-              {/* Hidden Fields */}
-              <FormField
-                control={form.control}
-                name="id"
-                render={({ field }) => <Input type="hidden" {...field} />}
-              />
-
               <FormField
                 control={form.control}
                 name="user_id"
