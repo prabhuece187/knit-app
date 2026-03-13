@@ -80,7 +80,7 @@ function EnhancedDataTableCard<T extends object>({
   const pageCount = meta?.totalPages ?? 1;
 
   /* ---------------- Table Hook (Server Mode) ---------------- */
-  const { table, mergedConfig } = useEnhancedTable({
+  const { table, mergedConfig, columnVisibility } = useEnhancedTable({
     data,
     columns,
     module,
@@ -91,16 +91,17 @@ function EnhancedDataTableCard<T extends object>({
     onPageChange: onPageChange ?? (() => { }),
   });
 
-  console.log("isError", isError);
+  // console.log("isError", isError);
 
   return (
     <>
       <CommonHeader name={name} trigger={trigger} />
 
       <div className="space-y-4">
-        {(mergedConfig.enableSearch ||
-          mergedConfig.enableFilters ||
-          mergedConfig.enableColumnVisibility) && (
+        {
+          (mergedConfig.enableSearch ||
+            mergedConfig.enableFilters ||
+            mergedConfig.enableColumnVisibility) && (
             <div className="flex items-center gap-2">
               <DataTableSearch
                 searchValue={localSearchValue}
@@ -114,9 +115,10 @@ function EnhancedDataTableCard<T extends object>({
                 config={mergedConfig}
               />
 
-              <DataTableControls table={table} config={mergedConfig} />
+              <DataTableControls table={table} config={mergedConfig} columnVisibility={columnVisibility} />
             </div>
-          )}
+          )
+        }
 
         {loading ? (
           <div className="flex justify-center py-8 text-muted-foreground">
@@ -128,7 +130,13 @@ function EnhancedDataTableCard<T extends object>({
           </div>
         ) : (
           <>
-            <EnhancedDataTable table={table} showPagination={false} />
+            <EnhancedDataTable
+              table={table}
+              showPagination={false}
+              enableHorizontalScroll={mergedConfig.enableHorizontalScroll}
+              fixedColumns={mergedConfig.fixedColumns}
+              className={mergedConfig.compactMode ? "compact" : ""}
+            />
 
             {meta && onPageChange && onLimitChange && (
               <DataTablePagination

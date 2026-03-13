@@ -40,7 +40,8 @@ export const TABLE_MODULE_CONFIGS: Record<string, TableModuleConfig> = {
     enableRowSelection: false,
     enableExport: false,
     fixedColumns: {
-      left: ["id", "name"],
+      left: ["name"],
+      right: ["actions"],
     },
     searchPlaceholder: "Search states by name...",
     showRowCount: true,

@@ -38,6 +38,7 @@ export function useDataTable<TQuery extends Record<string, unknown>, TItem>({
 
   const [filters, setFilters] =
     useState<Record<string, string>>(initialFilters);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [data, setData] = useState<TItem[]>([]);
   const [loading, setLoading] = useState(false);

@@ -31,6 +31,8 @@ export function useEnhancedTable<T extends object>({
   pageCount,
   onPageChange,
 }: UseEnhancedTableProps<T>) {
+
+
   /* ---------------- Module Config Merge ---------------- */
   const mergedConfig = useMemo(() => {
     const base = getTableModuleConfig(module);

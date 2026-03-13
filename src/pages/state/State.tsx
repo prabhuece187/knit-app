@@ -91,26 +91,21 @@ export default function State() {
     [handleAdd],
   );
 
+
   // Memoize table configuration
-  const tableConfig = useMemo(
-    () => ({
-      fixedColumns: {
-        left: ["id", "name"],
-        right: ["actions"],
-      },
-    }),
-    []
-  );
+  // const tableConfig = {
+  //   fixedColumns: {
+  //     left: ["id", "name"],
+  //     right: ["actions"],
+  //   },
+  // }
 
   // Define filter options for ServerFacetedFilter
-  const stateTypeFilterOptions = useMemo(
-    () => [
-      { label: "State", value: "STATE" },
-      { label: "Union Territory", value: "UNION_TERRITORY" },
-      { label: "All", value: undefined },
-    ],
-    []
-  );
+  const stateTypeFilterOptions = [
+    { label: "State", value: "STATE" },
+    { label: "Union Territory", value: "UNION_TERRITORY" },
+    { label: "All", value: undefined },
+  ];
 
   // Configuration: Set to true for single-select, false for multi-select
   const isSingleSelect = true;

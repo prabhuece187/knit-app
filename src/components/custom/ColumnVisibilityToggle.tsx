@@ -9,13 +9,16 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import type { Table } from "@tanstack/react-table";
+import type { VisibilityState } from "@tanstack/react-table";
 
 interface ColumnVisibilityToggleProps<TData> {
   table: Table<TData>;
+  columnVisibility?: VisibilityState;
 }
 
 export function ColumnVisibilityToggle<TData>({
   table,
+  columnVisibility,
 }: ColumnVisibilityToggleProps<TData>) {
   const columns = table
     .getAllColumns()
@@ -41,8 +44,18 @@ export function ColumnVisibilityToggle<TData>({
             <DropdownMenuCheckboxItem
               key={column.id}
               className="capitalize"
-              checked={column.getIsVisible()}
-              onCheckedChange={(value) => column.toggleVisibility(!!value)}
+              // checked={column.getIsVisible()}
+
+              checked={columnVisibility?.[column.id] !== false}
+              onCheckedChange={(value) => {
+                column.toggleVisibility(!!value);
+
+                // table.setColumnVisibility((prev) => ({
+                //   ...prev,
+                //   [column.id]: value === true,
+                // }));
+              }}
+              onSelect={(e) => e.preventDefault()}
             >
               {column.id}
             </DropdownMenuCheckboxItem>
