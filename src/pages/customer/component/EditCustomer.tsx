@@ -26,7 +26,7 @@ import {
   // DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useGetStateListQuery } from "@/api/StateApi";
+import { useGetStateListQuery } from "@/pages/state/api/StateApi";
 
 import { useEffect } from "react";
 import { SelectPopover } from "@/components/custom/CustomPopover";

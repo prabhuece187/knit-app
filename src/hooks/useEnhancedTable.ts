@@ -13,7 +13,7 @@ export interface UseEnhancedTableProps<T> {
   module?: string;
   tableConfig?: Partial<TableModuleConfig>;
 
-  // ✅ SERVER PAGINATION
+  // SERVER PAGINATION
   pageIndex: number;
   pageSize: number;
   pageCount: number;
@@ -47,7 +47,7 @@ export function useEnhancedTable<T extends object>({
     data,
     columns,
 
-    // ✅ SERVER MODE
+    // SERVER MODE
     pageCount,
     manualPagination: true,
 
@@ -71,7 +71,7 @@ export function useEnhancedTable<T extends object>({
 
     onColumnVisibilityChange: setColumnVisibility,
 
-    // ✅ Only core rows (no client filtering)
+    //  Only core rows (no client filtering)
     getCoreRowModel: getCoreRowModel(),
   });
 

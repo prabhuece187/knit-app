@@ -27,7 +27,7 @@ import {
   // DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useGetStateByIdQuery, usePatchStateMutation } from "@/api/StateApi";
+import { useGetStateByIdQuery, usePatchStateMutation } from "@/pages/state/api/StateApi";
 
 import { useEffect } from "react";
 import CommonHeader from "@/components/common/CommonHeader";

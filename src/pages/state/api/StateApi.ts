@@ -1,8 +1,7 @@
 import type { State, StateQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customFetchBase from "./CustomFetchBase";
-
+import customFetchBase from "../../../api/CustomFetchBase";
 
 export const StateApi = createApi({
   reducerPath: "StateApi",

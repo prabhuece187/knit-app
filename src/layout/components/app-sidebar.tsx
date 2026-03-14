@@ -86,13 +86,26 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
             title: "Knitting Machine",
             url: "/knitting-machine",
           },
+
+          {
+            title: "Yarn Types",
+            url: "/yarn_types",
+          },
           {
             title: "States",
             url: "/states",
           },
           {
-            title: "Yarn Types",
-            url: "/yarn_types",
+            title: "District",
+            url: "/districts",
+          },
+          {
+            title: "Cities",
+            url: "/cities",
+          },
+          {
+            title: "Pincodes",
+            url: "/pincodes",
           },
         ],
       },

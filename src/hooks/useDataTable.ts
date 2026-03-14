@@ -92,7 +92,7 @@ export function useDataTable<TQuery extends Record<string, unknown>, TItem>({
         if (!signal.aborted) {
           setData(result.data);
 
-          // ✅ Update pagination meta safely
+          // Update pagination meta safely
           updatePaginationMeta(result.meta);
         }
       })
@@ -105,7 +105,7 @@ export function useDataTable<TQuery extends Record<string, unknown>, TItem>({
       });
 
     return () => controller.abort();
-    // ⚠️ DO NOT include `pagination` in dependencies — avoids loop
+    // DO NOT include `pagination` in dependencies — avoids loop
   }, [debouncedQueryParams, fetchData, updatePaginationMeta]);
 
   // -----------------------
@@ -115,15 +115,18 @@ export function useDataTable<TQuery extends Record<string, unknown>, TItem>({
     (page: number) => setPage(page),
     [setPage],
   );
+
   const handleLimitChange = useCallback(
     (limit: number) => setLimit(limit),
     [setLimit],
   );
+
   const handleSortChange = useCallback(
     (sortBy: string, sortOrder: "asc" | "desc") =>
       setSorting(sortBy, sortOrder),
     [setSorting],
   );
+
   const handleSearchChange = useCallback(
     (term: string) => {
       setSearchTerm(term);
@@ -131,6 +134,7 @@ export function useDataTable<TQuery extends Record<string, unknown>, TItem>({
     },
     [setPage],
   );
+
   const handleFilterChange = useCallback(
     (newFilters: Record<string, string>) => {
       setFilters(newFilters);

@@ -99,25 +99,30 @@ function EnhancedDataTableCard<T extends object>({
 
       <div className="space-y-4">
         {
-          (mergedConfig.enableSearch ||
-            mergedConfig.enableFilters ||
-            mergedConfig.enableColumnVisibility) && (
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+
+            {mergedConfig.enableSearch &&
               <DataTableSearch
                 searchValue={localSearchValue}
                 onSearchChange={setLocalSearchValue}
                 placeholder={searchPlaceholder}
                 config={mergedConfig}
               />
+            }
+
+            {mergedConfig.enableFilters &&
 
               <DataTableFilters
                 filterComponents={filterComponents}
                 config={mergedConfig}
               />
+            }
 
+            {mergedConfig.enableColumnVisibility &&
               <DataTableControls table={table} config={mergedConfig} columnVisibility={columnVisibility} />
-            </div>
-          )
+            }
+          </div>
+
         }
 
         {loading ? (

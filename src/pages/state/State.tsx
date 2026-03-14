@@ -10,7 +10,7 @@ import type { State } from "@/schema-types/master-schema";
 import type { StateQuery } from "@/schema-types/master-schema";
 
 import { useDataTable } from "@/hooks/useDataTable";
-import { useGetStateQuery, useDeleteStateMutation } from "@/api/StateApi";
+import { useGetStateQuery, useDeleteStateMutation } from "@/pages/state/api/StateApi";
 import { toast } from "sonner";
 import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
 
@@ -29,8 +29,8 @@ export default function State() {
     handleFilterChange,
     queryParams,
   } = useDataTable<StateQuery, State>({
-    searchField: "search",
-    initialLimit: 2,
+    searchField: "name",
+    initialLimit: 10,
     initialPage: 1,
   });
 

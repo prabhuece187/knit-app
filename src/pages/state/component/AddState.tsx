@@ -29,7 +29,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import CommonHeader from "@/components/common/CommonHeader";
-import { usePostStateMutation } from "@/api/StateApi";
+import { usePostStateMutation } from "@/pages/state/api/StateApi";
 
 export default function AddState({
   open,

@@ -1,7 +1,7 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { CustomerApi } from "../api/CustomerApi";
 import { StateSlice } from "../slice/state-slice";
-import { StateApi } from "@/api/StateApi";
+import { StateApi } from "@/pages/state/api/StateApi";
 import { ItemApi } from "@/api/ItemApi";
 import { YarnTypeApi } from "@/api/YarnTypeApi";
 import { InwardApi } from "@/api/InwardApi";
