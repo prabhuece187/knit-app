@@ -23,8 +23,6 @@ import {
 import { NavUser } from "@/layout/components/nav-user";
 import { useAppSelector } from "@/store/Store";
 
-
-
 type AppSidebarProps = React.ComponentProps<typeof Sidebar> & {
   collapsed?: boolean;
 };

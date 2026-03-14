@@ -40,6 +40,7 @@ import Error500 from "@/components/custom/Error500";
 import { useAppSelector } from "@/store/Store";
 import AdminLoginPage from "./pages/auth/pages/AdminLoginPage";
 import Login from "./pages/Login";
+import District from "./pages/district/District";
 
 function App() {
 
@@ -71,6 +72,7 @@ function App() {
           <Route path="customers" element={<Customer />} />
           <Route path="items" element={<Item />} />
           <Route path="states" element={<State />} />
+          <Route path="districts" element={<District />} />
           <Route path="mills" element={<Mill />} />
           <Route path="yarn_types" element={<YarnType />} />
           <Route path="knitting-machine" element={<KnittingMachine />} />

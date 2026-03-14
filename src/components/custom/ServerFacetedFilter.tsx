@@ -32,6 +32,9 @@ interface ServerFacetedFilterProps {
   options: FacetedFilterOption[];
   selectedValues?: string[];
   onValueChange?: (values: string[]) => void;
+  onSearchChange?: (search: string) => void;
+  searchValue?: string;
+  searchPlaceholder?: string;
   className?: string;
   singleSelect?: boolean;
 }
@@ -41,6 +44,9 @@ export function ServerFacetedFilter({
   options,
   selectedValues = [],
   onValueChange,
+  onSearchChange,
+  searchValue = "",
+  searchPlaceholder,
   className,
   singleSelect = false,
 }: ServerFacetedFilterProps) {
@@ -69,6 +75,7 @@ export function ServerFacetedFilter({
   const handleClear = () => {
     onValueChange?.([]);
     setOpen(false);
+    onSearchChange?.("");
   };
 
   return (
@@ -117,8 +124,12 @@ export function ServerFacetedFilter({
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0" align="start">
-        <Command>
-          <CommandInput placeholder={title} />
+        <Command shouldFilter={!onSearchChange}>
+          <CommandInput
+            placeholder={searchPlaceholder ?? title}
+            value={searchValue}
+            onValueChange={onSearchChange}
+          />
           <CommandList>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandGroup>

@@ -15,7 +15,7 @@ import {
   CommandEmpty,
   CommandGroup,
 } from "@/components/ui/command";
-import { ChevronsUpDown, Check } from "lucide-react";
+import { ChevronsUpDown, Check, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import DynamicAdd from "../common/DynamicAdd";
 import { Controller, type Control, type FieldPath } from "react-hook-form";
@@ -32,11 +32,13 @@ interface SelectPopoverProps<
   valueKey: keyof TOption;
   labelKey: keyof TOption;
   value?: number;
-  onValueChange?: (val: number) => void;
+  onValueChange?: (val: number | undefined) => void;
   placeholder?: string;
   hideLabel?: boolean;
   control?: Control<TFormValues>;
   name?: FieldPath<TFormValues>;
+  onSearchChange?: (searchTerm: string) => void;
+  showClearButton?: boolean;
 }
 
 export function SelectPopover<
@@ -52,13 +54,15 @@ export function SelectPopover<
   placeholder = "Select...",
   hideLabel,
   control,
+  onSearchChange,
   name,
+  showClearButton = true,
 }: SelectPopoverProps<TOption, TFormValues>) {
   const [open, setOpen] = useState(false);
 
   const renderPopover = (
     val: number | undefined,
-    setVal: (v: number) => void
+    setVal: (v: number | undefined) => void
   ) => {
     const selected = options.find((opt) => opt[valueKey] === val);
 
@@ -73,12 +77,28 @@ export function SelectPopover<
               role="combobox"
             >
               {selected?.[labelKey] ?? placeholder}
-              <ChevronsUpDown className="ml-2 h-4 w-4 opacity-50" />
+              <div className="flex items-center">
+                {showClearButton && val != null && (
+                  <div
+                    className="h-6 w-6 p-0 mr-1 hover:bg-muted rounded-sm flex items-center justify-center cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setVal(undefined);
+                      onValueChange?.(undefined);
+                      onSearchChange?.("");
+                      setOpen(false);
+                    }}
+                  >
+                    <X className="h-3 w-3" />
+                  </div>
+                )}
+                <ChevronsUpDown className="h-4 w-4 opacity-50" />
+              </div>
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[300px] p-0">
             <Command>
-              <CommandInput placeholder={`Search ${label.toLowerCase()}...`} />
+              <CommandInput placeholder={`Search ${label.toLowerCase()}...`} onValueChange={onSearchChange} />
               <CommandList>
                 <CommandEmpty>
                   No {label.toLowerCase()} found. <DynamicAdd label={label} />

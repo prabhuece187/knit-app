@@ -55,9 +55,8 @@ export const stateQuerySchema = z.object({
   limit: z.number().min(1).max(100).default(10),
   sortBy: z.string().default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
-
-  state_name: z.string().optional(),
-  state_code: z.string().optional(),
+  name: z.string().optional(),
+  stateCode: z.string().optional(),
 });
 
 export type StateQuery = z.infer<typeof stateQuerySchema>;

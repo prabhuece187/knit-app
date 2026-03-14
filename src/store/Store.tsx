@@ -34,6 +34,7 @@ import { useDispatch, useSelector, type TypedUseSelectorHook } from "react-redux
 import { AuthApi } from "@/pages/auth/api/AuthApi";
 import { CategoryApi } from "@/api/CategoryApi";
 import { SubCategoryApi } from "@/api/SubCategoryApi";
+import { DistrictApi } from "@/pages/district/api/DistrictApi";
 
 
 const persistConfig = {
@@ -54,6 +55,7 @@ const rootReducer = combineReducers({
   [ItemApi.reducerPath]: ItemApi.reducer,
   [MillApi.reducerPath]: MillApi.reducer,
   [StateApi.reducerPath]: StateApi.reducer,
+  [DistrictApi.reducerPath]: DistrictApi.reducer,
   [YarnTypeApi.reducerPath]: YarnTypeApi.reducer,
   [InwardApi.reducerPath]: InwardApi.reducer,
   [OutwardApi.reducerPath]: OutwardApi.reducer,
@@ -85,6 +87,7 @@ export const store = configureStore({
       ItemApi.middleware,
       MillApi.middleware,
       StateApi.middleware,
+      DistrictApi.middleware,
       YarnTypeApi.middleware,
       InwardApi.middleware,
       OutwardApi.middleware,
