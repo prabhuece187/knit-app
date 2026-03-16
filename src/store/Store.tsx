@@ -20,6 +20,7 @@ import { KnittingProductionApi } from "@/api/KnittingProductionApi";
 import { KnittingReworkApi } from "@/api/ProductionReworkApi";
 import authReducer from "@/slice/AuthSlice";
 import { AuthApi } from "@/api/AuthApi";
+import { DashboardApi } from "@/api/DashboardApi";
 
 export const store = configureStore({
   reducer: {
@@ -44,6 +45,7 @@ export const store = configureStore({
     [KnittingProductionApi.reducerPath]: KnittingProductionApi.reducer,
     [KnittingReworkApi.reducerPath]: KnittingReworkApi.reducer,
     [AuthApi.reducerPath]: AuthApi.reducer,
+    [DashboardApi.reducerPath]: DashboardApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
@@ -64,6 +66,7 @@ export const store = configureStore({
       KnittingProductionApi.middleware,
       KnittingReworkApi.middleware,
       AuthApi.middleware,
+      DashboardApi.middleware,
     ),
 });
 
