@@ -49,17 +49,15 @@ export default function EditState({
     resolver: zodResolver(stateSchema),
   });
 
-  const { data: member, isSuccess } = useGetStateByIdQuery(StateId, {
+  const { data: stateData, isSuccess } = useGetStateByIdQuery(StateId, {
     skip: StateId === undefined,
   });
 
   useEffect(() => {
-    if (isSuccess && member) {
-      form.reset(member);
+    if (isSuccess && stateData) {
+      form.reset(stateData);
     }
-  }, [isSuccess, member, form]);
-
-
+  }, [isSuccess, stateData, form]);
 
   function onSubmit(values: z.infer<typeof stateSchema>) {
     patchState(values).unwrap().then(() => {
@@ -74,8 +72,6 @@ export default function EditState({
     form.reset();
     setOpen(false);
   }
-
-  console.log(form.formState.errors);
 
   return (
     <>

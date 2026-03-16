@@ -41,6 +41,7 @@ import { useAppSelector } from "@/store/Store";
 import AdminLoginPage from "./pages/auth/pages/AdminLoginPage";
 import Login from "./pages/Login";
 import District from "./pages/district/District";
+import City from "./pages/city/City";
 
 function App() {
 
@@ -73,6 +74,7 @@ function App() {
           <Route path="items" element={<Item />} />
           <Route path="states" element={<State />} />
           <Route path="districts" element={<District />} />
+          <Route path="cities" element={<City />} />
           <Route path="mills" element={<Mill />} />
           <Route path="yarn_types" element={<YarnType />} />
           <Route path="knitting-machine" element={<KnittingMachine />} />

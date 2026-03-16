@@ -153,31 +153,18 @@ export default function AddDistrict({
                           <FormItem>
                             <FormLabel>State*</FormLabel>
                             <FormControl>
-                              {/* <SelectPopover
+                              <SelectPopover
                                 label=""
                                 placeholder="Select state..."
                                 options={states}
                                 valueKey="id"
                                 labelKey="name"
                                 name="stateId"
-                                // control={form.control}
-                                onValueChange={(selected) =>
-                                  handleStateChange(selected)
-                                }
-                              // onSearchChange={handleSearchChange}
-                              /> */}
-
-                              <SelectPopover
-                                label="State"
-                                placeholder="Select Yarn Type..."
-                                options={states}
-                                valueKey="id"
-                                labelKey="name"
-                                value={form.watch("stateId")} // 👈 bound value
-                                hideLabel
-                                onValueChange={(selected) =>
-                                  handleStateChange(selected)
-                                }
+                                control={form.control}
+                                onValueChange={(selected) => {
+                                  console.log("handleDistrictChange called", selected);
+                                }}
+                                onSearchChange={handleSearchChange}
                               />
                             </FormControl>
                             <FormMessage />

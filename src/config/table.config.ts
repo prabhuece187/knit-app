@@ -68,6 +68,25 @@ export const TABLE_MODULE_CONFIGS: Record<string, TableModuleConfig> = {
     module: "district",
   },
 
+  city: {
+    enableSearch: true,
+    enableFilters: true,
+    enablePagination: true,
+    enableSorting: true,
+    enableColumnVisibility: true,
+    enableHorizontalScroll: false,
+    enableRowSelection: false,
+    enableExport: false,
+    fixedColumns: {
+      left: ["name"],
+      right: ["actions"],
+    },
+    searchPlaceholder: "Search cities by name...",
+    showRowCount: true,
+    compactMode: false,
+    module: "city",
+  },
+
   item: {
     enableSearch: true,
     enableFilters: true,
