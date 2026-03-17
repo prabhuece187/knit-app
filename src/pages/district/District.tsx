@@ -32,7 +32,7 @@ export default function District() {
 
   // Dialog state
   const [open, setOpen] = useState(false);
-  const [selectedDistrictId, setSelectedDistrictId] = useState<number | null>(
+  const [selectedDistrict, setSelectedDistrict] = useState<District | null>(
     null
   );
 
@@ -47,13 +47,13 @@ export default function District() {
   const [deleteDistrict] = useDeleteDistrictMutation();
 
   // Memoize stable handlers to prevent column recreation
-  const handleEdit = useCallback((id: number) => {
-    setSelectedDistrictId(id);
+  const handleEdit = useCallback((district: District) => {
+    setSelectedDistrict(district);
     setOpen(true);
   }, []);
 
   const handleAdd = useCallback(() => {
-    setSelectedDistrictId(null);
+    setSelectedDistrict(null);
     setOpen(true);
   }, []);
 
@@ -121,9 +121,9 @@ export default function District() {
       // tableConfig={tableConfig}
       />
 
-      {selectedDistrictId ? (
+      {selectedDistrict ? (
         <EditDistrict
-          DistrictId={selectedDistrictId}
+          district={selectedDistrict}
           open={open}
           setOpen={setOpen}
         />

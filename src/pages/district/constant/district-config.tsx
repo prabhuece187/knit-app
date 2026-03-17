@@ -5,7 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 
 export function getDistrictColumns(
-  handleEdit: (id: number) => void,
+  handleEdit: (district: District) => void,
   handleDelete: (id: number) => void
 ): ColumnDef<District>[] {
   return [
@@ -88,7 +88,7 @@ export function getDistrictColumns(
         <DataTableRowActions<District>
           row={row}
           onEdit={(item) => {
-            handleEdit(Number(item.id));
+            handleEdit(item);
           }}
           onDelete={(item) => {
             if (item.id) {

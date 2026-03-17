@@ -18,33 +18,32 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import {
-  useGetDistrictByIdQuery,
-  useUpdateDistrictMutation,
-} from "../api/DistrictApi";
+import { useUpdateDistrictMutation } from "../api/DistrictApi";
 import { useGetStateQuery } from "../../state/api/StateApi";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 import CommonHeader from "@/components/common/CommonHeader";
-import { SelectPopover } from "@/components/custom/CustomPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
+import { ensureOptionInList } from "@/utility/option-utils";
 
 export default function EditDistrict({
   open,
   setOpen,
-  DistrictId,
+  district,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  DistrictId: number;
+  district: District;
 }) {
+
   const [stateSearchTerm, setStateSearchTerm] = useState("");
+  const [userHasChangedState, setUserHasChangedState] = useState(false); // ✅ add this
   const [updateDistrict] = useUpdateDistrictMutation();
 
   const debouncedSearchTerm = useDebounce(stateSearchTerm, 300);
 
-  // Use paginated states query with debounced search
   const { data: statesResponse } = useGetStateQuery({
     page: PAGINATION_CONFIG.DEFAULT_PAGE,
     limit: PAGINATION_CONFIG.DEFAULT_LIMIT,
@@ -53,42 +52,46 @@ export default function EditDistrict({
     name: debouncedSearchTerm || undefined,
   });
 
-  const states = useMemo(
-    () => statesResponse?.data || [],
+  const baseStates = useMemo(
+    () =>
+      statesResponse?.data
+        ?.filter((s) => s.id !== undefined)
+        .map((s) => ({ id: s.id as number, name: s.name })) || [],
     [statesResponse?.data]
   );
 
+  const form = useForm<District>({
+    resolver: zodResolver(districtSchema),
+  });
+
+  console.log("district", district);
+
+  const fallbackState =
+    !userHasChangedState &&           // ✅ only use fallback if user hasn't touched it
+      district?.stateId &&
+      district?.state
+      ? { id: district.stateId, name: district.state.name }
+      : null;
+
+  const states = ensureOptionInList(baseStates, fallbackState);
+
+  console.log("states", states);
+  console.log("baseStates", baseStates);
+
   const handleStateChange = (stateId: number | undefined) => {
-    if (stateId) {
-      form.setValue("stateId", stateId);
-    }
+    if (stateId) form.setValue("stateId", stateId);
   };
 
   const handleSearchChange = (searchTerm: string) => {
     setStateSearchTerm(searchTerm);
   };
 
-  const form = useForm<District>({
-    resolver: zodResolver(districtSchema),
-    defaultValues: {
-      name: "",
-      districtCode: "",
-      stateId: 0,
-    },
-  });
-
-  const { data: districtData, isSuccess } = useGetDistrictByIdQuery(
-    DistrictId,
-    {
-      skip: DistrictId === undefined,
-    }
-  );
-
   useEffect(() => {
-    if (isSuccess && districtData) {
-      form.reset(districtData);
+    if (district?.id) {
+      form.reset(district);
+      setUserHasChangedState(false);
     }
-  }, [isSuccess, districtData, form]);
+  }, [district]); // ✅ re-runs whenever any district field changes
 
   function onSubmit(values: District) {
     const updateData = {
@@ -96,7 +99,7 @@ export default function EditDistrict({
       districtCode: values.districtCode,
       stateId: values.stateId,
     };
-    updateDistrict({ id: DistrictId, data: updateData })
+    updateDistrict({ id: district.id as number, data: updateData })
       .unwrap()
       .then((response) => {
         toast.success(response.message);
@@ -173,29 +176,24 @@ export default function EditDistrict({
                     </div>
 
                     <div className="col-span-6">
-                      <FormField
-                        control={form.control}
+                      <SelectPopover
+                        label="State*"
+                        placeholder="Select state..."
+                        options={states}
+                        valueKey="id"
+                        labelKey="name"
                         name="stateId"
-                        render={() => (
-                          <FormItem>
-                            <FormLabel>State*</FormLabel>
-                            <FormControl>
-                              <SelectPopover
-                                label="State"
-                                placeholder="Select state..."
-                                options={states}
-                                valueKey="id"
-                                labelKey="name"
-                                value={form.watch("stateId")} // 👈 bound value
-                                hideLabel
-                                onValueChange={(selected) =>
-                                  handleStateChange(selected)
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        control={form.control}
+                        hideLabel
+                        // onValueChange={(selected) =>
+                        //   handleStateChange(selected?.id)
+                        // }
+                        onValueChange={(selected) => {
+                          setUserHasChangedState(true);   // ✅ mark as changed on select
+                          console.log("handleDistrictChange called", selected);
+                        }}
+                        onClear={() => setUserHasChangedState(true)}
+                        onSearchChange={handleSearchChange}
                       />
                     </div>
                   </div>

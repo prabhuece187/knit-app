@@ -22,7 +22,7 @@ import CommonHeader from "@/components/common/CommonHeader";
 import { useCreateDistrictMutation } from "../api/DistrictApi";
 import { useGetStateQuery } from "../../state/api/StateApi";
 import { toast } from "sonner";
-import { SelectPopover } from "@/components/custom/CustomPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { useMemo, useState } from "react";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
@@ -146,31 +146,20 @@ export default function AddDistrict({
                     </div>
 
                     <div className="col-span-6">
-                      <FormField
-                        control={form.control}
+                      <SelectPopover
+                        label="State *"
+                        placeholder="Select state..."
+                        options={states}
+                        valueKey="id"
+                        labelKey="name"
                         name="stateId"
-                        render={() => (
-                          <FormItem>
-                            <FormLabel>State*</FormLabel>
-                            <FormControl>
-                              <SelectPopover
-                                label=""
-                                placeholder="Select state..."
-                                options={states}
-                                valueKey="id"
-                                labelKey="name"
-                                name="stateId"
-                                control={form.control}
-                                onValueChange={(selected) => {
-                                  console.log("handleDistrictChange called", selected);
-                                }}
-                                onSearchChange={handleSearchChange}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
+                        control={form.control}
+                        onValueChange={(selected) => {
+                          console.log("handleDistrictChange called", selected);
+                        }}
+                        onSearchChange={handleSearchChange}
                       />
+
                     </div>
                   </div>
                   <div className="grid grid-cols-12 gap-2">

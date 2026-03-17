@@ -23,7 +23,7 @@ import { useGetDistrictsQuery } from "@/pages/district/api/DistrictApi";
 import { toast } from "sonner";
 import { useEffect, useMemo, useState } from "react";
 import CommonHeader from "@/components/common/CommonHeader";
-import { SelectPopover } from "@/components/custom/CustomPopover";
+import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
 
@@ -36,7 +36,7 @@ export default function EditCity({
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   CityId: number;
 }) {
-  const [districtSearchTerm] = useState("");
+  const [districtSearchTerm, setDistrictSearchTerm] = useState("");
   const [updateCity] = useUpdateCityMutation();
 
   const debouncedSearchTerm = useDebounce(districtSearchTerm, 300);
@@ -78,6 +78,11 @@ export default function EditCity({
   const { data: cityData, isSuccess } = useGetCityByIdQuery(CityId, {
     skip: CityId === undefined,
   });
+
+  const handleSearchChange = (searchTerm: string) => {
+    setDistrictSearchTerm(searchTerm);
+  };
+
 
   useEffect(() => {
     if (isSuccess && cityData) {
@@ -148,7 +153,7 @@ export default function EditCity({
                     </div>
 
                     <div className="col-span-6">
-                      {/* <SelectPopover
+                      <SelectPopover
                         label="District*"
                         placeholder="Select district..."
                         options={districts}
@@ -157,33 +162,11 @@ export default function EditCity({
                         name="districtId"
                         control={form.control}
                         onValueChange={(selected) =>
-                          handleDistrictChange(selected)
+                          handleDistrictChange(
+                            selected?.id ? Number(selected.id) : undefined
+                          )
                         }
                         onSearchChange={handleSearchChange}
-                      /> */}
-                      <FormField
-                        control={form.control}
-                        name="districtId"
-                        render={() => (
-                          <FormItem>
-                            <FormLabel>District*</FormLabel>
-                            <FormControl>
-                              <SelectPopover
-                                label=""
-                                placeholder="Select district..."
-                                options={districts}
-                                valueKey="id"
-                                labelKey="name"
-                                value={form.watch("districtId")}
-                                hideLabel
-                                onValueChange={(selected) =>
-                                  handleDistrictChange(selected)
-                                }
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
                       />
                     </div>
                   </div>
