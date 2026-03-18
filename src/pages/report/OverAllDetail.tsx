@@ -4,566 +4,262 @@ import { usePostAllDetailReportMutation } from "@/api/ReportApi";
 import CommonHeader from "@/components/common/CommonHeader";
 import ExportActions from "@/components/common/ExportAction";
 import { SelectPopover } from "@/components/custom/CustomPopover";
+import DateRangePicker from "@/components/common/DateRangePicker";
+
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
+
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import {
   OverAllReportSchema,
   type InwardReport,
   type Totals,
 } from "@/schema-types/report-schema";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import type z from "zod";
+import { format } from "date-fns";
+import type { DateRange } from "react-day-picker";
 
-export default function OverAllReport() {
+export default function OverAllDetailReport() {
   const { data: customers = [] } = useGetCustomerListQuery("") as {
     data: Customer[];
   };
 
-  const { data: mills = [] } = useGetMillListQuery("") as { data: Mill[] };
+  const { data: mills = [] } = useGetMillListQuery("") as {
+    data: Mill[];
+  };
 
-  const [postOverAllReport] = usePostAllDetailReportMutation();
+  const [postReport] = usePostAllDetailReportMutation();
 
   const form = useForm<z.infer<typeof OverAllReportSchema>>({
     resolver: zodResolver(OverAllReportSchema),
     defaultValues: {
       user_id: 1,
-      from_date: new Date().toISOString().split("T")[0],
-      to_date: new Date().toISOString().split("T")[0],
+      from_date: "",
+      to_date: "",
     },
   });
 
-  const [InwardReportData, setInwardReportData] = React.useState<
-    InwardReport[]
-  >([]);
+  const [range, setRange] = React.useState<DateRange | undefined>();
+  const [data, setData] = React.useState<InwardReport[]>([]);
   const [totals, setTotals] = React.useState<Totals | null>(null);
+
+  const [printFormat, setPrintFormat] = React.useState<"A4" | "A5" | "Thermal">(
+    "A4",
+  );
+
+  // Sync Date
+  React.useEffect(() => {
+    if (range?.from) {
+      form.setValue("from_date", format(range.from, "yyyy-MM-dd"));
+    }
+    if (range?.to) {
+      form.setValue("to_date", format(range.to, "yyyy-MM-dd"));
+    }
+  }, [range, form]);
 
   async function onSubmit(values: z.infer<typeof OverAllReportSchema>) {
     try {
-      const response = await postOverAllReport(values).unwrap();
-      console.log("API Response:", response);
-      setInwardReportData(response.inwards);
-      setTotals(response.totals);
-    } catch (error) {
-      console.error("Failed to fetch report:", error);
+      const res = await postReport(values).unwrap();
+
+      const safe = (res.inwards ?? []).map((row: InwardReport) => ({
+        ...row,
+        inward_details: row.inward_details ?? [],
+        outwards: (row.outwards ?? []).map((o) => ({
+          ...o,
+          outward_details: o.outward_details ?? [],
+        })),
+      }));
+
+      setData(safe);
+      setTotals(res.totals ?? null);
+    } catch (e) {
+      console.error(e);
     }
   }
 
+  const onPrint = () => window.print();
+
   return (
     <>
+      {/* HEADER */}
       <CommonHeader
         name="Over All Detail Report"
-        trigger={
-          <ExportActions
-            fileName="over-all-report-detail"
-            sections={[
-              // Inward Data Listing (Simple flat list)
-              {
-                title: "Inward",
-                columns: ["Customer", "Mill", "Inward No", "Date"],
-                rows: InwardReportData.map((row) => [
-                  row.customer?.customer_name ?? "-",
-                  row.mill?.mill_name ?? "-",
-                  row.inward_no,
-                  row.inward_date,
-                ]),
-              },
-
-              // Over-All Detail Report (Full details)
-              ...InwardReportData.map((row) => ({
-                title: `Inward Details`,
-                columns: [
-                  "S.No",
-                  "Item",
-                  "Yarn Type",
-                  "Dia",
-                  "GSM",
-                  "Gauge",
-                  "Qty",
-                  "Weight",
-                  "Date",
-                ],
-                rows: [
-                  // 🔹 Inward details
-                  ...(row.inward_details?.map((detail, detailIndex) => [
-                    detailIndex + 1,
-                    detail.item?.item_name ?? "-",
-                    detail.yarn_type?.yarn_type ?? "-",
-                    detail.yarn_dia ?? "-",
-                    detail.yarn_gsm ?? "-",
-                    detail.yarn_gauge ?? "-",
-                    detail.inward_qty ?? "-",
-                    detail.inward_weight ?? "-",
-                    detail.inward_detail_date ?? "-",
-                  ]) ?? []),
-
-                  // Inward Total row
-                  [
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "Inward Total",
-                    row.total_quantity ?? 0,
-                    row.total_weight ?? 0,
-                    "",
-                  ],
-
-                  // Outwards (if any)
-                  ...(row.outwards?.flatMap((outward) => [
-                    // Header for outward
-                    ["", "", "", "", "", `Outward`, "", "", ""],
-                    // Outward detail rows
-                    ...(outward.outward_details?.map((detail, detailIndex) => [
-                      detailIndex + 1,
-                      detail.item?.item_name ?? "-",
-                      detail.yarn_type?.yarn_type ?? "-",
-                      detail.yarn_dia ?? "-",
-                      detail.yarn_gsm ?? "-",
-                      detail.yarn_gauge ?? "-",
-                      detail.outward_qty ?? "-",
-                      detail.outward_weight ?? "-",
-                      detail.outward_detail_date ?? "-",
-                    ]) ?? []),
-                    // Outward Total row
-                    [
-                      "",
-                      "",
-                      "",
-                      "",
-                      "",
-                      "Outward Total",
-                      outward.total_quantity ?? 0,
-                      outward.total_weight ?? 0,
-                      "",
-                    ],
-                  ]) ?? []),
-
-                  // Final Balance row
-                  [
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "Balance",
-                    totals?.balance?.balance_quantity ?? 0,
-                    totals?.balance?.balance_weight ?? 0,
-                    "",
-                  ],
-                ],
-              })),
-            ]}
-          />
-        }
+        trigger={<ExportActions fileName="overall-report" sections={[]} />}
       />
 
-      {/* Search Form */}
-      <Card className="@container/card">
-        <CardContent className="pt-4">
-          <Form {...form}>
-            <form
-              id="report-form"
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-8"
+      {/* FILTER */}
+      <Form {...form}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="flex flex-wrap gap-4 items-end mb-4"
+        >
+          {/* Date */}
+          <div className="min-w-[220px]">
+            <input
+              type="hidden"
+              name="from_date"
+              value={range?.from ? format(range.from, "yyyy-MM-dd") : ""}
+            />
+            <input
+              type="hidden"
+              name="to_date"
+              value={range?.to ? format(range.to, "yyyy-MM-dd") : ""}
+            />
+            <DateRangePicker value={range} onChange={setRange} />
+          </div>
+
+          {/* Customer */}
+          <SelectPopover
+            label="Customer"
+            placeholder="Select Customer"
+            options={customers}
+            valueKey="id"
+            labelKey="customer_name"
+            name="customer_id"
+            control={form.control}
+          />
+
+          {/* Mill */}
+          <SelectPopover
+            label="Mill"
+            placeholder="Select Mill"
+            options={mills}
+            valueKey="id"
+            labelKey="mill_name"
+            name="mill_id"
+            control={form.control}
+          />
+
+          {/* Search */}
+          <Input
+            placeholder="Search..."
+            {...form.register("search_data")}
+            className="w-[200px]"
+          />
+
+          <Button type="submit">Search</Button>
+
+          {/* Print */}
+          <div className="ml-auto flex gap-2">
+            <select
+              className="border px-2 py-1 rounded"
+              value={printFormat}
+              onChange={(e) =>
+                setPrintFormat(e.target.value as "A4" | "A5" | "Thermal")
+              }
             >
-              <div className="flex flex-wrap gap-4">
-                <div className="flex-1 min-w-[200px]">
-                  <FormField
-                    control={form.control}
-                    name="from_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>From Date*</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            value={field.value ?? ""}
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              <option value="A4">A4</option>
+              <option value="A5">A5</option>
+              <option value="Thermal">Thermal</option>
+            </select>
 
-                <div className="flex-1 min-w-[200px]">
-                  <FormField
-                    control={form.control}
-                    name="to_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>To Date*</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="date"
-                            value={field.value ?? ""}
-                            onChange={(e) => field.onChange(e.target.value)}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+            <Button onClick={onPrint} variant="outline">
+              Print
+            </Button>
+          </div>
+        </form>
+      </Form>
 
-                <div className="flex-1 min-w-[200px]">
-                  <SelectPopover
-                    label="Customer"
-                    placeholder="Select Customer..."
-                    options={customers}
-                    valueKey="id"
-                    labelKey="customer_name"
-                    name="customer_id"
-                    control={form.control}
-                  />
-                </div>
+      {/* REPORT (NO CARD, FULL WIDTH) */}
+      {/* REPORT */}
+      <div id="print-section" className="mt-4 overflow-x-auto">
+        <Table className="border">
+          <TableBody>
+            {(data ?? []).map((row, index) => (
+              <React.Fragment key={row.id ?? index}>
+                {/* HEADER INFO */}
+                <TableRow className="bg-gray-200">
+                  <TableCell colSpan={7} className="font-semibold">
+                    Customer: {row.customer?.customer_name ?? "-"} | Mill:{" "}
+                    {row.mill?.mill_name ?? "-"} | Inward No: {row.inward_no} |
+                    Date: {row.inward_date}
+                  </TableCell>
+                </TableRow>
 
-                <div className="flex-1 min-w-[200px]">
-                  <SelectPopover
-                    label="Mill"
-                    placeholder="Select Mill..."
-                    options={mills}
-                    valueKey="id"
-                    labelKey="mill_name"
-                    name="mill_id"
-                    control={form.control}
-                  />
-                </div>
+                {/* TABLE HEADER */}
+                <TableRow className="bg-gray-100 font-semibold text-center">
+                  <TableCell>S.No</TableCell>
+                  <TableCell>Type</TableCell>
+                  <TableCell className="text-left">Item</TableCell>
+                  <TableCell>Yarn</TableCell>
+                  <TableCell>Qty</TableCell>
+                  <TableCell>Weight</TableCell>
+                </TableRow>
 
-                <div className="flex-1 min-w-[200px]">
-                  <FormField
-                    control={form.control}
-                    name="search_data"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Any Data</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Enter search data" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                <div className="flex items-end justify-end min-w-[150px]">
-                  <Button type="submit" className="m-1">
-                    Search
-                  </Button>
-                </div>
-              </div>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-
-      {/* Reports */}
-      <Card className="@container/card mt-1">
-        <CardContent className="pt-4">
-          <Table>
-            <TableBody>
-              {InwardReportData.map((row, index) => (
-                <React.Fragment key={row.id ?? index}>
-                  {/* Main Inward - Grid View */}
-
-                  <TableRow className="font-semibold">
-                    <TableCell colSpan={8}>Inward</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell colSpan={8} className="p-4">
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div>
-                          <p className="text-sm ">Customer</p>
-                          <p className="text-lg font-medium">
-                            {row.customer?.customer_name ?? "-"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm ">Mill</p>
-                          <p className="text-lg font-medium">
-                            {row.mill?.mill_name ?? "-"}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm ">Inward No</p>
-                          <p className="text-lg font-medium">{row.inward_no}</p>
-                        </div>
-                        <div>
-                          <p className="text-sm ">Date</p>
-                          <p className="text-lg font-medium">
-                            {row.inward_date}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm ">Qty</p>
-                          <p className="text-lg font-medium">
-                            {row.total_quantity}
-                          </p>
-                        </div>
-                        <div>
-                          <p className="text-sm ">Weight</p>
-                          <p className="text-lg font-medium">
-                            {row.total_weight}
-                          </p>
-                        </div>
-                      </div>
+                {/* INWARD ROWS */}
+                {(row.inward_details ?? []).map((d, i) => (
+                  <TableRow key={`in-${i}`} className="text-center">
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell className="text-green-600 font-medium">
+                      Inward
                     </TableCell>
+                    <TableCell className="text-left">
+                      {d.item?.item_name ?? "-"}
+                    </TableCell>
+                    <TableCell>{d.yarn_type?.yarn_type ?? "-"}</TableCell>
+                    <TableCell>{d.inward_qty ?? 0}</TableCell>
+                    <TableCell>{d.inward_weight ?? 0}</TableCell>
                   </TableRow>
+                ))}
 
-                  {/* Inward Details - Table */}
-                  {Array.isArray(row.inward_details) &&
-                    row.inward_details.length > 0 && (
-                      <TableRow>
-                        <TableCell colSpan={8} className="p-0">
-                          <Table className="border mt-2">
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead className="text-left">
-                                  S.No
-                                </TableHead>
-                                <TableHead className="text-left">
-                                  Item
-                                </TableHead>
-                                <TableHead className="text-left">
-                                  Yarn Type
-                                </TableHead>
-                                <TableHead className="text-right">
-                                  Dia
-                                </TableHead>
-                                <TableHead className="text-right">
-                                  GSM
-                                </TableHead>
-                                <TableHead className="text-right">
-                                  Gauge
-                                </TableHead>
-                                <TableHead className="text-right">
-                                  Qty
-                                </TableHead>
-                                <TableHead className="text-right">
-                                  Weight
-                                </TableHead>
-                                <TableHead className="text-left">
-                                  Date
-                                </TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              {row.inward_details.map((detail, detailIndex) => (
-                                <TableRow key={detail.id ?? detailIndex}>
-                                  <TableCell className="text-left">
-                                    {detailIndex + 1}
-                                  </TableCell>
-                                  <TableCell className="text-left">
-                                    {detail.item?.item_name ?? "-"}
-                                  </TableCell>
-                                  <TableCell className="text-left">
-                                    {detail.yarn_type?.yarn_type ?? "-"}
-                                  </TableCell>
-                                  <TableCell className="text-right">
-                                    {detail.yarn_dia}
-                                  </TableCell>
-                                  <TableCell className="text-right">
-                                    {detail.yarn_gsm}
-                                  </TableCell>
-                                  <TableCell className="text-right">
-                                    {detail.yarn_gauge}
-                                  </TableCell>
-                                  <TableCell className="text-right">
-                                    {detail.inward_qty}
-                                  </TableCell>
-                                  <TableCell className="text-right">
-                                    {detail.inward_weight}
-                                  </TableCell>
-                                  <TableCell className="text-left">
-                                    {detail.inward_detail_date}
-                                  </TableCell>
-                                </TableRow>
-                              ))}
+                {/* OUTWARD ROWS */}
+                {(row.outwards ?? []).flatMap((o) =>
+                  (o.outward_details ?? []).map((d, i) => (
+                    <TableRow key={`out-${i}`} className="text-center">
+                      <TableCell>{i + 1}</TableCell>
+                      <TableCell className="text-red-600 font-medium">
+                        Outward
+                      </TableCell>
+                      <TableCell className="text-left">
+                        {d.item?.item_name ?? "-"}
+                      </TableCell>
+                      <TableCell>{d.yarn_type?.yarn_type ?? "-"}</TableCell>
+                      <TableCell>{d.outward_qty ?? 0}</TableCell>
+                      <TableCell>{d.outward_weight ?? 0}</TableCell>
+                    </TableRow>
+                  )),
+                )}
 
-                              {/* Inward Total */}
-                              <TableRow className="font-medium">
-                                {/* Empty cells to match S.No → Gauge */}
-                                <TableCell colSpan={6} className="text-right">
-                                  Inward Total:
-                                </TableCell>
+                {/* BALANCE */}
+                <TableRow className="bg-gray-300 font-bold text-center">
+                  <TableCell colSpan={4}>Balance</TableCell>
+                  <TableCell>
+                    {totals?.balance?.balance_quantity ?? 0}
+                  </TableCell>
+                  <TableCell>{totals?.balance?.balance_weight ?? 0}</TableCell>
+                </TableRow>
 
-                                {/* Qty */}
-                                <TableCell className="text-right">
-                                  {row.total_quantity}
-                                </TableCell>
+                {/* GAP */}
+                <TableRow>
+                  <TableCell colSpan={7} className="py-2"></TableCell>
+                </TableRow>
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
-                                {/* Weight */}
-                                <TableCell className="text-right">
-                                  {row.total_weight}
-                                </TableCell>
-
-                                {/* Date (empty for total row) */}
-                                <TableCell />
-                              </TableRow>
-                            </TableBody>
-                          </Table>
-                        </TableCell>
-                      </TableRow>
-                    )}
-
-                  {/*  Outward Details */}
-                  {Array.isArray(row.outwards) &&
-                    row.outwards.map((outward, outwardIndex) => (
-                      <React.Fragment key={outward.id ?? outwardIndex}>
-                        {/* Outward Header */}
-                        <TableRow className="font-semibold">
-                          <TableCell colSpan={8}>Outward</TableCell>
-                        </TableRow>
-
-                        {/* Outward Details Table */}
-                        {Array.isArray(outward.outward_details) &&
-                          outward.outward_details.length > 0 && (
-                            <TableRow>
-                              <TableCell colSpan={8} className="p-0">
-                                <Table className="border mt-2">
-                                  <TableHeader>
-                                    <TableRow>
-                                      <TableHead className="text-left">
-                                        S.No
-                                      </TableHead>
-                                      <TableHead className="text-left">
-                                        Item
-                                      </TableHead>
-                                      <TableHead className="text-left">
-                                        Yarn Type
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Dia
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        GSM
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Gauge
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Qty
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Weight
-                                      </TableHead>
-                                      <TableHead className="text-right">
-                                        Delivered
-                                      </TableHead>
-                                      <TableHead className="text-left">
-                                        Date
-                                      </TableHead>
-                                    </TableRow>
-                                  </TableHeader>
-                                  <TableBody>
-                                    {outward.outward_details.map(
-                                      (detail, detailIndex) => (
-                                        <TableRow
-                                          key={detail.id ?? detailIndex}
-                                        >
-                                          <TableCell className="text-left">
-                                            {detailIndex + 1}
-                                          </TableCell>
-                                          <TableCell className="text-left">
-                                            {detail.item?.item_name ?? "-"}
-                                          </TableCell>
-                                          <TableCell className="text-left">
-                                            {detail.yarn_type?.yarn_type ?? "-"}
-                                          </TableCell>
-                                          <TableCell className="text-right">
-                                            {detail.yarn_dia}
-                                          </TableCell>
-                                          <TableCell className="text-right">
-                                            {detail.yarn_gsm}
-                                          </TableCell>
-                                          <TableCell className="text-right">
-                                            {detail.yarn_gauge}
-                                          </TableCell>
-                                          <TableCell className="text-right">
-                                            {detail.outward_qty}
-                                          </TableCell>
-                                          <TableCell className="text-right">
-                                            {detail.outward_weight}
-                                          </TableCell>
-                                          <TableCell className="text-right">
-                                            {detail.deliverd_weight}
-                                          </TableCell>
-                                          <TableCell className="text-left">
-                                            {detail.outward_detail_date}
-                                          </TableCell>
-                                        </TableRow>
-                                      )
-                                    )}
-
-                                    {/*  Outward Total */}
-                                    <TableRow className="font-medium">
-                                      <TableCell
-                                        colSpan={6}
-                                        className="text-right"
-                                      >
-                                        Outward Total:
-                                      </TableCell>
-                                      <TableCell className="text-right">
-                                        {outward.total_quantity}
-                                      </TableCell>
-                                      <TableCell className="text-right">
-                                        {outward.total_weight}
-                                      </TableCell>
-                                    </TableRow>
-
-                                    {/*  Final Balance */}
-                                    {totals && (
-                                      <TableRow className="font-bold">
-                                        <TableCell
-                                          colSpan={6}
-                                          className="text-right"
-                                        >
-                                          Balance:
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                          {totals.balance?.balance_quantity ??
-                                            0}
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                          {totals.balance?.balance_weight ?? 0}
-                                        </TableCell>
-                                      </TableRow>
-                                    )}
-                                  </TableBody>
-                                </Table>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                      </React.Fragment>
-                    ))}
-                </React.Fragment>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {/* PRINT CSS */}
+      <style>
+        {`
+        @media print {
+          body * { visibility: hidden; }
+          #print-section, #print-section * { visibility: visible; }
+          #print-section {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+          }
+        }
+        `}
+      </style>
     </>
   );
 }

@@ -129,7 +129,7 @@ export default function IndividualData() {
         return items.map((i) => ({
           id: i.id ?? 1,
           name: i.item_name,
-          detail: i.item_code ?? "",
+          detail: i.hsn_code ?? "",
         }));
       case "yarn_types":
         return yarn_types.map((y) => ({
