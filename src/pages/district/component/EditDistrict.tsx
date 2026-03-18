@@ -21,12 +21,12 @@ import { Button } from "@/components/ui/button";
 import { useUpdateDistrictMutation } from "../api/DistrictApi";
 import { useGetStateQuery } from "../../state/api/StateApi";
 import { toast } from "sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CommonHeader from "@/components/common/CommonHeader";
 import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
-import { ensureOptionInList } from "@/utility/option-utils";
+import { ensureOptionInList, toIdNameOptions } from "@/utility/option-utils";
 
 export default function EditDistrict({
   open,
@@ -39,7 +39,8 @@ export default function EditDistrict({
 }) {
 
   const [stateSearchTerm, setStateSearchTerm] = useState("");
-  const [userHasChangedState, setUserHasChangedState] = useState(false); // ✅ add this
+  // const [states, setStates] = useState<State[]>([]);
+  // const [userHasChangedState, setUserHasChangedState] = useState(false); // ✅ add this
   const [updateDistrict] = useUpdateDistrictMutation();
 
   const debouncedSearchTerm = useDebounce(stateSearchTerm, 300);
@@ -52,13 +53,7 @@ export default function EditDistrict({
     name: debouncedSearchTerm || undefined,
   });
 
-  const baseStates = useMemo(
-    () =>
-      statesResponse?.data
-        ?.filter((s) => s.id !== undefined)
-        .map((s) => ({ id: s.id as number, name: s.name })) || [],
-    [statesResponse?.data]
-  );
+  const baseStates = toIdNameOptions(statesResponse?.data);
 
   const form = useForm<District>({
     resolver: zodResolver(districtSchema),
@@ -67,20 +62,23 @@ export default function EditDistrict({
   console.log("district", district);
 
   const fallbackState =
-    !userHasChangedState &&           // ✅ only use fallback if user hasn't touched it
-      district?.stateId &&
+    // !userHasChangedState &&           // ✅ only use fallback if user hasn't touched it
+    district?.stateId &&
       district?.state
       ? { id: district.stateId, name: district.state.name }
       : null;
 
   const states = ensureOptionInList(baseStates, fallbackState);
 
+  // useEffect(() => {
+  //   if (fallbackState) {
+  //     setStates(ensureOptionInList(baseStates, fallbackState));
+  //   }
+  // }, [states, baseStates, fallbackState]);
+
   console.log("states", states);
   console.log("baseStates", baseStates);
-
-  const handleStateChange = (stateId: number | undefined) => {
-    if (stateId) form.setValue("stateId", stateId);
-  };
+  console.log("fallbackState", fallbackState);
 
   const handleSearchChange = (searchTerm: string) => {
     setStateSearchTerm(searchTerm);
@@ -89,7 +87,7 @@ export default function EditDistrict({
   useEffect(() => {
     if (district?.id) {
       form.reset(district);
-      setUserHasChangedState(false);
+      // setUserHasChangedState(false);
     }
   }, [district]); // ✅ re-runs whenever any district field changes
 
@@ -116,9 +114,15 @@ export default function EditDistrict({
     setOpen(false);
   }
 
+  const handleClose = (value: boolean) => {
+    if (!value) form.reset();
+    setStateSearchTerm("")
+    setOpen(value)
+  }
+
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={(value) => handleClose(value)}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -189,10 +193,10 @@ export default function EditDistrict({
                         //   handleStateChange(selected?.id)
                         // }
                         onValueChange={(selected) => {
-                          setUserHasChangedState(true);   // ✅ mark as changed on select
+                          // setUserHasChangedState(true);   // ✅ mark as changed on select
                           console.log("handleDistrictChange called", selected);
                         }}
-                        onClear={() => setUserHasChangedState(true)}
+                        // onClear={() => setUserHasChangedState(true)}
                         onSearchChange={handleSearchChange}
                       />
                     </div>

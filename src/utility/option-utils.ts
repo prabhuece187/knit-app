@@ -31,3 +31,18 @@ export function ensureOptionInList<T extends Record<string, unknown>>(
   if (exists) return list;
   return [item, ...list];
 }
+
+export function toIdNameOptions<
+  T extends {
+    id?: number | null;
+    name?: string | null;
+  }
+>(items: T[] | undefined | null): Array<{ id: number; name: string }> {
+  if (!items) return [];
+  return items
+    .filter(
+      (item): item is T & { id: number; name: string } =>
+        item.id != null && item.name != null
+    )
+    .map((item) => ({ id: item.id, name: item.name }));
+}

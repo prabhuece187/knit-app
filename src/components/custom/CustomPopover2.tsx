@@ -110,10 +110,10 @@ export function SelectPopover<
                             </PopoverTrigger>
                             <PopoverContent
                                 className="w-[300px] p-0 z-[100]"
-                            // onInteractOutside={(e) => {
-                            //   // Prevent the dialog from closing when interacting with the popover
-                            //   e.preventDefault();
-                            // }}
+                                onInteractOutside={(e) => {
+                                    // Prevent the dialog from closing when interacting with the popover
+                                    //   e.preventDefault();
+                                }}
                             >
                                 <Command>
                                     <CommandInput
