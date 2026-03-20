@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { useGetDistrictsQuery } from "@/pages/district/api/DistrictApi";
 import { useGetStateQuery } from "@/pages/state/api/StateApi";
 import { useForm, FormProvider } from "react-hook-form";
@@ -11,8 +11,7 @@ import {
   type CityFilterFormData,
 } from "../schema-types/city-schema";
 import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
-import { X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import ResetFiltersButton from "@/components/common/ResetFiltersButton";
 
 function CityFilter({ filters, onFilterChange }: CityFilterProps) {
 
@@ -143,23 +142,15 @@ function CityFilter({ filters, onFilterChange }: CityFilterProps) {
           disabled={!filters.stateId}
         />
 
-
-        {/* Active Filter Tags */}
-        {(filters.stateId || filters.districtId) && (
-          <div className="flex items-center space-x-1">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => onFilterChange({
-                stateId: "",
-                districtId: "",
-              })}
-              className="h-8 px-2 text-xs"
-            >
-              Reset <X className="h-3 w-3" />
-            </Button>
-          </div>
-        )}
+        <ResetFiltersButton
+          show={!!(filters.stateId || filters.districtId)}
+          onReset={() =>
+            onFilterChange({
+              stateId: "",
+              districtId: "",
+            })
+          }
+        />
       </div>
     </FormProvider>
   );

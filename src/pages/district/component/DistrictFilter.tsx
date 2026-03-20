@@ -4,6 +4,7 @@ import { useCallback, useState } from 'react';
 import { PAGINATION_CONFIG } from '@/config/app.config';
 import { useGetStateQuery } from '@/pages/state/api/StateApi';
 import { useDebounce } from '@/helper/useDebounce';
+import ResetFiltersButton from '@/components/common/ResetFiltersButton';
 
 const DistrictFilter = ({ filters, onFilterChange }: DistrictFilterProps) => {
 
@@ -60,6 +61,15 @@ const DistrictFilter = ({ filters, onFilterChange }: DistrictFilterProps) => {
                 searchValue={stateSearch}
                 searchPlaceholder="Search State..."
                 singleSelect={isSingleSelect}
+            />
+
+            <ResetFiltersButton
+                show={!!filters.stateId}
+                onReset={() =>
+                    onFilterChange({
+                        stateId: "",
+                    })
+                }
             />
         </>
     )
