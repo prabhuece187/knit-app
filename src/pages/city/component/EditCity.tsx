@@ -18,30 +18,32 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { useGetCityByIdQuery, useUpdateCityMutation } from "../api/CityApi";
+import { useUpdateCityMutation } from "../api/CityApi";
 import { useGetDistrictsQuery } from "@/pages/district/api/DistrictApi";
 import { toast } from "sonner";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CommonHeader from "@/components/common/CommonHeader";
 import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
+import { ensureOptionInList } from "@/utility/option-utils";
+import { toIdNameOptions } from "@/utility/option-utils";
+
 
 export default function EditCity({
   open,
   setOpen,
-  CityId,
+  city,
 }: {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  CityId: number;
+  city: City;
 }) {
   const [districtSearchTerm, setDistrictSearchTerm] = useState("");
   const [updateCity] = useUpdateCityMutation();
 
   const debouncedSearchTerm = useDebounce(districtSearchTerm, 300);
 
-  // Use paginated districts query with debounced search
   const { data: districtsResponse } = useGetDistrictsQuery({
     page: PAGINATION_CONFIG.DEFAULT_PAGE,
     limit: PAGINATION_CONFIG.DEFAULT_LIMIT,
@@ -50,16 +52,8 @@ export default function EditCity({
     name: debouncedSearchTerm || undefined,
   });
 
-  const districts = useMemo(
-    () =>
-      districtsResponse?.data
-        ?.filter((d) => d.id !== undefined)
-        .map((d) => ({
-          id: d.id as number,
-          name: d.name,
-        })) || [],
-    [districtsResponse?.data]
-  );
+  const baseDistricts = toIdNameOptions(districtsResponse?.data);
+
 
   const handleDistrictChange = (districtId: number | undefined) => {
     if (districtId) {
@@ -75,27 +69,31 @@ export default function EditCity({
     },
   });
 
-  const { data: cityData, isSuccess } = useGetCityByIdQuery(CityId, {
-    skip: CityId === undefined,
-  });
+  const fallbackDistrict =
+    city?.districtId &&
+      city?.district
+      ? { id: city.districtId, name: city.district.name }
+      : null;
+
+  const districts = ensureOptionInList(baseDistricts, fallbackDistrict);
+
 
   const handleSearchChange = (searchTerm: string) => {
     setDistrictSearchTerm(searchTerm);
   };
 
-
   useEffect(() => {
-    if (isSuccess && cityData) {
-      form.reset(cityData);
+    if (city?.id) {
+      form.reset(city);
     }
-  }, [isSuccess, cityData, form]);
+  }, [city]);
 
   function onSubmit(values: City) {
     const updateData = {
       name: values.name,
       districtId: values.districtId,
     };
-    updateCity({ id: CityId, data: updateData })
+    updateCity({ id: city.id as number, data: updateData })
       .unwrap()
       .then((response) => {
         toast.success(response.message);
@@ -112,9 +110,15 @@ export default function EditCity({
     setOpen(false);
   }
 
+  const handleClose = (value: boolean) => {
+    if (!value) form.reset();
+    setDistrictSearchTerm("")
+    setOpen(value)
+  }
+
   return (
     <>
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>

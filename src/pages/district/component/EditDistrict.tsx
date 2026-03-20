@@ -59,7 +59,6 @@ export default function EditDistrict({
     resolver: zodResolver(districtSchema),
   });
 
-  console.log("district", district);
 
   const fallbackState =
     // !userHasChangedState &&           // ✅ only use fallback if user hasn't touched it
@@ -70,15 +69,7 @@ export default function EditDistrict({
 
   const states = ensureOptionInList(baseStates, fallbackState);
 
-  // useEffect(() => {
-  //   if (fallbackState) {
-  //     setStates(ensureOptionInList(baseStates, fallbackState));
-  //   }
-  // }, [states, baseStates, fallbackState]);
 
-  console.log("states", states);
-  console.log("baseStates", baseStates);
-  console.log("fallbackState", fallbackState);
 
   const handleSearchChange = (searchTerm: string) => {
     setStateSearchTerm(searchTerm);

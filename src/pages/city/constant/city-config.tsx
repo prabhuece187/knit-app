@@ -1,12 +1,11 @@
 import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import { citySchema, type City } from "../schema-types/city-schema";
 import type { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "@/components/ui/badge";
 import { ServerDataTableColumnHeader } from "@/components/custom/ServerDataTableColumnHeader";
 
 
 interface GetCityColumnsProps {
-  onEdit: (id: number) => void;
+  onEdit: (city: City) => void;
   onDelete: (id: number) => void;
   currentSortBy?: string;
   currentSortOrder?: "asc" | "desc";
@@ -145,7 +144,7 @@ export function getCityColumns({
         <DataTableRowActions<City>
           row={row}
           onEdit={(item) => {
-            onEdit(Number(item.id));
+            onEdit(item);
           }}
           onDelete={(item) => {
             if (item.id) {

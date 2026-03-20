@@ -11,6 +11,8 @@ import {
   type CityFilterFormData,
 } from "../schema-types/city-schema";
 import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 function CityFilter({ filters, onFilterChange }: CityFilterProps) {
 
@@ -39,21 +41,21 @@ function CityFilter({ filters, onFilterChange }: CityFilterProps) {
     stateId: filters.stateId ? Number(filters.stateId) : undefined,
   }, { skip: !filters.stateId });
 
-  const districts = useMemo(
-    () =>
-      districtsResponse?.data
-        ?.filter((d) => d.id !== undefined)
-        .map((d) => ({
-          id: d.id as number,
-          name: d.name,
-        })) || [],
-    [districtsResponse?.data]
-  );
+  // const districts = useMemo(
+  //   () =>
+  //     districtsResponse?.data
+  //       ?.filter((d) => d.id !== undefined)
+  //       .map((d) => ({
+  //         id: d.id as number,
+  //         name: d.name,
+  //       })) || [],
+  //   [districtsResponse?.data]
+  // );
 
-  const states = useMemo(
-    () => statesResponse?.data || [],
-    [statesResponse?.data]
-  );
+  // const states = useMemo(
+  //   () => statesResponse?.data || [],
+  //   [statesResponse?.data]
+  // );
 
   const form = useForm<CityFilterFormData>({
     resolver: zodResolver(cityFilterSchema),
@@ -138,7 +140,26 @@ function CityFilter({ filters, onFilterChange }: CityFilterProps) {
           searchValue={districtSearch}
           searchPlaceholder="Search State..."
           singleSelect={isSingleSelect}
+          disabled={!filters.stateId}
         />
+
+
+        {/* Active Filter Tags */}
+        {(filters.stateId || filters.districtId) && (
+          <div className="flex items-center space-x-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => onFilterChange({
+                stateId: "",
+                districtId: "",
+              })}
+              className="h-8 px-2 text-xs"
+            >
+              Reset <X className="h-3 w-3" />
+            </Button>
+          </div>
+        )}
       </div>
     </FormProvider>
   );

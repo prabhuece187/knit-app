@@ -30,7 +30,7 @@ export default function City() {
 
   // Dialog state
   const [open, setOpen] = useState(false);
-  const [selectedCityId, setSelectedCityId] = useState<number | null>(null);
+  const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
   // API calls
   const {
@@ -42,13 +42,13 @@ export default function City() {
   const [deleteCity] = useDeleteCityMutation();
 
   // Memoize stable handlers to prevent column recreation
-  const handleEdit = useCallback((id: number) => {
-    setSelectedCityId(id);
+  const handleEdit = useCallback((city: City) => {
+    setSelectedCity(city);
     setOpen(true);
   }, []);
 
   const handleAdd = useCallback(() => {
-    setSelectedCityId(null);
+    setSelectedCity(null);
     setOpen(true);
   }, []);
 
@@ -139,8 +139,8 @@ export default function City() {
         tableConfig={tableConfig}
       />
 
-      {selectedCityId ? (
-        <EditCity CityId={selectedCityId} open={open} setOpen={setOpen} />
+      {selectedCity ? (
+        <EditCity city={selectedCity} open={open} setOpen={setOpen} />
       ) : (
         <AddCity open={open} setOpen={setOpen} />
       )}

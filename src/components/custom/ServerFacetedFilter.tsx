@@ -37,6 +37,7 @@ interface ServerFacetedFilterProps {
   searchPlaceholder?: string;
   className?: string;
   singleSelect?: boolean;
+  disabled?: boolean;
 }
 
 export function ServerFacetedFilter({
@@ -49,6 +50,7 @@ export function ServerFacetedFilter({
   searchPlaceholder,
   className,
   singleSelect = false,
+  disabled = false,
 }: ServerFacetedFilterProps) {
   const [open, setOpen] = React.useState(false);
   const selectedSet = new Set(selectedValues);
@@ -85,6 +87,7 @@ export function ServerFacetedFilter({
           variant="outline"
           size="sm"
           className={cn("h-8 border-dashed", className)}
+          disabled={disabled}
         >
           <PlusCircle />
           {title}

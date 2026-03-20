@@ -38,6 +38,7 @@ interface SelectPopoverProps<
   control?: Control<TFormValues>;
   name?: FieldPath<TFormValues>;
   onSearchChange?: (searchTerm: string) => void;
+  onClear?: () => void;
   showClearButton?: boolean;
 }
 
@@ -57,6 +58,7 @@ export function SelectPopover<
   onSearchChange,
   name,
   showClearButton = true,
+  onClear,
 }: SelectPopoverProps<TOption, TFormValues>) {
   const [open, setOpen] = useState(false);
 
