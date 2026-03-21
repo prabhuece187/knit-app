@@ -13,10 +13,8 @@ import {
   BACKEND_REGISTRATION_STEPS,
 } from "../utils/authConstants";
 import type { RegistrationStepType } from "../utils/authConstants";
-import type {
-  Step1Registration,
-  Step2Registration,
-} from "../types/registration.types";
+import type { ProfessionalSelectFallbacks } from "../types/auth.types";
+import type { Step1Registration, Step2Registration } from "../types/registration.types";
 import type { UseFormReturn } from "react-hook-form";
 
 interface UseRegistrationFlowProps {
@@ -33,6 +31,7 @@ interface UseRegistrationFlowReturn {
   isSubmittingSurvey: boolean;
   registrationStatus: unknown;
   savedProfessionalDetails: unknown;
+  professionalSelectFallbacks: ProfessionalSelectFallbacks | undefined;
 
   // Actions
   handleProfessionalSubmit: (data: Step1Registration) => Promise<void>;
@@ -52,6 +51,8 @@ export function useRegistrationFlow({
   );
   const [isReviewMode, setIsReviewMode] = useState(false);
   const [hasLoadedSavedData, setHasLoadedSavedData] = useState(false);
+  const [professionalSelectFallbacks, setProfessionalSelectFallbacks] =
+    useState<ProfessionalSelectFallbacks | undefined>();
 
   // API mutations
   const [completeProfessionalDetails, { isLoading: isSubmittingProfessional }] =
@@ -110,6 +111,31 @@ export function useRegistrationFlow({
         subCategoryId: savedProfessionalDetails.subCategory.id,
         profileImage: savedProfessionalDetails.profileImage,
         refererCode: savedProfessionalDetails.refererCode,
+        stateId: savedProfessionalDetails.state.id,
+        districtId: savedProfessionalDetails.district.id,
+        cityName:
+          savedProfessionalDetails.cityName ??
+          savedProfessionalDetails.city ??
+          "",
+        pincodes: savedProfessionalDetails.pincodes,
+      });
+      setProfessionalSelectFallbacks({
+        state: {
+          id: savedProfessionalDetails.state.id,
+          name: savedProfessionalDetails.state.name,
+        },
+        district: {
+          id: savedProfessionalDetails.district.id,
+          name: savedProfessionalDetails.district.name,
+        },
+        category: {
+          id: savedProfessionalDetails.category.id,
+          name: savedProfessionalDetails.category.name,
+        },
+        subCategory: {
+          id: savedProfessionalDetails.subCategory.id,
+          name: savedProfessionalDetails.subCategory.name,
+        },
       });
       setHasLoadedSavedData(true);
     }
@@ -192,6 +218,7 @@ export function useRegistrationFlow({
     isSubmittingSurvey,
     registrationStatus,
     savedProfessionalDetails,
+    professionalSelectFallbacks,
 
     // Actions
     handleProfessionalSubmit,

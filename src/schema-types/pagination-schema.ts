@@ -30,6 +30,23 @@ export interface UsePaginationReturn {
   updatePaginationMeta: (meta: PaginationMeta) => void;
 }
 
+export const baseQuerySchema = z.object({
+  page: z.number().min(1).default(1),
+  limit: z.number().min(1).max(100).default(10),
+  sortBy: z.string().default("createdAt"),
+  sortOrder: z.enum(["asc", "desc"]).default("desc"),
+  name: z.string().optional(),
+});
+
+export type BaseQuery = z.infer<typeof baseQuerySchema>;
+
+export interface PaginationQueryType {
+  sortBy?: string;
+  sortOrder?: string;
+  page?: number;
+  limit?: number;
+  name?: string;
+}
 
 // ======================= Common Response Types ============================
 

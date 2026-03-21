@@ -1,16 +1,19 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import customFetchBase from "./customFetchBase";
-import type { SubCategory } from "@/schema-types/master-schema";
+import customFetchBase from "./CustomFetchBase";
+import type { SubCategory, SubCategoryQueryType } from "@/schema-types/master-schema";
+import type { BaseQuery } from "@/schema-types/pagination-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 
 export const SubCategoryApi = createApi({
   reducerPath: "SubCategoryApi",
   baseQuery: customFetchBase,
   tagTypes: ["SubCategoryTag"],
   endpoints: (build) => ({
-    getSubCategories: build.query<SubCategory[], void>({
-      query: () => ({
+    getSubCategories: build.query<PaginatedResponse<SubCategory>, SubCategoryQueryType>({
+      query: (params) => ({
         url: "subcategory",
         method: "GET",
+        params,
       }),
       providesTags: ["SubCategoryTag"],
     }),
@@ -21,14 +24,15 @@ export const SubCategoryApi = createApi({
       }),
       providesTags: ["SubCategoryTag"],
     }),
-    getSubCategoriesByCategory: build.query<SubCategory[], number>({
-      query: (categoryId) => ({
-        url: `subcategory/category/${categoryId}`,
+    getSubCategoriesByCategory: build.query<PaginatedResponse<SubCategory>, SubCategoryQueryType>({
+      query: (params) => ({
+        url: "subcategory",
         method: "GET",
+        params,
       }),
       providesTags: ["SubCategoryTag"],
     }),
-    getActiveSubCategories: build.query<SubCategory[], void>({
+    getActiveSubCategories: build.query<SubCategory[], BaseQuery>({
       query: () => ({
         url: "subcategory/active",
         method: "GET",

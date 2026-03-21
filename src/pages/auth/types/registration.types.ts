@@ -33,9 +33,58 @@ export const step1RegistrationSchema = z.object({
   subCategoryId: z.coerce.number().min(1, "Please select a subcategory"),
   profileImage: z.string().optional(),
   refererCode: z.string().optional(),
+  stateId: z.coerce.number().min(1, "Please select a state"),
+  districtId: z.coerce.number().min(1, "Please select a district"),
+  cityName: z.string().optional(),
+  // schema
+  pincodes: z.preprocess(
+    (val) => {
+      // RHF passes a string from the input
+      if (typeof val === "string") {
+        return val
+          .split(",")
+          .map((p) => p.trim())
+          .filter((p) => p.length > 0);
+      }
+      // already an array (e.g. default values)
+      if (Array.isArray(val)) return val;
+      return [];
+    },
+    z
+      .array(
+        z.string().superRefine((val, ctx) => {
+          if (val.length !== 6) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `"${val}" must be exactly 6 digits`,
+            });
+          } else if (!/^\d{6}$/.test(val)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `"${val}" must contain digits only`,
+            });
+          }
+        })
+      )
+      .min(1, "At least one pincode is required")
+      .max(5, "You can provide up to 5 pincodes")
+      .superRefine((pincodes, ctx) => {
+        const seen = new Set<string>();
+        pincodes.forEach((pin, index) => {
+          if (seen.has(pin)) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `"${pin}" is duplicated`,
+              path: [index],
+            });
+          }
+          seen.add(pin);
+        });
+      })
+  ),
 });
 
-export type Step1Registration = z.infer<typeof step1RegistrationSchema>;
+export type Step1Registration = z.input<typeof step1RegistrationSchema>;
 
 // Step 2 Registration Schema
 export const step2RegistrationSchema = z.object({

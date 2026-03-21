@@ -3,10 +3,12 @@ import { type UseFormReturn } from "react-hook-form";
 import AuthHeader from "../shared/AuthHeader";
 import ProfessionalDetailsForm from "../forms/ProfessionalDetailsForm";
 import StepNavigation from "../shared/StepNavigation";
+import type { ProfessionalSelectFallbacks } from "../../types/auth.types";
 import type { Step1Registration } from "../../types/registration.types";
 
 interface ProfessionalStepProps {
   form: UseFormReturn<Step1Registration>;
+  selectOptionFallbacks?: ProfessionalSelectFallbacks;
   onSubmit: (data: Step1Registration) => void;
   onBack: () => void;
   isLoading: boolean;
@@ -15,6 +17,7 @@ interface ProfessionalStepProps {
 
 export default function ProfessionalStep({
   form,
+  selectOptionFallbacks,
   onSubmit,
   onBack,
   isLoading,
@@ -51,7 +54,11 @@ export default function ProfessionalStep({
         </div>
       )}
 
-      <ProfessionalDetailsForm form={form} isReviewMode={isReviewMode} />
+      <ProfessionalDetailsForm
+        form={form}
+        isReviewMode={isReviewMode}
+        selectOptionFallbacks={selectOptionFallbacks}
+      />
 
       <StepNavigation
         onBack={onBack}

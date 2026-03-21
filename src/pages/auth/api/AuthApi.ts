@@ -1,7 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type {
   RequestOtpResponse,
-  RequestOtpRequest,
+  RequestOtp,
   LoginResponse,
   ValidateOtpRequest,
   RefreshTokenRequest,
@@ -28,7 +28,7 @@ export const AuthApi = createApi({
   tagTypes: ["Auth", "User", "Registration"],
   endpoints: (builder) => ({
     // Request OTP
-    requestOtp: builder.mutation<RequestOtpResponse, RequestOtpRequest>({
+    requestOtp: builder.mutation<RequestOtpResponse, RequestOtp>({
       query: (args) => ({
         method: "POST",
         url: "auth/request-otp",

@@ -69,8 +69,6 @@ export default function EditDistrict({
 
   const states = ensureOptionInList(baseStates, fallbackState);
 
-
-
   const handleSearchChange = (searchTerm: string) => {
     setStateSearchTerm(searchTerm);
   };

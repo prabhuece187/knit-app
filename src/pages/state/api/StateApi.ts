@@ -1,4 +1,4 @@
-import type { State, StateQuery } from "@/schema-types/master-schema";
+import type { State, StateQueryType } from "../schema-types/state.schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customFetchBase from "../../../api/CustomFetchBase";
@@ -8,7 +8,7 @@ export const StateApi = createApi({
   baseQuery: customFetchBase,
   tagTypes: ["StateTag"],
   endpoints: (build) => ({
-    getState: build.query<PaginatedResponse<State>, StateQuery>({
+    getState: build.query<PaginatedResponse<State>, StateQueryType>({
       query: (params) => ({
         url: "states",
         method: "GET",

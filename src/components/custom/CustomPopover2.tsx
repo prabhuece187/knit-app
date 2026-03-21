@@ -44,6 +44,7 @@ interface SelectPopoverProps<
     onSearchChange?: (searchTerm: string) => void;
     onClear?: () => void;
     showClearButton?: boolean;
+    disabled?: boolean;
 }
 
 export function SelectPopover<
@@ -62,6 +63,7 @@ export function SelectPopover<
     hideLabel = false,
     showClearButton = true,
     onClear,
+    disabled = false,
 }: SelectPopoverProps<TFieldValues, TOption>) {
     const [open, setOpen] = useState(false);
 
@@ -83,6 +85,7 @@ export function SelectPopover<
                                         role="combobox"
                                         aria-expanded={open}
                                         className="w-full justify-between"
+                                        disabled={disabled}
                                     >
                                         {selected?.[labelKey] ?? placeholder}
                                         <div className="flex items-center">
@@ -162,7 +165,7 @@ export function SelectPopover<
                                 </Command>
                             </PopoverContent>
                         </Popover>
-                        <FormMessage />
+                        <FormMessage className="text-left" />
                     </FormItem>
                 );
             }}

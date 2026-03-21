@@ -1,4 +1,5 @@
 import z from "zod";
+import type { PaginationQueryType } from "./pagination-schema";
 // =======================  customer ============================
 export const customerSchema = z.object({
   id: z.coerce.number().optional(),
@@ -311,6 +312,10 @@ export const categorySchema = z.object({
 
 export type Category = z.infer<typeof categorySchema>;
 
+export interface CategoryQueryType extends PaginationQueryType {
+  name?: string;
+}
+
 // SubCategory Schema
 export const subCategorySchema = z.object({
   id: z.number(),
@@ -372,3 +377,7 @@ export const surveySourceOptions = [
   { id: 5, name: "Referral", value: "referral" },
   { id: 6, name: "Other", value: "other" },
 ];
+
+export interface SubCategoryQueryType extends PaginationQueryType {
+  categoryId: number;
+}

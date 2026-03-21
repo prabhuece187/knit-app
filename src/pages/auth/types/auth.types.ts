@@ -1,5 +1,8 @@
+import type { District } from "@/pages/district/schema-types/district-schema";
+import type { State } from "@/pages/state/schema-types/state.schema";
+
 // Auth API Types
-export interface RequestOtpRequest {
+export interface RequestOtp {
   email: string;
 }
 
@@ -69,7 +72,8 @@ export interface ProfessionalDetailResponse {
   userId: number;
 }
 
-export interface Category {
+/** Nested entities from GET /auth/saved-professional-details */
+export interface SavedProfessionalCategory {
   id: number;
   name: string;
   slug: string;
@@ -82,12 +86,12 @@ export interface Category {
   updatedAt: string;
 }
 
-export interface SubCategory {
+export interface SavedProfessionalSubCategory {
   id: number;
   name: string;
   slug: string;
   categoryId: number;
-  categoryName: string;
+  categoryName?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -96,10 +100,24 @@ export interface SavedProfessionalDetailsResponse {
   name: string;
   mobileNumber: string;
   whatsappNumber: string;
-  category: Category;
-  subCategory: SubCategory;
+  category: SavedProfessionalCategory;
+  subCategory: SavedProfessionalSubCategory;
   profileImage?: string;
-  refererCode: string;
+  refererCode?: string;
+  state: State & { id: number };
+  district: District & { id: number };
+  cityName?: string;
+  /** Some responses use `city` instead of `cityName`. */
+  city?: string;
+  pincodes: string[];
+}
+
+/** For select popovers when saved ids are not on the current API page */
+export interface ProfessionalSelectFallbacks {
+  state?: { id: number; name: string };
+  district?: { id: number; name: string };
+  category?: { id: number; name: string };
+  subCategory?: { id: number; name: string };
 }
 
 export interface SurveyDetailRequest {
@@ -154,18 +172,6 @@ export interface AdminValidateOtpResponse {
     isActive: boolean;
   };
 }
-
-// Registration Step Constants
-export const RegistrationStep = {
-  EMAIL_VERIFICATION_PENDING: "EMAIL_VERIFICATION_PENDING",
-  EMAIL_VERIFIED: "EMAIL_VERIFIED",
-  PROFESSIONAL_DETAILS_ADDED: "PROFESSIONAL_DETAILS_ADDED",
-  SURVEY_COMPLETED: "SURVEY_COMPLETED",
-  REGISTRATION_COMPLETE: "REGISTRATION_COMPLETE",
-} as const;
-
-export type RegistrationStep =
-  (typeof RegistrationStep)[keyof typeof RegistrationStep];
 
 // Navigation Step Types
 export type LoginStep = "email" | "otp" | "registration" | "dashboard";

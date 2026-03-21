@@ -64,3 +64,15 @@ export const SUCCESS_MESSAGES = {
   REGISTRATION_COMPLETE: "Registration completed successfully!",
   LOGIN_SUCCESS: "Login successful! Redirecting...",
 } as const;
+
+// Registration Step Constants
+export const RegistrationStep = {
+  EMAIL_VERIFICATION_PENDING: "EMAIL_VERIFICATION_PENDING",
+  EMAIL_VERIFIED: "EMAIL_VERIFIED",
+  PROFESSIONAL_DETAILS_ADDED: "PROFESSIONAL_DETAILS_ADDED",
+  SURVEY_COMPLETED: "SURVEY_COMPLETED",
+  REGISTRATION_COMPLETE: "REGISTRATION_COMPLETE",
+} as const;
+
+export type RegistrationStep =
+  (typeof RegistrationStep)[keyof typeof RegistrationStep];

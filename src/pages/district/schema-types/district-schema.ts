@@ -1,3 +1,4 @@
+import { baseQuerySchema } from "@/schema-types/pagination-schema";
 import { z } from "zod";
 
 // ======================= District Schema ============================
@@ -28,15 +29,12 @@ export type District = z.infer<typeof districtSchema>;
 // ======================= District Query Schema ============================
 
 // District-specific query schema (extends pagination options)
-export const districtQuerySchema = z.object({
-  page: z.number().min(1).default(1),
-  limit: z.number().min(1).max(100).default(10),
-  sortBy: z.string().default("createdAt"),
-  sortOrder: z.enum(["asc", "desc"]).default("desc"),
-  name: z.string().optional(),
-  districtCode: z.string().optional(),
-  stateId: z.number().optional(),
-});
+export const districtQuerySchema = baseQuerySchema.merge(
+  z.object({
+    districtCode: z.string().optional(),
+    stateId: z.number().optional(),
+  })
+);
 
 export type DistrictQuery = z.infer<typeof districtQuerySchema>;
 

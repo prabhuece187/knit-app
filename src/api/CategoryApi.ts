@@ -1,16 +1,19 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import customFetchBase from "./CustomFetchBase";
-import type { Category } from "@/schema-types/master-schema";
+import type { Category, CategoryQueryType } from "@/schema-types/master-schema";
+import type { BaseQuery } from "@/schema-types/pagination-schema";
+import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 
 export const CategoryApi = createApi({
   reducerPath: "CategoryApi",
   baseQuery: customFetchBase,
   tagTypes: ["CategoryTag"],
   endpoints: (build) => ({
-    getCategories: build.query<Category[], void>({
-      query: () => ({
+    getCategories: build.query<PaginatedResponse<Category>, CategoryQueryType>({
+      query: (params) => ({
         url: "category",
         method: "GET",
+        params,
       }),
       providesTags: ["CategoryTag"],
     }),
@@ -21,10 +24,11 @@ export const CategoryApi = createApi({
       }),
       providesTags: ["CategoryTag"],
     }),
-    getActiveCategories: build.query<Category[], void>({
-      query: () => ({
+    getActiveCategories: build.query<Category[], BaseQuery>({
+      query: (params) => ({
         url: "category/active",
         method: "GET",
+        params,
       }),
       providesTags: ["CategoryTag"],
     }),

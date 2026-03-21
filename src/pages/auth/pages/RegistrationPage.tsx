@@ -47,6 +47,7 @@ export default function RegistrationPage({
     handleSurveySubmit,
     handleReviewAndContinue,
     handleBackToProfessional,
+    professionalSelectFallbacks,
   } = useRegistrationFlow({
     email,
     onComplete: () => navigate("/dashboard"),
@@ -97,6 +98,7 @@ export default function RegistrationPage({
         {currentStep === REGISTRATION_STEPS.PROFESSIONAL && (
           <ProfessionalStep
             form={professionalForm}
+            selectOptionFallbacks={professionalSelectFallbacks}
             onSubmit={
               isReviewMode ? handleReviewAndContinue : handleProfessionalSubmit
             }
