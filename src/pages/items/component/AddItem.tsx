@@ -9,12 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import {
   Form,
@@ -50,7 +45,6 @@ export default function AddItem({
     },
   });
 
-  // Auto Barcode & QR Generate
   const itemName = form.watch("item_name");
   const itemCode = form.watch("hsn_code");
 
@@ -62,7 +56,7 @@ export default function AddItem({
     form.setValue("qrcode", final);
 
     if (barcodeRef.current) {
-      barcodeRef.current.innerHTML = ""; // Clear old barcode
+      barcodeRef.current.innerHTML = "";
       JsBarcode(barcodeRef.current, final, {
         format: "CODE128",
         displayValue: true,
@@ -79,68 +73,92 @@ export default function AddItem({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* WIDE DIALOG */}
-      <DialogContent className="w-full max-w-5xl sm:max-w-5xl">
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Add Item" />
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="
+          w-full max-w-3xl sm:max-w-3xl overflow-y-auto rounded-xl p-0
+          [&>button]:top-[5%]
+          [&>button]:-translate-y-1/2
+          [&>button]:right-4
+          [&>button]:rounded-full
+          [&>button]:p-1.5
+          [&>button]:hover:bg-muted
+        "
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Add Item" />
+          <p className="text-xs text-muted-foreground">
+            Enter Item Details and Generate Barcode and QR Code
+          </p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
             <input type="hidden" {...form.register("barcode")} />
             <input type="hidden" {...form.register("qrcode")} />
 
             {/* ------- INPUT FIELDS ------- */}
-            <div className="grid grid-cols-6 gap-4">
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="item_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Item Name*</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Item Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="item_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">
+                      Item Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-10"
+                        placeholder="Enter Item Name"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="hsn_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Item Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Item Code" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="hsn_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Item Code</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-10"
+                        placeholder="Enter Item Code"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="unit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Unit</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Unit" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-10"
+                        placeholder="Enter Unit"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-              <div className="col-span-6">
+              <div></div>
+
+              <div className="col-span-2">
                 <FormField
                   control={form.control}
                   name="description"
@@ -149,8 +167,8 @@ export default function AddItem({
                       <FormLabel>Description</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Enter Description"
                           className="resize-none"
+                          placeholder="Enter Description"
                           {...field}
                         />
                       </FormControl>
@@ -159,32 +177,33 @@ export default function AddItem({
                 />
               </div>
 
-              {/* ------- BARCODE + QR PREVIEW ------- */}
-              <div className="col-span-6 mt-4">
-                <div className="bg-gray-50 border rounded-xl p-5 shadow-sm">
-                  <p className="text-base font-semibold mb-4">
+              {/* ------- PREVIEW ------- */}
+              <div className="col-span-2">
+                <div className="border rounded-xl p-5 bg-muted/40">
+                  <p className="text-sm font-semibold mb-4">
                     Barcode & QR Preview
                   </p>
 
-                  <div className="grid grid-cols-2 gap-8">
-                    {/* LEFT — BARCODE */}
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* Barcode */}
                     <div className="flex flex-col items-center">
-                      <p className="text-sm font-medium mb-2">Barcode</p>
-                      <div className="bg-white rounded-lg shadow p-4 w-full flex justify-center">
-                        <svg
-                          ref={barcodeRef}
-                          className="w-[300px] h-[90px]"
-                        ></svg>
+                      <span className="text-xs text-muted-foreground mb-2">
+                        Barcode
+                      </span>
+                      <div className="bg-white border rounded-lg p-4 w-full flex justify-center">
+                        <svg ref={barcodeRef} className="w-[280px] h-[80px]" />
                       </div>
                     </div>
 
-                    {/* RIGHT — QR CODE */}
+                    {/* QR */}
                     <div className="flex flex-col items-center">
-                      <p className="text-sm font-medium mb-2">QR Code</p>
-                      <div className="bg-white rounded-lg shadow p-4">
+                      <span className="text-xs text-muted-foreground mb-2">
+                        QR Code
+                      </span>
+                      <div className="bg-white border rounded-lg p-4">
                         <QRCodeSVG
                           value={form.getValues("qrcode") || ""}
-                          size={160}
+                          size={140}
                         />
                       </div>
                     </div>
@@ -193,8 +212,8 @@ export default function AddItem({
               </div>
             </div>
 
-            {/* ------- BUTTONS ------- */}
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -202,7 +221,9 @@ export default function AddItem({
               >
                 Cancel
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className="px-6">
+                Submit
+              </Button>
             </div>
           </form>
         </Form>

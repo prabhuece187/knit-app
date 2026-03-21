@@ -7,13 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import {
   Form,
@@ -66,20 +60,10 @@ export default function EditKnittingMachine({
     skip: !id,
   });
 
-  // ✅ Same pattern as EditCustomer
   useEffect(() => {
     if (id && isSuccess && data) {
       form.reset({
-        id: data.id,
-        user_id: data.user_id,
-        machine_no: data.machine_no,
-        machine_name: data.machine_name ?? "",
-        model: data.model ?? "",
-        brand: data.brand ?? "",
-        feeder: data.feeder ?? 0,
-        dia: data.dia ?? null,
-        gauge: data.gauge ?? null,
-        status: data.status ?? "active",
+        ...data,
       });
     }
   }, [id, isSuccess, data, form]);
@@ -91,24 +75,40 @@ export default function EditKnittingMachine({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Edit Knitting Machine" />
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="
+          w-full max-w-5xl sm:max-w-5xl overflow-y-auto rounded-xl p-0
+          [&>button]:top-[6%]
+          [&>button]:-translate-y-1/2
+          [&>button]:right-4
+          [&>button]:rounded-full
+          [&>button]:p-1.5
+          [&>button]:hover:bg-muted"
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Edit Knitting Machine" />
+          <p className="text-xs text-muted-foreground">
+            Update Machine Details
+          </p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-6 gap-3">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
+            <div className="grid grid-cols-2 gap-4">
               <FormField
                 control={form.control}
                 name="user_id"
                 render={({ field }) => <Input type="hidden" {...field} />}
               />
 
+              {/* Repeat same fields like Add */}
+
               {/* Machine No */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="machine_no"
@@ -116,16 +116,15 @@ export default function EditKnittingMachine({
                     <FormItem>
                       <FormLabel>Machine No*</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* Machine Name */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="machine_name"
@@ -133,24 +132,23 @@ export default function EditKnittingMachine({
                     <FormItem>
                       <FormLabel>Machine Name*</FormLabel>
                       <FormControl>
-                        <Input placeholder="Machine Name" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* Machine Model */}
-              <div className="col-span-3">
+              {/* Model */}
+              <div>
                 <FormField
                   control={form.control}
                   name="model"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Machine Model*</FormLabel>
+                      <FormLabel>Model*</FormLabel>
                       <FormControl>
-                        <Input placeholder="Machine Model" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -159,7 +157,7 @@ export default function EditKnittingMachine({
               </div>
 
               {/* Brand */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="brand"
@@ -167,7 +165,7 @@ export default function EditKnittingMachine({
                     <FormItem>
                       <FormLabel>Brand</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -175,7 +173,7 @@ export default function EditKnittingMachine({
               </div>
 
               {/* Feeder */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="feeder"
@@ -185,11 +183,11 @@ export default function EditKnittingMachine({
                       <FormControl>
                         <Input
                           type="number"
-                          placeholder="28"
+                          className="h-10"
                           value={field.value ?? ""}
                           onChange={(e) =>
                             field.onChange(
-                              e.target.value ? Number(e.target.value) : null
+                              e.target.value ? Number(e.target.value) : null,
                             )
                           }
                         />
@@ -200,7 +198,7 @@ export default function EditKnittingMachine({
               </div>
 
               {/* Dia */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="dia"
@@ -210,10 +208,11 @@ export default function EditKnittingMachine({
                       <FormControl>
                         <Input
                           type="number"
+                          className="h-10"
                           value={field.value ?? ""}
                           onChange={(e) =>
                             field.onChange(
-                              e.target.value ? Number(e.target.value) : null
+                              e.target.value ? Number(e.target.value) : null,
                             )
                           }
                         />
@@ -224,7 +223,7 @@ export default function EditKnittingMachine({
               </div>
 
               {/* Gauge */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="gauge"
@@ -234,10 +233,11 @@ export default function EditKnittingMachine({
                       <FormControl>
                         <Input
                           type="number"
+                          className="h-10"
                           value={field.value ?? ""}
                           onChange={(e) =>
                             field.onChange(
-                              e.target.value ? Number(e.target.value) : null
+                              e.target.value ? Number(e.target.value) : null,
                             )
                           }
                         />
@@ -248,7 +248,7 @@ export default function EditKnittingMachine({
               </div>
 
               {/* Status */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={form.control}
                   name="status"
@@ -260,7 +260,7 @@ export default function EditKnittingMachine({
                         onValueChange={field.onChange}
                       >
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="h-10">
                             <SelectValue />
                           </SelectTrigger>
                         </FormControl>
@@ -278,8 +278,8 @@ export default function EditKnittingMachine({
               </div>
             </div>
 
-            {/* Buttons */}
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -287,7 +287,9 @@ export default function EditKnittingMachine({
               >
                 Cancel
               </Button>
-              <Button type="submit">Update</Button>
+              <Button type="submit" className="px-6">
+                Update
+              </Button>
             </div>
           </form>
         </Form>

@@ -8,14 +8,7 @@ import { z } from "zod";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import {
   Form,
@@ -25,11 +18,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+
 import CommonHeader from "@/components/common/CommonHeader";
+import { Checkbox } from "@/components/ui/checkbox";
 
 import { bankSchema } from "@/schema-types/master-schema";
 import { useGetBankByIdQuery, usePutBankMutation } from "@/api/BankApi";
-import { Checkbox } from "@/components/ui/checkbox";
 
 // Type
 type Bank = z.infer<typeof bankSchema>;
@@ -59,33 +53,27 @@ export default function EditBank({
       bank_email: "",
       bank_mobile: "",
       bank_address: "",
-      is_default: false, // ✅ boolean default
+      is_default: false,
     },
   });
 
-  const {
-    formState: { errors },
-    handleSubmit,
-    control,
-    reset,
-  } = form;
+  const { handleSubmit, control, reset } = form;
 
   const { data: bankData, isSuccess } = useGetBankByIdQuery(id, {
     skip: id === undefined,
   });
 
-  // Reset form when bank data is loaded
-useEffect(() => {
-  if (isSuccess && bankData) {
-    reset({
-      ...bankData,
-      is_default: Boolean(bankData.is_default), // convert number → boolean
-    });
-  }
-}, [isSuccess, bankData, reset]);
+  // Reset form when data loads
+  useEffect(() => {
+    if (isSuccess && bankData) {
+      reset({
+        ...bankData,
+        is_default: Boolean(bankData.is_default),
+      });
+    }
+  }, [isSuccess, bankData, reset]);
 
   function onSubmit(values: Bank) {
-    // Ensure is_default is a number if backend expects 0/1
     const payload = {
       ...values,
       is_default: Boolean(values.is_default),
@@ -97,37 +85,47 @@ useEffect(() => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Edit Bank" />
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
+      <DialogContent
+        className="
+          w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-0
+          [&>button]:top-[5%]
+          [&>button]:-translate-y-1/2
+          [&>button]:right-4
+          [&>button]:rounded-full
+          [&>button]:p-1.5
+          [&>button]:hover:bg-muted
+        "
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Edit Bank" />
+          <p className="text-xs text-muted-foreground">Update Bank Details</p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-6 gap-4">
-
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+            <div className="grid grid-cols-2 gap-4">
               {/* Bank Name */}
-              <div className="col-span-3">
+              <div className="col-span-2">
                 <FormField
                   control={control}
                   name="bank_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Bank Name*</FormLabel>
+                      <FormLabel className="font-semibold">
+                        Bank Name <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Bank Name" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.bank_name?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* Branch Name */}
-              <div className="col-span-3">
+              {/* Branch */}
+              <div>
                 <FormField
                   control={control}
                   name="branch_name"
@@ -135,57 +133,16 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Branch Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Branch Name" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.branch_name?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* Account Holder Name */}
-              <div className="col-span-3">
-                <FormField
-                  control={control}
-                  name="account_holder_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Holder Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Account Holder Name"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage>
-                        {errors.account_holder_name?.message}
-                      </FormMessage>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Account Number */}
-              <div className="col-span-3">
-                <FormField
-                  control={control}
-                  name="account_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Account Number" {...field} />
-                      </FormControl>
-                      <FormMessage>
-                        {errors.account_number?.message}
-                      </FormMessage>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* IFSC Code */}
-              <div className="col-span-3">
+              {/* IFSC */}
+              <div>
                 <FormField
                   control={control}
                   name="ifsc_code"
@@ -193,16 +150,50 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>IFSC Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter IFSC Code" {...field} />
+                        <Input className="h-10 uppercase" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.ifsc_code?.message}</FormMessage>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Account Holder */}
+              <div>
+                <FormField
+                  control={control}
+                  name="account_holder_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account Holder</FormLabel>
+                      <FormControl>
+                        <Input className="h-10" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Account Number */}
+              <div>
+                <FormField
+                  control={control}
+                  name="account_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account Number</FormLabel>
+                      <FormControl>
+                        <Input className="h-10" {...field} />
+                      </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* City */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={control}
                   name="bank_city"
@@ -210,16 +201,16 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter City" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.bank_city?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* State */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={control}
                   name="bank_state"
@@ -227,16 +218,16 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter State" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.bank_state?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* Email */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={control}
                   name="bank_email"
@@ -244,16 +235,16 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Email" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.bank_email?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* Mobile */}
-              <div className="col-span-3">
+              <div>
                 <FormField
                   control={control}
                   name="bank_mobile"
@@ -261,40 +252,16 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Mobile</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Mobile" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.bank_mobile?.message}</FormMessage>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              {/* Default Bank */}
-              <div className="col-span-3 flex items-center space-x-2 mt-2">
-                <FormField
-                  control={control}
-                  name="is_default"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value ?? false} // ensure boolean
-                          onCheckedChange={(checked) =>
-                            field.onChange(checked === true)
-                          }
-                        />
-                      </FormControl>
-                      <FormLabel className="font-medium">
-                        Set as Default Bank
-                      </FormLabel>
-                      <FormMessage>{errors.is_default?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
 
               {/* Address */}
-              <div className="col-span-6">
+              <div className="col-span-2">
                 <FormField
                   control={control}
                   name="bank_address"
@@ -302,20 +269,36 @@ useEffect(() => {
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Enter Address"
-                          className="resize-none"
-                          {...field}
-                        />
+                        <Textarea className="resize-none" {...field} />
                       </FormControl>
-                      <FormMessage>{errors.bank_address?.message}</FormMessage>
+                      <FormMessage />
                     </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Default Checkbox */}
+              <div className="col-span-2 flex items-center gap-3 bg-muted/50 px-4 py-3 rounded-lg">
+                <FormField
+                  control={control}
+                  name="is_default"
+                  render={({ field }) => (
+                    <>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(!!checked)}
+                      />
+                      <span className="text-sm font-medium">
+                        Set as Default Bank
+                      </span>
+                    </>
                   )}
                 />
               </div>
             </div>
 
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -323,7 +306,9 @@ useEffect(() => {
               >
                 Cancel
               </Button>
-              <Button type="submit">Update</Button>
+              <Button type="submit" className="px-6">
+                Update
+              </Button>
             </div>
           </form>
         </Form>

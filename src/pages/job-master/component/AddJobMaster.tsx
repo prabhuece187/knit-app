@@ -6,8 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
+  // DialogHeader,
+  // DialogTitle,
 } from "@/components/ui/dialog";
 
 import {
@@ -16,6 +16,7 @@ import {
   FormItem,
   FormControl,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
@@ -99,61 +100,66 @@ export default function AddJobMaster({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-full max-w-5xl sm:max-w-5xl">
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Add Job Master" />
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="
+      w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-0
+      [&>button]:top-[6%]
+      [&>button]:-translate-y-1/2
+      [&>button]:right-4
+      [&>button]:rounded-full
+      [&>button]:p-1.5
+      [&>button]:hover:bg-muted
+    "
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Add Job Master" />
+          <p className="text-xs text-muted-foreground">
+            Enter Job Master Details
+          </p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-12 gap-6">
-              {/* LEFT COLUMN */}
-              <div className="col-span-12 lg:col-span-6 p-4 border rounded grid grid-cols-2 gap-4">
-                {/* Job No */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Job No
-                  </label>
-                  <FormField
-                    control={form.control}
-                    name="job_card_no"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input placeholder="Job No" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
+            {/* 🔥 FIXED GRID SPACING */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+              {/* Job No */}
+              <FormField
+                control={form.control}
+                name="job_card_no"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">Job No</FormLabel>
+                    <FormControl>
+                      <Input className="h-10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Job Date */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Job Date
-                  </label>
-                  <FormField
-                    control={form.control}
-                    name="job_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
+              {/* Job Date */}
+              <FormField
+                control={form.control}
+                name="job_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Inward */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Inward
-                  </label>
+              {/* Inward */}
+              <div className="space-y-2 [&>label]:mb-1 ">
+                <FormLabel>Inward</FormLabel>
+                <div className="h-10">
                   <SelectPopover
                     label=""
                     placeholder="Select Inward..."
@@ -168,12 +174,12 @@ export default function AddJobMaster({
                     }
                   />
                 </div>
+              </div>
 
-                {/* Customer */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Customer
-                  </label>
+              {/* Customer */}
+              <div className="space-y-2 [&>label]:mb-1">
+                <FormLabel>Customer</FormLabel>
+                <div className="h-10">
                   <SelectPopover
                     label=""
                     placeholder="Select customer..."
@@ -188,12 +194,12 @@ export default function AddJobMaster({
                     }
                   />
                 </div>
+              </div>
 
-                {/* Mill */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Mill
-                  </label>
+              {/* Mill */}
+              <div className="space-y-2 [&>label]:mb-1">
+                <FormLabel>Mill</FormLabel>
+                <div className="h-10">
                   <SelectPopover
                     label=""
                     placeholder="Select mill..."
@@ -208,96 +214,83 @@ export default function AddJobMaster({
                     }
                   />
                 </div>
-
-                {/* Approx Job Weight */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Approx Job Weight
-                  </label>
-                  <FormField
-                    control={form.control}
-                    name="approx_job_weight"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            placeholder="Approx Job Weight"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Expected Delivery Date */}
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Expected Delivery Date
-                  </label>
-                  <FormField
-                    control={form.control}
-                    name="expected_delivery_date"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input type="date" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium mb-1 text-center">
-                    Status
-                  </label>
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full border rounded px-3 py-2 text-sm"
-                          >
-                            <option value="open">Open</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
-                          </select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
               </div>
 
-              {/* RIGHT COLUMN */}
-              <div className="col-span-12 lg:col-span-6 p-4 border rounded grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="remarks"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <FormControl>
-                        <Textarea
-                          placeholder="Remarks"
-                          {...field}
-                          className="h-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Approx Job Weight */}
+              <FormField
+                control={form.control}
+                name="approx_job_weight"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Approx Job Weight</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        className="h-10"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Expected Delivery Date */}
+              <FormField
+                control={form.control}
+                name="expected_delivery_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Expected Delivery Date</FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Status */}
+              <FormField
+                control={form.control}
+                name="status"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Status</FormLabel>
+                    <FormControl>
+                      <select
+                        {...field}
+                        className="w-full h-10 border rounded-md px-3 text-sm"
+                      >
+                        <option value="open">Open</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Remarks */}
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Remarks</FormLabel>
+                    <FormControl>
+                      <Textarea className="resize-none" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
-            <div className="flex justify-end gap-2">
+
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -305,7 +298,9 @@ export default function AddJobMaster({
               >
                 Cancel
               </Button>
-              <Button type="submit">Create Job</Button>
+              <Button type="submit" className="px-6">
+                Create Job
+              </Button>
             </div>
           </form>
         </Form>

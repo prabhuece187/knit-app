@@ -9,13 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import {
   Form,
@@ -46,24 +40,21 @@ export default function EditItem({
   const [updateItem] = usePutItemMutation();
   const barcodeRef = useRef<SVGSVGElement | null>(null);
 
-  // ----------- FORM INIT ------------
   const form = useForm<z.infer<typeof itemSchema>>({
     resolver: zodResolver(itemSchema),
   });
 
-  // ----------- GET ITEM DATA ------------
   const { data: item, isSuccess } = useGetItemByIdQuery(id, {
     skip: !id,
   });
 
-  // ----------- RESET WHEN DATA ARRIVES ------------
   useEffect(() => {
     if (item && isSuccess) {
       form.reset(item);
     }
   }, [item, isSuccess, form]);
 
-  // ----------- AUTO BARCODE + QR GENERATE ------------
+  // Barcode + QR auto
   useEffect(() => {
     const name = form.watch("item_name");
     const code = form.watch("hsn_code");
@@ -75,6 +66,7 @@ export default function EditItem({
     form.setValue("qrcode", finalValue);
 
     if (barcodeRef.current) {
+      barcodeRef.current.innerHTML = "";
       JsBarcode(barcodeRef.current, finalValue, {
         format: "CODE128",
         displayValue: true,
@@ -83,7 +75,6 @@ export default function EditItem({
     }
   }, [form.watch("item_name"), form.watch("hsn_code")]);
 
-  // ----------- SUBMIT ------------
   function onSubmit(values: z.infer<typeof itemSchema>) {
     updateItem({ id, ...values });
     setOpen(false);
@@ -91,72 +82,80 @@ export default function EditItem({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-2xl">
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Edit Item" />
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
+      <DialogContent
+        className="
+          w-full max-w-3xl sm:max-w-3xl overflow-y-auto rounded-xl p-0
+          [&>button]:top-[5%]
+          [&>button]:-translate-y-1/2
+          [&>button]:right-4
+          [&>button]:rounded-full
+          [&>button]:p-1.5
+          [&>button]:hover:bg-muted
+        "
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Edit Item" />
+          <p className="text-xs text-muted-foreground">
+            Update Item Details and Generate Barcode and QR Code
+          </p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-6 gap-4">
-              <input type="hidden" {...form.register("barcode")} />
-              <input type="hidden" {...form.register("qrcode")} />
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
+            <input type="hidden" {...form.register("barcode")} />
+            <input type="hidden" {...form.register("qrcode")} />
 
-              {/* ITEM NAME */}
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="item_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Item Name*</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Item Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            {/* ------- INPUTS ------- */}
+            <div className="grid grid-cols-2 gap-4">
+              <FormField
+                control={form.control}
+                name="item_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">
+                      Item Name <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input className="h-10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              {/* ITEM CODE (HSN) */}
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="hsn_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Item Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Item Code" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="hsn_code"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Item Code</FormLabel>
+                    <FormControl>
+                      <Input className="h-10" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-              {/* UNIT */}
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="unit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Unit</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Unit" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="unit"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Unit</FormLabel>
+                    <FormControl>
+                      <Input className="h-10" {...field} />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-              {/* DESCRIPTION */}
-              <div className="col-span-6">
+              <div></div>
+
+              <div className="col-span-2">
                 <FormField
                   control={form.control}
                   name="description"
@@ -164,36 +163,50 @@ export default function EditItem({
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Enter Description"
-                          className="resize-none"
-                          {...field}
-                        />
+                        <Textarea className="resize-none" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* BARCODE + QR PREVIEW */}
-              <div className="col-span-6 p-4 border rounded bg-gray-50">
-                <p className="text-sm font-semibold mb-2">Barcode Preview</p>
-                <svg ref={barcodeRef} />
+              {/* ------- PREVIEW ------- */}
+              <div className="col-span-2">
+                <div className="border rounded-xl p-5 bg-muted/40">
+                  <p className="text-sm font-semibold mb-4">
+                    Barcode & QR Preview
+                  </p>
 
-                <p className="text-sm font-semibold mt-4 mb-2">
-                  QR Code Preview
-                </p>
-                <div className="bg-white w-fit p-2 rounded">
-                  <QRCodeSVG
-                    value={form.getValues("qrcode") || ""}
-                    size={130}
-                  />
+                  <div className="grid grid-cols-2 gap-6">
+                    {/* Barcode */}
+                    <div className="flex flex-col items-center">
+                      <span className="text-xs text-muted-foreground mb-2">
+                        Barcode
+                      </span>
+                      <div className="bg-white border rounded-lg p-4 w-full flex justify-center">
+                        <svg ref={barcodeRef} className="w-[280px] h-[80px]" />
+                      </div>
+                    </div>
+
+                    {/* QR */}
+                    <div className="flex flex-col items-center">
+                      <span className="text-xs text-muted-foreground mb-2">
+                        QR Code
+                      </span>
+                      <div className="bg-white border rounded-lg p-4">
+                        <QRCodeSVG
+                          value={form.getValues("qrcode") || ""}
+                          size={140}
+                        />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* BUTTONS */}
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -201,7 +214,9 @@ export default function EditItem({
               >
                 Cancel
               </Button>
-              <Button type="submit">Update</Button>
+              <Button type="submit" className="px-6">
+                Update
+              </Button>
             </div>
           </form>
         </Form>

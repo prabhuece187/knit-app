@@ -7,8 +7,6 @@ import { useEffect } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 
 import {
@@ -17,6 +15,7 @@ import {
   FormItem,
   FormControl,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
@@ -83,27 +82,41 @@ export default function AddProductionRework({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-full max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Add Knitting Rework" />
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="
+      w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0
+      [&>button]:top-[5%]
+      [&>button]:-translate-y-1/2
+      [&>button]:right-4
+      [&>button]:rounded-full
+      [&>button]:p-1.5
+      [&>button]:hover:bg-muted
+    "
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Add Knitting Rework" />
+          <p className="text-xs text-muted-foreground">Enter Rework Details</p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4 p-4 border rounded">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
+            {/* 🔥 CLEAN GRID */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
               {/* Rework No */}
               <FormField
                 control={form.control}
                 name="rework_no"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <label className="block text-sm font-medium text-center">
-                      Rework No*
-                    </label>
+                    <FormLabel className="font-semibold">
+                      Rework No <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input {...field} readOnly />
+                      <Input {...field} readOnly className="h-10" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -116,22 +129,22 @@ export default function AddProductionRework({
                 name="job_card_id"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <label className="block text-sm font-medium mb-1 text-center">
-                      Job Card*
-                    </label>
-
+                    <FormLabel>
+                      Job Card <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <SelectPopover
-                        placeholder="Select Job Card..."
-                        label=""
-                        options={jobCards}
-                        valueKey="id"
-                        labelKey="job_card_no"
-                        value={field.value}
-                        onValueChange={(val) => field.onChange(Number(val))}
-                      />
+                      <div className="[&>button]:h-10">
+                        <SelectPopover
+                          placeholder="Select Job Card..."
+                          label=""
+                          options={jobCards}
+                          valueKey="id"
+                          labelKey="job_card_no"
+                          value={field.value}
+                          onValueChange={(val) => field.onChange(Number(val))}
+                        />
+                      </div>
                     </FormControl>
-
                     <FormMessage />
                   </FormItem>
                 )}
@@ -143,19 +156,21 @@ export default function AddProductionRework({
                 name="production_return_id"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <label className="block text-sm font-medium text-center">
-                      Production Return*
-                    </label>
+                    <FormLabel>
+                      Production Return <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <SelectPopover
-                        placeholder="Select Return..."
-                        label=""
-                        options={returns}
-                        valueKey="id"
-                        labelKey="return_no"
-                        value={field.value}
-                        onValueChange={(v) => field.onChange(Number(v))}
-                      />
+                      <div className="[&>button]:h-10">
+                        <SelectPopover
+                          placeholder="Select Return..."
+                          label=""
+                          options={returns}
+                          valueKey="id"
+                          labelKey="return_no"
+                          value={field.value}
+                          onValueChange={(v) => field.onChange(Number(v))}
+                        />
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,11 +183,11 @@ export default function AddProductionRework({
                 name="rework_date"
                 render={({ field }) => (
                   <FormItem>
-                    <label className="block text-sm font-medium text-center">
-                      Rework Date*
-                    </label>
+                    <FormLabel>
+                      Rework Date <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input type="date" className="h-10" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -185,18 +200,19 @@ export default function AddProductionRework({
                 name="rework_weight"
                 render={({ field }) => (
                   <FormItem>
-                    <label className="block text-sm font-medium text-center">
-                      Rework Weight*
-                    </label>
+                    <FormLabel>
+                      Rework Weight <span className="text-red-500">*</span>
+                    </FormLabel>
                     <FormControl>
                       <Input
                         type="number"
+                        className="h-10"
                         value={field.value ?? ""}
                         onChange={(e) =>
                           field.onChange(
                             e.target.value === ""
                               ? undefined
-                              : Number(e.target.value)
+                              : Number(e.target.value),
                           )
                         }
                       />
@@ -212,11 +228,9 @@ export default function AddProductionRework({
                 name="remarks"
                 render={({ field }) => (
                   <FormItem className="col-span-2">
-                    <label className="block text-sm font-medium text-center">
-                      Remarks
-                    </label>
+                    <FormLabel>Remarks</FormLabel>
                     <FormControl>
-                      <Textarea {...field} />
+                      <Textarea className="resize-none" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -224,11 +238,14 @@ export default function AddProductionRework({
               />
             </div>
 
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button variant="outline" onClick={() => setOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className="px-6">
+                Submit
+              </Button>
             </div>
           </form>
         </Form>

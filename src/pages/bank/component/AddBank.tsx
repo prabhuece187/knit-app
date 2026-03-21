@@ -14,13 +14,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import CommonHeader from "@/components/common/CommonHeader";
 import { usePostBankMutation } from "@/api/BankApi";
@@ -54,38 +48,52 @@ export default function AddBank({
   });
 
   function onSubmit(values: z.infer<typeof bankSchema>) {
-    console.log("its run");
     postBank(values);
     setOpen(false);
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Add Bank" />
-          </DialogTitle>
-          <DialogDescription />
-        </DialogHeader>
+      <DialogContent
+        className="
+          w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-0
+          [&>button]:top-[5%]
+          [&>button]:-translate-y-1/2
+          [&>button]:right-4
+          [&>button]:rounded-full
+          [&>button]:p-1.5
+          [&>button]:hover:bg-muted"
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Add Bank" />
+          <p className="text-xs text-muted-foreground">Enter Bank Details</p>
+        </div>
 
         <Form {...form}>
           <form
             onSubmit={form.handleSubmit(onSubmit, (errors) =>
               console.log(errors),
             )}
-            className="space-y-6"
+            className="p-6 space-y-6"
           >
-            <div className="grid grid-cols-6 gap-4">
-              <div className="col-span-3">
+            <div className="grid grid-cols-2 gap-4">
+              {/* Bank Name */}
+              <div className="col-span-2">
                 <FormField
                   control={form.control}
                   name="bank_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Bank Name*</FormLabel>
+                      <FormLabel className="font-semibold">
+                        Bank Name <span className="text-red-500">*</span>
+                      </FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Bank Name" {...field} />
+                        <Input
+                          className="h-10"
+                          placeholder="Enter Bank Name"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -93,7 +101,8 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3">
+              {/* Branch */}
+              <div>
                 <FormField
                   control={form.control}
                   name="branch_name"
@@ -101,7 +110,7 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>Branch Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Branch Name" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -109,42 +118,8 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="account_holder_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Holder Name</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Enter Account Holder Name"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="col-span-3">
-                <FormField
-                  control={form.control}
-                  name="account_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Account Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="col-span-3">
+              {/* IFSC */}
+              <div>
                 <FormField
                   control={form.control}
                   name="ifsc_code"
@@ -152,7 +127,7 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>IFSC Code</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter IFSC Code" {...field} />
+                        <Input className="h-10 uppercase" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -160,7 +135,42 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3">
+              {/* Account Holder */}
+              <div>
+                <FormField
+                  control={form.control}
+                  name="account_holder_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account Holder</FormLabel>
+                      <FormControl>
+                        <Input className="h-10" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* Account Number */}
+              <div>
+                <FormField
+                  control={form.control}
+                  name="account_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Account Number</FormLabel>
+                      <FormControl>
+                        <Input className="h-10" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              {/* City */}
+              <div>
                 <FormField
                   control={form.control}
                   name="bank_city"
@@ -168,7 +178,7 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>City</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter City" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -176,7 +186,8 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3">
+              {/* State */}
+              <div>
                 <FormField
                   control={form.control}
                   name="bank_state"
@@ -184,7 +195,7 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>State</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter State" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -192,7 +203,8 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3">
+              {/* Email */}
+              <div>
                 <FormField
                   control={form.control}
                   name="bank_email"
@@ -200,7 +212,7 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>Email</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Email" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -208,7 +220,8 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3">
+              {/* Mobile */}
+              <div>
                 <FormField
                   control={form.control}
                   name="bank_mobile"
@@ -216,7 +229,7 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>Mobile</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Mobile" {...field} />
+                        <Input className="h-10" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -224,29 +237,8 @@ export default function AddBank({
                 />
               </div>
 
-              <div className="col-span-3 flex items-center space-x-2 mt-2">
-                <FormField
-                  control={form.control}
-                  name="is_default"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-2 space-y-0">
-                      <FormControl>
-                        <Checkbox
-                          checked={field.value}
-                          onCheckedChange={(checked) =>
-                            field.onChange(!!checked)
-                          }
-                        />
-                      </FormControl>
-                      <FormLabel className="font-medium">
-                        Set as Default Bank
-                      </FormLabel>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-              <div className="col-span-6">
+              {/* Address */}
+              <div className="col-span-2">
                 <FormField
                   control={form.control}
                   name="bank_address"
@@ -254,20 +246,36 @@ export default function AddBank({
                     <FormItem>
                       <FormLabel>Address</FormLabel>
                       <FormControl>
-                        <Textarea
-                          placeholder="Enter Address"
-                          className="resize-none"
-                          {...field}
-                        />
+                        <Textarea className="resize-none" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
+
+              {/* Default Checkbox */}
+              <div className="col-span-2 flex items-center gap-3 bg-muted/50 px-4 py-3 rounded-lg">
+                <FormField
+                  control={form.control}
+                  name="is_default"
+                  render={({ field }) => (
+                    <>
+                      <Checkbox
+                        checked={field.value}
+                        onCheckedChange={(checked) => field.onChange(!!checked)}
+                      />
+                      <span className="text-sm font-medium">
+                        Set as Default Bank
+                      </span>
+                    </>
+                  )}
+                />
+              </div>
             </div>
 
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -275,7 +283,9 @@ export default function AddBank({
               >
                 Cancel
               </Button>
-              <Button type="submit">Submit</Button>
+              <Button type="submit" className="px-6">
+                Submit
+              </Button>
             </div>
           </form>
         </Form>

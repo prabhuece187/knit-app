@@ -4,12 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import {
   Form,
@@ -17,6 +12,7 @@ import {
   FormItem,
   FormControl,
   FormMessage,
+  FormLabel,
 } from "@/components/ui/form";
 
 import { Input } from "@/components/ui/input";
@@ -57,7 +53,7 @@ export default function EditProductionReturn({
   };
 
   const { data: knittingProduction = [] } = useGetKnittingProductionListQuery(
-    ""
+    "",
   ) as {
     data: KnittingProduction[];
   };
@@ -106,49 +102,65 @@ export default function EditProductionReturn({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="w-full max-w-4xl sm:max-w-3xl">
-        <DialogHeader>
-          <DialogTitle>
-            <CommonHeader name="Edit Knitting Production Return" />
-          </DialogTitle>
-        </DialogHeader>
+      <DialogContent
+        className="
+      w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-0
+      [&>button]:top-[5%]
+      [&>button]:-translate-y-1/2
+      [&>button]:right-4
+      [&>button]:rounded-full
+      [&>button]:p-1.5
+      [&>button]:hover:bg-muted
+    "
+      >
+        {/* Header */}
+        <div className="px-6 py-4 pr-12 border-b bg-background">
+          <CommonHeader name="Edit Knitting Production Return" />
+          <p className="text-xs text-muted-foreground">
+            Update Production Return Details
+          </p>
+        </div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-12 gap-6">
-              {/* LEFT SECTION */}
-              <div className="col-span-12 lg:col-span-6 grid grid-cols-2 gap-4 p-4 border rounded">
-                {/* Return No */}
-                <FormField
-                  control={form.control}
-                  name="return_no"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Return No*
-                      </label>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Auto-generated"
-                          readOnly
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="p-6 space-y-6"
+          >
+            {/* 🔥 CLEAN GRID */}
+            <div className="grid grid-cols-2 gap-x-4 gap-y-6">
+              {/* Return No */}
+              <FormField
+                control={form.control}
+                name="return_no"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel className="font-semibold">
+                      Return No <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        placeholder="Auto-generated"
+                        readOnly
+                        className="h-10"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Job Card */}
-                <FormField
-                  control={form.control}
-                  name="job_card_id"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Job Card*
-                      </label>
-                      <FormControl>
+              {/* Job Card */}
+              <FormField
+                control={form.control}
+                name="job_card_id"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>
+                      Job Card <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <div className="[&>button]:h-10">
                         <SelectPopover
                           placeholder="Select Job Card..."
                           label=""
@@ -158,22 +170,22 @@ export default function EditProductionReturn({
                           value={field.value}
                           onValueChange={(val) => field.onChange(Number(val))}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Production */}
-                <FormField
-                  control={form.control}
-                  name="production_id"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Production
-                      </label>
-                      <FormControl>
+              {/* Production */}
+              <FormField
+                control={form.control}
+                name="production_id"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Production</FormLabel>
+                    <FormControl>
+                      <div className="[&>button]:h-10">
                         <SelectPopover
                           placeholder="Select Production..."
                           label=""
@@ -183,136 +195,126 @@ export default function EditProductionReturn({
                           value={field.value}
                           onValueChange={(val) => field.onChange(Number(val))}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Return Date */}
-                <FormField
-                  control={form.control}
-                  name="return_date"
-                  render={({ field }) => (
-                    <FormItem>
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Return Date*
-                      </label>
-                      <FormControl>
-                        <Input type="date" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Return Date */}
+              <FormField
+                control={form.control}
+                name="return_date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Return Date <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input type="date" className="h-10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Return Weight */}
-                <FormField
-                  control={form.control}
-                  name="return_weight"
-                  render={({ field }) => (
-                    <FormItem>
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Return Weight (Kg)*
-                      </label>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Weight"
-                          value={field.value ?? ""}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value === ""
-                                ? undefined
-                                : parseFloat(e.target.value) // <-- convert string to number
-                            )
-                          }
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Return Weight */}
+              <FormField
+                control={form.control}
+                name="return_weight"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      Return Weight (Kg) <span className="text-red-500">*</span>
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        className="h-10"
+                        placeholder="Weight"
+                        value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === ""
+                              ? undefined
+                              : Number(e.target.value),
+                          )
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-              {/* RIGHT SECTION */}
-              <div className="col-span-12 lg:col-span-6 grid grid-cols-2 gap-4 p-4 border rounded">
-                {/* Rework Required */}
-                <FormField
-                  control={form.control}
-                  name="rework_required"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <label className="block text-sm font-medium mb-1">
-                        Rework Required
-                      </label>
-                      <FormControl>
-                        <input
-                          type="checkbox"
-                          className="w-5 h-5"
-                          checked={field.value || false}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                          onBlur={field.onBlur}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Rework Required */}
+              <FormField
+                control={form.control}
+                name="rework_required"
+                render={({ field }) => (
+                  <FormItem className="col-span-2 flex items-center gap-3 bg-muted/50 px-4 py-3 rounded-lg">
+                    <FormControl>
+                      <input
+                        type="checkbox"
+                        className="w-5 h-5"
+                        checked={field.value || false}
+                        onChange={(e) => field.onChange(e.target.checked)}
+                      />
+                    </FormControl>
+                    <span className="text-sm font-medium">Rework Required</span>
+                  </FormItem>
+                )}
+              />
 
-                {/* Return Reason */}
-                <FormField
-                  control={form.control}
-                  name="return_reason"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Return Reason
-                      </label>
-                      <FormControl>
-                        <select
-                          className="w-full border rounded px-3 py-2 text-sm"
-                          value={field.value ?? ""}
-                          onChange={(e) =>
-                            field.onChange(
-                              e.target.value === "" ? undefined : e.target.value
-                            )
-                          }
-                        >
-                          <option value="">Select Return Reason</option>
-                          <option value="hole">Hole</option>
-                          <option value="oil_stain">Oil Stain</option>
-                          <option value="gsm_issue">GSM Issue</option>
-                          <option value="dia_issue">Dia Issue</option>
-                          <option value="other">Other</option>
-                        </select>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              {/* Return Reason */}
+              <FormField
+                control={form.control}
+                name="return_reason"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Return Reason</FormLabel>
+                    <FormControl>
+                      <select
+                        className="w-full h-10 border rounded-md px-3 text-sm"
+                        value={field.value ?? ""}
+                        onChange={(e) =>
+                          field.onChange(
+                            e.target.value === "" ? undefined : e.target.value,
+                          )
+                        }
+                      >
+                        <option value="">Select Return Reason</option>
+                        <option value="hole">Hole</option>
+                        <option value="oil_stain">Oil Stain</option>
+                        <option value="gsm_issue">GSM Issue</option>
+                        <option value="dia_issue">Dia Issue</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-                {/* Remarks */}
-                <FormField
-                  control={form.control}
-                  name="remarks"
-                  render={({ field }) => (
-                    <FormItem className="col-span-2">
-                      <label className="block text-sm font-medium mb-1 text-center">
-                        Remarks
-                      </label>
-                      <FormControl>
-                        <Textarea placeholder="Optional remarks" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              {/* Remarks */}
+              <FormField
+                control={form.control}
+                name="remarks"
+                render={({ field }) => (
+                  <FormItem className="col-span-2">
+                    <FormLabel>Remarks</FormLabel>
+                    <FormControl>
+                      <Textarea className="resize-none" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
 
-            {/* BUTTONS */}
-            <div className="flex justify-end gap-2">
+            {/* Footer */}
+            <div className="flex justify-end gap-2 pt-4 border-t">
               <Button
                 type="button"
                 variant="outline"
@@ -320,7 +322,9 @@ export default function EditProductionReturn({
               >
                 Cancel
               </Button>
-              <Button type="submit">Update</Button>
+              <Button type="submit" className="px-6">
+                Submit
+              </Button>
             </div>
           </form>
         </Form>
