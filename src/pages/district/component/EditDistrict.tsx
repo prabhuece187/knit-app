@@ -12,8 +12,10 @@ import {
 } from "@/components/ui/form";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -27,6 +29,7 @@ import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
 import { ensureOptionInList, toIdNameOptions } from "@/utility/option-utils";
+import { XIcon } from "lucide-react"
 
 export default function EditDistrict({
   open,
@@ -68,6 +71,8 @@ export default function EditDistrict({
       : null;
 
   const states = ensureOptionInList(baseStates, fallbackState);
+
+
 
   const handleSearchChange = (searchTerm: string) => {
     setStateSearchTerm(searchTerm);
@@ -112,23 +117,32 @@ export default function EditDistrict({
   return (
     <>
       <Dialog open={open} onOpenChange={(value) => handleClose(value)}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>
-              <CommonHeader name={"Edit District"} />
-            </DialogTitle>
-            <DialogDescription>
-              Update district information. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid grid-cols-12 px-2 py-2">
-            <div className="col-span-12">
-              <Form {...form}>
-                <form
-                  id="district-form"
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
-                >
+        <DialogContent showCloseButton={false} className="max-h-[90vh] overflow-y-auto">
+          <Form {...form}>
+            <form
+              id="district-form"
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-4"
+            >
+              <DialogHeader>
+
+                <DialogTitle className="flex bg-muted/50 rounded-md px-2 py-3 items-center justify-between">
+                  Edit District
+
+                  <DialogClose className=" opacity-70 transition-opacity hover:opacity-100 rounded-xs focus:outline-none disabled:pointer-events-none">
+                    <XIcon className="size-4" />
+                    <span className="sr-only">Close</span>
+                  </DialogClose>
+                </DialogTitle>
+
+                <DialogDescription className="px-2">
+                  Update district information. Click save when you're done.
+                </DialogDescription>
+
+              </DialogHeader>
+
+              <div className="grid grid-cols-12 px-2">
+                <div className="col-span-12">
                   <div className="grid grid-cols-6 gap-4">
                     <div className="col-span-3">
                       <FormField
@@ -177,7 +191,7 @@ export default function EditDistrict({
                         labelKey="name"
                         name="stateId"
                         control={form.control}
-                        hideLabel
+                        // hideLabel
                         // onValueChange={(selected) =>
                         //   handleStateChange(selected?.id)
                         // }
@@ -190,25 +204,27 @@ export default function EditDistrict({
                       />
                     </div>
                   </div>
-                  <div className="grid grid-cols-12 gap-2">
-                    <div className="col-span-12 flex justify-end">
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="m-1"
-                        onClick={handleCancel}
-                      >
-                        Cancel
-                      </Button>
-                      <Button type="submit" className="m-1">
-                        Update District
-                      </Button>
-                    </div>
-                  </div>
-                </form>
-              </Form>
-            </div>
-          </div>
+                </div>
+              </div>
+
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="m-1"
+                    onClick={handleCancel}
+                  >
+                    Cancel
+                  </Button>
+                </DialogClose>
+                <Button type="submit" className="m-1">
+                  Update District
+                </Button>
+              </DialogFooter>
+
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </>
