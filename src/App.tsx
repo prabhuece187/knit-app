@@ -42,6 +42,7 @@ import AdminLoginPage from "./pages/auth/pages/AdminLoginPage";
 import Login from "./pages/Login";
 import District from "./pages/district/District";
 import City from "./pages/city/City";
+import EditProfessional from "./pages/professional/EditProfessional";
 
 function App() {
 
@@ -132,6 +133,10 @@ function App() {
 
           <Route path="job-ledger" element={<JobLedgerReport />} />
           <Route path="wastage" element={<WastageReport />} />
+
+
+          {/* Professional */}
+          <Route path="professionals/:id" element={<EditProfessional />} />
 
           {/* Add-on Service */}
           <Route path="customers/:id" element={<IndividualData />} />

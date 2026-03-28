@@ -81,9 +81,6 @@ export default function EditDistrict({
       stateId: values.stateId,
     };
 
-    console.log("updateData", updateData);
-
-    return;
     updateDistrict({ id: district.id as number, data: updateData })
       .unwrap()
       .then((response) => {
