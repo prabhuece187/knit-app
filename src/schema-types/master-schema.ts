@@ -155,6 +155,7 @@ export type YarnTypeQuery = z.infer<typeof yarnTypeQuerySchema>;
 // ======================== Dynamic Add ==========================
 export type LabelType =
   | "State"
+  | "District"
   | "Customer"
   | "Item"
   | "Mill"

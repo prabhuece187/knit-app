@@ -24,7 +24,6 @@ import { useUpdateDistrictMutation } from "../api/DistrictApi";
 import { useGetStateQuery } from "../../state/api/StateApi";
 import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import CommonHeader from "@/components/common/CommonHeader";
 import { SelectPopover } from "@/components/custom/CustomPopover2";
 import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
@@ -42,8 +41,6 @@ export default function EditDistrict({
 }) {
 
   const [stateSearchTerm, setStateSearchTerm] = useState("");
-  // const [states, setStates] = useState<State[]>([]);
-  // const [userHasChangedState, setUserHasChangedState] = useState(false); // ✅ add this
   const [updateDistrict] = useUpdateDistrictMutation();
 
   const debouncedSearchTerm = useDebounce(stateSearchTerm, 300);
@@ -62,9 +59,7 @@ export default function EditDistrict({
     resolver: zodResolver(districtSchema),
   });
 
-
   const fallbackState =
-    // !userHasChangedState &&           // ✅ only use fallback if user hasn't touched it
     district?.stateId &&
       district?.state
       ? { id: district.stateId, name: district.state.name }
@@ -73,17 +68,11 @@ export default function EditDistrict({
   const states = ensureOptionInList(baseStates, fallbackState);
 
 
-
-  const handleSearchChange = (searchTerm: string) => {
-    setStateSearchTerm(searchTerm);
-  };
-
   useEffect(() => {
     if (district?.id) {
       form.reset(district);
-      // setUserHasChangedState(false);
     }
-  }, [district]); // ✅ re-runs whenever any district field changes
+  }, [district]);
 
   function onSubmit(values: District) {
     const updateData = {
@@ -91,6 +80,10 @@ export default function EditDistrict({
       districtCode: values.districtCode,
       stateId: values.stateId,
     };
+
+    console.log("updateData", updateData);
+
+    return;
     updateDistrict({ id: district.id as number, data: updateData })
       .unwrap()
       .then((response) => {
@@ -127,7 +120,7 @@ export default function EditDistrict({
               <DialogHeader>
 
                 <DialogTitle className="flex bg-muted/50 rounded-md px-2 py-3 items-center justify-between">
-                  Edit District
+                  <div className="text-md font-medium px-1">Edit District</div>
 
                   <DialogClose className=" opacity-70 transition-opacity hover:opacity-100 rounded-xs focus:outline-none disabled:pointer-events-none">
                     <XIcon className="size-4" />
@@ -184,23 +177,14 @@ export default function EditDistrict({
 
                     <div className="col-span-6">
                       <SelectPopover
-                        label="State*"
+                        label="State"
                         placeholder="Select state..."
                         options={states}
                         valueKey="id"
                         labelKey="name"
                         name="stateId"
                         control={form.control}
-                        // hideLabel
-                        // onValueChange={(selected) =>
-                        //   handleStateChange(selected?.id)
-                        // }
-                        onValueChange={(selected) => {
-                          // setUserHasChangedState(true);   // ✅ mark as changed on select
-                          console.log("handleDistrictChange called", selected);
-                        }}
-                        // onClear={() => setUserHasChangedState(true)}
-                        onSearchChange={handleSearchChange}
+                        onSearchChange={setStateSearchTerm}
                       />
                     </div>
                   </div>

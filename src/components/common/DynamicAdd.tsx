@@ -7,6 +7,7 @@ import AddMill from "@/pages/mill/component/AddMill";
 import AddYarnType from "@/pages/yarntype/component/AddYarnType";
 import type { LabelType } from "@/schema-types/master-schema";
 import AddBank from "@/pages/bank/component/AddBank";
+import AddDistrict from "@/pages/district/component/AddDistrict";
 
 // Props allow any string
 type DynamicAddProps = {
@@ -22,6 +23,7 @@ const componentMap: Record<
   }>
 > = {
   State: AddState,
+  District: AddDistrict,
   Customer: AddCustomer,
   Item: AddItem,
   Mill: AddMill,
@@ -31,7 +33,7 @@ const componentMap: Record<
 
 // Type guard to ensure label is one of the valid options
 const isValidLabel = (label: string): label is LabelType => {
-  return ["State", "Customer", "Item", "Mill", "YarnType","Bank"].includes(label);
+  return ["State", "District", "Customer", "Item", "Mill", "YarnType", "Bank"].includes(label);
 };
 
 export default function DynamicAdd({ label }: DynamicAddProps) {

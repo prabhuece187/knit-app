@@ -112,7 +112,7 @@ export function SelectPopover<
                                 </FormControl>
                             </PopoverTrigger>
                             <PopoverContent
-                                className="w-[300px] p-0 z-[100]"
+                                className="w-[300px] p-0 "
                                 onInteractOutside={(e) => {
                                     // Prevent the dialog from closing when interacting with the popover
                                     //   e.preventDefault();
@@ -131,7 +131,9 @@ export function SelectPopover<
                                             {label
                                                 ? `No ${label.toLowerCase()} found.`
                                                 : "No options found."}{" "}
-                                            {label && <DynamicAdd label={label} />}
+                                            {label &&
+                                                <DynamicAdd label={label} />
+                                            }
                                         </CommandEmpty>
                                         <CommandGroup>
                                             {options.map((opt) => (

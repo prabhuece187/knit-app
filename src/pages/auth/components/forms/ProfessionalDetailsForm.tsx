@@ -33,6 +33,11 @@ export default function ProfessionalDetailsForm({
   const [categorySearch, setCategorySearch] = useState("");
   const [subCategorySearch, setSubCategorySearch] = useState("");
 
+  const stateId = form.watch("stateId");
+  const districtId = form.watch("districtId");
+  const categoryId = form.watch("categoryId");
+  const subCategoryId = form.watch("subCategoryId");
+
   const debouncedStateSearch = useDebounce(stateSearch, 300);
   const debouncedDistrictSearch = useDebounce(districtSearch, 300);
   const debouncedCategorySearch = useDebounce(categorySearch, 300);
@@ -46,11 +51,6 @@ export default function ProfessionalDetailsForm({
     sortOrder: "asc",
     name: debouncedStateSearch || undefined,
   });
-
-  const stateId = form.watch("stateId");
-  const districtId = form.watch("districtId");
-  const categoryId = form.watch("categoryId");
-  const subCategoryId = form.watch("subCategoryId");
 
   const baseStates = toIdNameOptions(statesResponse?.data);
   const fallbackState =
@@ -125,21 +125,22 @@ export default function ProfessionalDetailsForm({
     baseSubCategoryOptions,
     fallbackSubCategory
   );
-  console.log("subCategoryOptions", subCategoryOptions);
+  // console.log("subCategoryOptions", subCategoryOptions);
 
-  const prevCategoryIdRef = useRef<number | undefined>(undefined);
-  useEffect(() => {
-    const cid =
-      categoryId != null && Number(categoryId) > 0
-        ? Number(categoryId)
-        : undefined;
-    const prev = prevCategoryIdRef.current;
-    prevCategoryIdRef.current = cid;
+  // const prevCategoryIdRef = useRef<number | undefined>(undefined);
 
-    if (prev !== undefined && prev > 0 && cid !== prev) {
-      form.setValue("subCategoryId", 0);
-    }
-  }, [categoryId, form]);
+  // useEffect(() => {
+  //   const cid =
+  //     categoryId != null && Number(categoryId) > 0
+  //       ? Number(categoryId)
+  //       : undefined;
+  //   const prev = prevCategoryIdRef.current;
+  //   prevCategoryIdRef.current = cid;
+
+  //   if (prev !== undefined && prev > 0 && cid !== prev) {
+  //     form.setValue("subCategoryId", 0);
+  //   }
+  // }, [categoryId, form]);
 
   return (
     <Form {...form}>

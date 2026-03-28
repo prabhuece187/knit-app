@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/form";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -28,6 +29,7 @@ import { PAGINATION_CONFIG } from "@/config/app.config";
 import { useDebounce } from "@/helper/useDebounce";
 import { ensureOptionInList } from "@/utility/option-utils";
 import { toIdNameOptions } from "@/utility/option-utils";
+import { XIcon } from "lucide-react";
 
 
 export default function EditCity({
@@ -54,13 +56,6 @@ export default function EditCity({
 
   const baseDistricts = toIdNameOptions(districtsResponse?.data);
 
-
-  const handleDistrictChange = (districtId: number | undefined) => {
-    if (districtId) {
-      form.setValue("districtId", districtId);
-    }
-  };
-
   const form = useForm<City>({
     resolver: zodResolver(citySchema),
     defaultValues: {
@@ -77,11 +72,6 @@ export default function EditCity({
 
   const districts = ensureOptionInList(baseDistricts, fallbackDistrict);
 
-
-  const handleSearchChange = (searchTerm: string) => {
-    setDistrictSearchTerm(searchTerm);
-  };
-
   useEffect(() => {
     if (city?.id) {
       form.reset(city);
@@ -93,6 +83,8 @@ export default function EditCity({
       name: values.name,
       districtId: values.districtId,
     };
+
+
     updateCity({ id: city.id as number, data: updateData })
       .unwrap()
       .then((response) => {
@@ -119,12 +111,19 @@ export default function EditCity({
   return (
     <>
       <Dialog open={open} onOpenChange={handleClose}>
-        <DialogContent className="max-h-[90vh] overflow-y-auto">
+        <DialogContent showCloseButton={false} className="max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              <CommonHeader name={"Edit City"} />
+
+            <DialogTitle className="flex bg-muted/50 rounded-md px-2 py-3 items-center justify-between">
+              <div className="text-md font-medium px-1">Edit City</div>
+
+              <DialogClose className=" opacity-70 transition-opacity hover:opacity-100 rounded-xs focus:outline-none disabled:pointer-events-none">
+                <XIcon className="size-4" />
+                <span className="sr-only">Close</span>
+              </DialogClose>
             </DialogTitle>
-            <DialogDescription>
+
+            <DialogDescription className="px-2">
               Update city information. Click save when you're done.
             </DialogDescription>
           </DialogHeader>
@@ -134,7 +133,7 @@ export default function EditCity({
                 <form
                   id="city-form"
                   onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-8"
+                  className="space-y-4"
                 >
                   <div className="grid grid-cols-6 gap-4">
                     <div className="col-span-6">
@@ -158,19 +157,19 @@ export default function EditCity({
 
                     <div className="col-span-6">
                       <SelectPopover
-                        label="District*"
+                        label="District"
                         placeholder="Select district..."
                         options={districts}
                         valueKey="id"
                         labelKey="name"
                         name="districtId"
                         control={form.control}
-                        onValueChange={(selected) =>
-                          handleDistrictChange(
-                            selected?.id ? Number(selected.id) : undefined
-                          )
-                        }
-                        onSearchChange={handleSearchChange}
+                        // onValueChange={(selected) =>
+                        //   handleDistrictChange(
+                        //     selected?.id ? Number(selected.id) : undefined
+                        //   )
+                        // }
+                        onSearchChange={setDistrictSearchTerm}
                       />
                     </div>
                   </div>
