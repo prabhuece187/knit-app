@@ -135,32 +135,32 @@ export const professionalSchema = z.object({
     cityName: z.string().optional(),
 
     country: z.string().default("India"),
-    latitude: z.coerce
-        .number()
-        .min(-90)
-        .max(90, "Latitude must be between -90 and 90")
-        .optional(),
-    longitude: z.coerce
-        .number()
-        .min(-180)
-        .max(180, "Longitude must be between -180 and 180")
-        .optional(),
+    // latitude: z.coerce
+    //     .number()
+    //     .min(-90)
+    //     .max(90, "Latitude must be between -90 and 90")
+    //     .optional(),
+    // longitude: z.coerce
+    //     .number()
+    //     .min(-180)
+    //     .max(180, "Longitude must be between -180 and 180")
+    //     .optional(),
 
     // Professional status and metrics
-    isVerified: z.boolean().default(false),
-    isPremiumListed: z.boolean().default(false),
-    averageRating: z.coerce
-        .number()
-        .min(0)
-        .max(5, "Rating must be between 0 and 5")
-        .default(0),
-    totalReviews: z.coerce
-        .number()
-        .min(0, "Total reviews cannot be negative")
-        .default(0),
+    // isVerified: z.boolean().default(false),
+    // isPremiumListed: z.boolean().default(false),
+    // averageRating: z.coerce
+    //     .number()
+    //     .min(0)
+    //     .max(5, "Rating must be between 0 and 5")
+    //     .default(0),
+    // totalReviews: z.coerce
+    //     .number()
+    //     .min(0, "Total reviews cannot be negative")
+    //     .default(0),
 
     // Business hours
-    businessHours: businessHoursSchema.optional(),
+    // businessHours: businessHoursSchema.optional(),
 
     pincodes: z.preprocess(
         (val) => {
@@ -275,12 +275,12 @@ export const professionalQuerySchema = z.object({
     districtId: z.coerce.number().optional(),
     cityId: z.coerce.number().optional(),
     pincode: z.string().optional(),
-    isVerified: z.coerce.boolean().optional(),
-    isPremiumListed: z.coerce.boolean().optional(),
-    minRating: z.coerce.number().min(0).max(5).optional(),
-    specializations: z.array(z.string()).optional(),
-    skills: z.array(z.string()).optional(),
-    search: z.string().optional(),
+    // isVerified: z.coerce.boolean().optional(),
+    // isPremiumListed: z.coerce.boolean().optional(),
+    // minRating: z.coerce.number().min(0).max(5).optional(),
+    // specializations: z.array(z.string()).optional(),
+    // skills: z.array(z.string()).optional(),
+    // search: z.string().optional(),
 });
 
 // Premium status update schema
@@ -307,3 +307,14 @@ export type ProfessionalVerification = z.infer<
 >;
 export type BusinessHours = z.infer<typeof businessHoursSchema>;
 export type KnownLanguages = z.infer<typeof knownLanguagesSchema>;
+
+
+export const updateSocialAndSEOSchema = z.object({
+    id: z.coerce.number(),
+    officeWebsite: z.string().optional(),
+    linkedInProfile: z.string().optional(),
+    twitterProfile: z.string().optional(),
+    facebookProfile: z.string().optional(),
+    instagramProfile: z.string().optional(),
+});
+export type UpdateSocialAndSEO = z.infer<typeof updateSocialAndSEOSchema>;

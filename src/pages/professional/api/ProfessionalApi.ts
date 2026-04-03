@@ -5,12 +5,14 @@ import type {
     CreateProfessional,
     UpdateProfessional,
     ProfessionalQuery,
+    UpdateSocialAndSEO,
 } from "../schema-types/professional-schema";
 import type {
     PaginatedResponse,
     CreateResponse,
     UpdateResponse,
     DeleteResponse,
+    SuccessResponse,
 } from "@/schema-types/pagination-schema";
 
 export const ProfessionalApi = createApi({
@@ -70,6 +72,15 @@ export const ProfessionalApi = createApi({
             }),
             invalidatesTags: ["ProfessionalTag"],
         }),
+        updateSocialAndSEO: build.mutation<
+            SuccessResponse, UpdateSocialAndSEO>({
+                query: ({ id, ...data }) => ({
+                    url: `professionals/${id}/social-and-seo`,
+                    method: "PATCH",
+                    body: data,
+                }),
+                invalidatesTags: ["ProfessionalTag"],
+            }),
     }),
 });
 
@@ -79,5 +90,6 @@ export const {
     useGetProfessionalByUserIdQuery,
     useCreateProfessionalMutation,
     useUpdateProfessionalMutation,
+    useUpdateSocialAndSEOMutation,
     useDeleteProfessionalMutation,
 } = ProfessionalApi;

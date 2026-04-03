@@ -84,7 +84,7 @@ export default function EditProfessional() {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
-          <TabsTrigger value="location">Location</TabsTrigger>
+          {/* <TabsTrigger value="location">Location</TabsTrigger> */}
           <TabsTrigger value="social">Social & SEO</TabsTrigger>
         </TabsList>
 

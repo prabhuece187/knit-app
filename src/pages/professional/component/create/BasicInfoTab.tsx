@@ -142,7 +142,7 @@ export default function BasicInfoTab({ registrationData }: BasicInfoTabProps) {
                             )}
                         />
 
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="slug"
                             render={({ field }) => (
@@ -157,9 +157,9 @@ export default function BasicInfoTab({ registrationData }: BasicInfoTabProps) {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> */}
 
-                        <FormField
+                        {/* <FormField
                             control={form.control}
                             name="officeName"
                             render={({ field }) => (
@@ -171,7 +171,7 @@ export default function BasicInfoTab({ registrationData }: BasicInfoTabProps) {
                                     <FormMessage />
                                 </FormItem>
                             )}
-                        />
+                        /> */}
                     </div>
 
                     {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> */}

@@ -19,11 +19,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useUpdateProfessionalMutation } from "../../api/ProfessionalApi";
+import { useUpdateSocialAndSEOMutation } from "../../api/ProfessionalApi";
 import {
-  updateProfessionalSchema,
-  type UpdateProfessional,
   type Professional,
+  updateSocialAndSEOSchema,
+  type UpdateSocialAndSEO,
 } from "../../schema-types/professional-schema";
 
 interface SocialAndSEOTabProps {
@@ -33,36 +33,31 @@ interface SocialAndSEOTabProps {
 export default function SocialAndSEOTab({
   professional,
 }: SocialAndSEOTabProps) {
-  const [updateProfessional, { isLoading }] = useUpdateProfessionalMutation();
+  const [updateSocialAndSEO, { isLoading }] = useUpdateSocialAndSEOMutation();
 
-  const form = useForm<UpdateProfessional>({
-    resolver: zodResolver(updateProfessionalSchema),
+  const form = useForm<UpdateSocialAndSEO>({
+    resolver: zodResolver(updateSocialAndSEOSchema),
     defaultValues: {
       id: professional.id,
-      // officeWebsite: professional.officeWebsite,
+      officeWebsite: professional.officeWebsite,
       linkedInProfile: professional.linkedInProfile,
       twitterProfile: professional.twitterProfile,
       facebookProfile: professional.facebookProfile,
-      instagramProfile: professional.instagramProfile,
-      // metaTitle: professional.metaTitle,
-      // metaDescription: professional.metaDescription,
-      // metaKeywords: professional.metaKeywords || [],
-      // ogImage: professional.ogImage,
-      // canonicalUrl: professional.canonicalUrl,
+      instagramProfile: professional.instagramProfile
     },
   });
 
 
-  const handleSubmit = async (data: UpdateProfessional) => {
+  const handleSubmit = async (data: UpdateSocialAndSEO) => {
     if (!professional.id) {
       toast.error("Invalid professional ID");
       return;
     }
 
     try {
-      await updateProfessional({
+      await updateSocialAndSEO({
         id: professional.id,
-        // officeWebsite: data.officeWebsite,
+        officeWebsite: data.officeWebsite,
         linkedInProfile: data.linkedInProfile,
         twitterProfile: data.twitterProfile,
         facebookProfile: data.facebookProfile,
