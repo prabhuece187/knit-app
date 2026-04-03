@@ -80,6 +80,9 @@ export function getStateColumns({
     },
     {
       id: "actions",
+      header: () => (
+        <div className="font-medium">Actions</div>
+      ),
       cell: ({ row }) => (
         <DataTableRowActions<State>
           row={row}

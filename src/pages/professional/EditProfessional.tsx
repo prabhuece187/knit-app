@@ -11,11 +11,11 @@ import SocialAndSEOTab from "./component/edit/SocialAndSEOTab";
 import CommonHeader from "@/components/common/CommonHeader";
 import LocationTab from "./component/edit/LocationTab";
 
-export default function EditProfessional() {
+export default function EditProfessional({ ProfessionalId }: { ProfessionalId?: number }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basic");
-  const professionalId = id ? parseInt(id, 10) : 0;
+  const professionalId = ProfessionalId ? ProfessionalId : id ? parseInt(id, 10) : 0;
 
   const {
     data: professional,

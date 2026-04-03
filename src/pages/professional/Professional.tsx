@@ -1,14 +1,172 @@
-import BasicInfoTab from "./component/create/BasicInfoTab";
-// import type { CompleteRegistration } from "@/schema-types/master-schema";
+import { useState, useMemo, useCallback } from "react";
+import { Button } from "@/components/ui/button";
+import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
 
-// interface ProfessionalProps {
-//   registrationData?: CompleteRegistration;
-// }
+import { getProfessionalColumns } from "./constant/professional-config";
+// import AddProfessional from "./component/AddProfessional";
+import EditProfessional from "./EditProfessional";
 
-// export default function Professional({ registrationData }: ProfessionalProps) {
-//   return <BasicInfoTab registrationData={registrationData} />;
-// }
+import type {
+  ProfessionalQuery,
+  ProfessionalResponse,
+} from "./schema-types/professional-schema";
+
+import { useDataTable } from "@/hooks/useDataTable";
+import { useGetProfessionalsQuery, useDeleteProfessionalMutation } from "@/pages/professional/api/ProfessionalApi";
+import { toast } from "sonner";
+import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
 
 export default function Professional() {
-  return <BasicInfoTab />;
+  const [open, setOpen] = useState(false);
+  const [selectedProfessionalId, setSelectedProfessionalId] = useState<number | null>(null);
+
+  const {
+    pagination,
+    searchTerm,
+    filters,
+    handlePageChange,
+    handleLimitChange,
+    handleSortChange,
+    handleSearchChange,
+    handleFilterChange,
+    queryParams,
+  } = useDataTable<ProfessionalQuery, ProfessionalResponse>({
+    searchField: "name",
+    initialLimit: 10,
+    initialPage: 1,
+  });
+
+  const {
+    data: response,
+    isLoading,
+    isError,
+  } = useGetProfessionalsQuery({ ...queryParams }, { refetchOnMountOrArgChange: true });
+
+  const [deleteProfessional] = useDeleteProfessionalMutation();
+
+  const handleEdit = useCallback((id: number) => {
+    setSelectedProfessionalId(id);
+    setOpen(true);
+  }, []);
+
+  const handleAdd = useCallback(() => {
+    setSelectedProfessionalId(null);
+    setOpen(true);
+  }, []);
+
+  const handleDelete = useCallback(
+    (id: number) => {
+      deleteProfessional(id)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+        })
+        .catch((error) => {
+          toast.error(error.data.message);
+        });
+    },
+    [deleteProfessional]
+  );
+
+
+  const columns = useMemo(
+    () =>
+      getProfessionalColumns({
+        onEdit: handleEdit,
+        onDelete: handleDelete,
+        currentSortBy: pagination.sortBy,
+        currentSortOrder: pagination.sortOrder,
+        onSortChange: handleSortChange,
+      }),
+    [
+      handleEdit,
+      handleDelete,
+      pagination.sortBy,
+      pagination.sortOrder,
+      handleSortChange,
+    ]
+  );
+
+  const triggerButton = useMemo(
+    () => <Button onClick={handleAdd}>Add State</Button>,
+    [handleAdd],
+  );
+
+  // Define filter options for ServerFacetedFilter
+  const stateTypeFilterOptions = [
+    { label: "State", value: "STATE" },
+    { label: "Union Territory", value: "UNION_TERRITORY" },
+    { label: "All", value: undefined },
+  ];
+
+  // Configuration: Set to true for single-select, false for multi-select
+  const isSingleSelect = true;
+
+  // Handle type filter changes - supports both single and multi-select
+  const handleTypeFilterChange = useCallback(
+    (values: string[]) => {
+      handleFilterChange({
+        ...filters,
+        type: isSingleSelect
+          ? values.length > 0
+            ? values[0]
+            : "" // Single select: empty string will be filtered out
+          : values.length > 0
+            ? values.join(",")
+            : "", // Multi-select: empty string will be filtered out
+      });
+    },
+    [filters, handleFilterChange]
+  );
+
+  // Memoize filter components with ServerFacetedFilter
+  const filterComponents = useMemo(
+    () => (
+      <ServerFacetedFilter
+        title="Type"
+        options={stateTypeFilterOptions}
+        selectedValues={
+          isSingleSelect
+            ? filters.type
+              ? [filters.type]
+              : [] // Single select: wrap in array
+            : filters.type
+              ? filters.type.split(",").filter(Boolean)
+              : [] // Multi-select: split by comma
+        }
+        onValueChange={handleTypeFilterChange}
+        singleSelect={isSingleSelect}
+      />
+    ),
+    [stateTypeFilterOptions, filters.type, handleTypeFilterChange]
+  );
+
+  return (
+    <>
+      <EnhancedDataTableCard
+        name="Professionals"
+        columns={columns}
+        data={response?.data ?? []}
+        meta={response?.meta ?? pagination}
+        loading={isLoading}
+        isError={isError}
+        onPageChange={handlePageChange}
+        onLimitChange={handleLimitChange}
+        onSortChange={handleSortChange}
+        onSearchChange={handleSearchChange}
+        searchPlaceholder="Search professionals..."
+        searchValue={searchTerm}
+        module="professional"
+        trigger={triggerButton}
+        filterComponents={filterComponents}
+      />
+
+      {selectedProfessionalId ? (
+        <EditProfessional ProfessionalId={selectedProfessionalId} />
+      ) : (
+        // <AddProfessional open={open} setOpen={setOpen} />
+        null
+      )}
+    </>
+  );
 }

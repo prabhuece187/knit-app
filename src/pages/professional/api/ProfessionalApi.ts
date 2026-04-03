@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import customFetchBase from "../../../api/CustomFetchBase";
 import type {
     Professional,
+    ProfessionalResponse,
     CreateProfessional,
     UpdateProfessional,
     ProfessionalQuery,
@@ -18,10 +19,10 @@ import type {
 export const ProfessionalApi = createApi({
     reducerPath: "ProfessionalApi",
     baseQuery: customFetchBase,
-    tagTypes: ["ProfessionalTag"],
+    tagTypes: ["Professional"],
     endpoints: (build) => ({
         getProfessionals: build.query<
-            PaginatedResponse<Professional>,
+            PaginatedResponse<ProfessionalResponse>,
             ProfessionalQuery
         >({
             query: (params) => ({
@@ -29,21 +30,21 @@ export const ProfessionalApi = createApi({
                 method: "GET",
                 params,
             }),
-            providesTags: ["ProfessionalTag"],
+            providesTags: ["Professional"],
         }),
         getProfessionalById: build.query<Professional, number>({
             query: (id) => ({
                 url: `professionals/${id}`,
                 method: "GET",
             }),
-            providesTags: ["ProfessionalTag"],
+            providesTags: ["Professional"],
         }),
         getProfessionalByUserId: build.query<Professional, number>({
             query: (userId) => ({
                 url: `professionals/user/${userId}`,
                 method: "GET",
             }),
-            providesTags: ["ProfessionalTag"],
+            providesTags: ["Professional"],
         }),
         createProfessional: build.mutation<
             CreateResponse<Professional>,
@@ -54,7 +55,7 @@ export const ProfessionalApi = createApi({
                 method: "POST",
                 body: data,
             }),
-            invalidatesTags: ["ProfessionalTag"],
+            invalidatesTags: ["Professional"],
         }),
         updateProfessional: build.mutation<
             UpdateResponse<Professional>, UpdateProfessional>({
@@ -63,14 +64,14 @@ export const ProfessionalApi = createApi({
                     method: "PATCH",
                     body: data,
                 }),
-                invalidatesTags: ["ProfessionalTag"],
+                invalidatesTags: ["Professional"],
             }),
         deleteProfessional: build.mutation<DeleteResponse, number>({
             query: (id) => ({
                 url: `professionals/${id}`,
                 method: "DELETE",
             }),
-            invalidatesTags: ["ProfessionalTag"],
+            invalidatesTags: ["Professional"],
         }),
         updateSocialAndSEO: build.mutation<
             SuccessResponse, UpdateSocialAndSEO>({
@@ -79,7 +80,7 @@ export const ProfessionalApi = createApi({
                     method: "PATCH",
                     body: data,
                 }),
-                invalidatesTags: ["ProfessionalTag"],
+                invalidatesTags: ["Professional"],
             }),
     }),
 });
