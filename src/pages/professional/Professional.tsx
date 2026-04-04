@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import EnhancedDataTableCard from "@/components/custom/EnhancedDataTableCard";
 
 import { getProfessionalColumns } from "./constant/professional-config";
-// import AddProfessional from "./component/AddProfessional";
 import EditProfessional from "./EditProfessional";
 
 import type {
@@ -15,6 +14,7 @@ import { useDataTable } from "@/hooks/useDataTable";
 import { useGetProfessionalsQuery, useDeleteProfessionalMutation } from "@/pages/professional/api/ProfessionalApi";
 import { toast } from "sonner";
 import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
+import { CommonDrawer } from "@/components/common/CommonDrawer";
 
 export default function Professional() {
   const [open, setOpen] = useState(false);
@@ -68,7 +68,6 @@ export default function Professional() {
     [deleteProfessional]
   );
 
-
   const columns = useMemo(
     () =>
       getProfessionalColumns({
@@ -92,17 +91,14 @@ export default function Professional() {
     [handleAdd],
   );
 
-  // Define filter options for ServerFacetedFilter
   const stateTypeFilterOptions = [
     { label: "State", value: "STATE" },
     { label: "Union Territory", value: "UNION_TERRITORY" },
     { label: "All", value: undefined },
   ];
 
-  // Configuration: Set to true for single-select, false for multi-select
   const isSingleSelect = true;
 
-  // Handle type filter changes - supports both single and multi-select
   const handleTypeFilterChange = useCallback(
     (values: string[]) => {
       handleFilterChange({
@@ -110,16 +106,15 @@ export default function Professional() {
         type: isSingleSelect
           ? values.length > 0
             ? values[0]
-            : "" // Single select: empty string will be filtered out
+            : ""
           : values.length > 0
             ? values.join(",")
-            : "", // Multi-select: empty string will be filtered out
+            : "",
       });
     },
     [filters, handleFilterChange]
   );
 
-  // Memoize filter components with ServerFacetedFilter
   const filterComponents = useMemo(
     () => (
       <ServerFacetedFilter
@@ -129,10 +124,10 @@ export default function Professional() {
           isSingleSelect
             ? filters.type
               ? [filters.type]
-              : [] // Single select: wrap in array
+              : []
             : filters.type
               ? filters.type.split(",").filter(Boolean)
-              : [] // Multi-select: split by comma
+              : []
         }
         onValueChange={handleTypeFilterChange}
         singleSelect={isSingleSelect}
@@ -161,11 +156,15 @@ export default function Professional() {
         filterComponents={filterComponents}
       />
 
-      {selectedProfessionalId ? (
-        <EditProfessional ProfessionalId={selectedProfessionalId} />
-      ) : (
-        // <AddProfessional open={open} setOpen={setOpen} />
-        null
+      {selectedProfessionalId && (
+        <CommonDrawer
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          side="right"
+          size="lg"
+        >
+          <EditProfessional ProfessionalId={selectedProfessionalId} hideHeader={true} />
+        </CommonDrawer>
       )}
     </>
   );

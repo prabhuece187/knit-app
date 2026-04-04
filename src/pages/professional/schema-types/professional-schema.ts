@@ -76,6 +76,8 @@ export const professionalSchema = z.object({
         .min(2, { message: "Professional name must be at least 2 characters" }),
 
     profileImage: z.string().optional(),
+    mobileNumber: z.string().min(10, "Mobile number is required"),
+    whatsappNumber: z.string().min(10, "WhatsApp number is required"),
     // knownLanguages: knownLanguagesSchema.optional(),
     // qualifications: z.array(z.string()).optional(),
     // certifications: z.array(z.string()).optional(),

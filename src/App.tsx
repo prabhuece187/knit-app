@@ -44,6 +44,7 @@ import District from "./pages/district/District";
 import City from "./pages/city/City";
 import EditProfessional from "./pages/professional/EditProfessional";
 import Professional from "./pages/professional/Professional";
+import Profile from "./pages/professional/Profile";
 
 function App() {
 
@@ -139,6 +140,7 @@ function App() {
           {/* Professional */}
           <Route path="professionals/:id" element={<EditProfessional />} />
           <Route path="professionals" element={<Professional />} />
+          <Route path="profile" element={<Profile />} />
 
           {/* Add-on Service */}
           <Route path="customers/:id" element={<IndividualData />} />

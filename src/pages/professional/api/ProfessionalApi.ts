@@ -39,9 +39,9 @@ export const ProfessionalApi = createApi({
             }),
             providesTags: ["Professional"],
         }),
-        getProfessionalByUserId: build.query<Professional, number>({
-            query: (userId) => ({
-                url: `professionals/user/${userId}`,
+        getProfessionalByUserId: build.query<ProfessionalResponse, void>({
+            query: () => ({
+                url: `professionals/user`,
                 method: "GET",
             }),
             providesTags: ["Professional"],

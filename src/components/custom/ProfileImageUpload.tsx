@@ -4,6 +4,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
 import { Upload, X, User } from "lucide-react";
 
+const baseUrl = import.meta.env.VITE_API_URL as string;
+
 interface ProfileImageUploadProps {
   value?: string;
   onChange: (value: string) => void;
@@ -68,7 +70,7 @@ export default function ProfileImageUpload({
             {preview ? (
               <div className="relative">
                 <img
-                  src={preview}
+                  src={`${baseUrl}/${preview}`}
                   alt="Profile preview"
                   className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
                 />

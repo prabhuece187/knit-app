@@ -7,11 +7,10 @@ import {
     professionalSchema,
 } from "../schema-types/professional-schema";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
-
+import { Button } from "@/components/ui/button";
+import { EyeIcon } from "lucide-react";
 
 const baseUrl = import.meta.env.VITE_API_URL as string;
-
 
 interface GetProfessionalColumnsProps {
     onEdit: (id: number) => void;
@@ -101,11 +100,19 @@ export function getProfessionalColumns({
                 <div className="font-medium">Actions</div>
             ),
             cell: ({ row }) => (
-                <DataTableRowActions<ProfessionalResponse>
-                    row={row}
-                    onEdit={(professional) => onEdit(Number(professional.id))}
-                    onDelete={(professional) => onDelete?.(Number(professional.id))}
-                />
+                <div className="flex items-center gap-2">
+                    <DataTableRowActions<ProfessionalResponse>
+                        row={row}
+                        onEdit={(professional) => onEdit(Number(professional.id))}
+                        onDelete={(professional) => onDelete?.(Number(professional.id))}
+                    />
+
+                    <div>
+                        <Button variant="outline" size="sm">
+                            <EyeIcon className="w-4 h-4" />
+                        </Button>
+                    </div>
+                </div>
             ),
         },
     ];

@@ -9,9 +9,8 @@ import { useGetProfessionalByIdQuery } from "./api/ProfessionalApi";
 import BasicInfoTab from "./component/edit/BasicInfoTab";
 import SocialAndSEOTab from "./component/edit/SocialAndSEOTab";
 import CommonHeader from "@/components/common/CommonHeader";
-import LocationTab from "./component/edit/LocationTab";
 
-export default function EditProfessional({ ProfessionalId }: { ProfessionalId?: number }) {
+export default function EditProfessional({ ProfessionalId, hideHeader }: { ProfessionalId?: number, hideHeader?: boolean }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basic");
@@ -25,7 +24,7 @@ export default function EditProfessional({ ProfessionalId }: { ProfessionalId?: 
     skip: !professionalId || isNaN(professionalId),
   });
 
-  if (!id || isNaN(professionalId)) {
+  if (!professionalId || isNaN(professionalId)) {
     return (
       <div className="container mx-auto py-6">
         <div className="text-center">
@@ -79,27 +78,19 @@ export default function EditProfessional({ ProfessionalId }: { ProfessionalId?: 
 
   return (
     <>
-      <CommonHeader name="Edit Profile" trigger={triggerButton()} />
+      {hideHeader ? <CommonHeader name="Edit Profile" /> : <CommonHeader name="Edit Profile" trigger={triggerButton()} />}
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="basic">Basic Info</TabsTrigger>
-          {/* <TabsTrigger value="location">Location</TabsTrigger> */}
           <TabsTrigger value="social">Social & SEO</TabsTrigger>
         </TabsList>
 
         <TabsContent value="basic" className="space-y-6 pt-3">
           <BasicInfoTab professional={professional} />
-          {/* <ProfessionalDetailsForm
-            form={form}
-            isReviewMode={isReviewMode}
-            selectOptionFallbacks={selectOptionFallbacks}
-          /> */}
         </TabsContent>
 
-        <TabsContent value="location" className="space-y-6 pt-3">
-          <LocationTab professional={professional} />
-        </TabsContent>
+
 
         <TabsContent value="social" className="space-y-6 pt-3">
           <SocialAndSEOTab professional={professional} />
