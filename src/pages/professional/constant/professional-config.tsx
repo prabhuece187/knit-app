@@ -15,6 +15,7 @@ const baseUrl = import.meta.env.VITE_API_URL as string;
 interface GetProfessionalColumnsProps {
     onEdit: (id: number) => void;
     onDelete: (id: number) => void;
+    onView: (id: number) => void;
     currentSortBy?: string;
     currentSortOrder?: "asc" | "desc";
     onSortChange?: (sortBy: string, sortOrder: "asc" | "desc") => void;
@@ -23,9 +24,10 @@ interface GetProfessionalColumnsProps {
 export function getProfessionalColumns({
     onEdit,
     onDelete,
+    onView,
     currentSortBy,
     currentSortOrder,
-    onSortChange,
+    onSortChange
 }: GetProfessionalColumnsProps): ColumnDef<ProfessionalResponse>[] {
     return [
         {
@@ -108,7 +110,7 @@ export function getProfessionalColumns({
                     />
 
                     <div>
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => onView(Number(row.original.userId))}>
                             <EyeIcon className="w-4 h-4" />
                         </Button>
                     </div>

@@ -15,10 +15,14 @@ import { useGetProfessionalsQuery, useDeleteProfessionalMutation } from "@/pages
 import { toast } from "sonner";
 import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
 import { CommonDrawer } from "@/components/common/CommonDrawer";
+import Profile from "./Profile";
 
 export default function Professional() {
   const [open, setOpen] = useState(false);
   const [selectedProfessionalId, setSelectedProfessionalId] = useState<number | null>(null);
+
+  const [userId, setUserId] = useState<number | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const {
     pagination,
@@ -49,6 +53,11 @@ export default function Professional() {
     setOpen(true);
   }, []);
 
+  const handleView = useCallback((id: number) => {
+    setUserId(id);
+    setProfileOpen(true);
+  }, []);
+
   const handleAdd = useCallback(() => {
     setSelectedProfessionalId(null);
     setOpen(true);
@@ -73,6 +82,7 @@ export default function Professional() {
       getProfessionalColumns({
         onEdit: handleEdit,
         onDelete: handleDelete,
+        onView: handleView,
         currentSortBy: pagination.sortBy,
         currentSortOrder: pagination.sortOrder,
         onSortChange: handleSortChange,
@@ -164,6 +174,17 @@ export default function Professional() {
           size="lg"
         >
           <EditProfessional ProfessionalId={selectedProfessionalId} hideHeader={true} />
+        </CommonDrawer>
+      )}
+
+      {userId && (
+        <CommonDrawer
+          isOpen={profileOpen}
+          onClose={() => setProfileOpen(false)}
+          side="right"
+          size="lg"
+        >
+          <Profile userId={userId} />
         </CommonDrawer>
       )}
     </>

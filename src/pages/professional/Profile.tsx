@@ -1,4 +1,3 @@
-import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useGetProfessionalByUserIdQuery } from "./api/ProfessionalApi"
@@ -10,18 +9,33 @@ import {
     Phone,
     MessageCircle,
     Globe,
-    MapPin,
     Building2,
     Map,
     Landmark,
     Home,
     Hash,
 } from "lucide-react"
+import { useAppSelector } from "@/store/Store"
 
 const baseUrl = import.meta.env.VITE_API_URL as string
 
-export default function Profile() {
-    const { data, isLoading, isError } = useGetProfessionalByUserIdQuery()
+type ProfileProps = {
+    userId?: number
+}
+
+export default function Profile({ userId: userIdFromProps }: ProfileProps) {
+
+    const authUserId = useAppSelector((state) => state.auth.user?.id)
+    const resolvedUserId = userIdFromProps ?? authUserId
+    const skipFetch =
+        resolvedUserId == null ||
+        typeof resolvedUserId !== "number" ||
+        Number.isNaN(resolvedUserId)
+
+    const { data, isLoading, isError } = useGetProfessionalByUserIdQuery(
+        resolvedUserId ?? 0,
+        { skip: skipFetch },
+    )
 
     if (isLoading) {
         return (

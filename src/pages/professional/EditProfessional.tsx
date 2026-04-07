@@ -9,12 +9,22 @@ import { useGetProfessionalByIdQuery } from "./api/ProfessionalApi";
 import BasicInfoTab from "./component/edit/BasicInfoTab";
 import SocialAndSEOTab from "./component/edit/SocialAndSEOTab";
 import CommonHeader from "@/components/common/CommonHeader";
+import { CommonDrawer } from "@/components/common/CommonDrawer";
+import Profile from "./Profile";
+import { useAppSelector } from "@/store/Store";
+
 
 export default function EditProfessional({ ProfessionalId, hideHeader }: { ProfessionalId?: number, hideHeader?: boolean }) {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  const { id } = useParams<{ id: string }>();
+  const authUserId = useAppSelector((state) => state.auth.user?.id)
+
   const [activeTab, setActiveTab] = useState("basic");
+  const [profileOpen, setProfileOpen] = useState(false);
+
   const professionalId = ProfessionalId ? ProfessionalId : id ? parseInt(id, 10) : 0;
+
 
   const {
     data: professional,
@@ -70,10 +80,17 @@ export default function EditProfessional({ ProfessionalId, hideHeader }: { Profe
   }
 
   const triggerButton = () => (
-    <Button variant="ghost" onClick={() => navigate("/professionals")}>
-      <ArrowLeft className="h-4 w-4 mr-2" />
-      Back to Professionals
-    </Button>
+    <>
+      {/* <Button variant="ghost" onClick={() => navigate("/profile")}>
+        <ArrowLeft className="h-4 w-4 mr-2" />
+        Back to Profile
+      </Button> */}
+
+      <Button variant="outline" size="sm" onClick={() => setProfileOpen(true)}>
+        View Profile
+      </Button>
+    </>
+
   );
 
   return (
@@ -96,6 +113,17 @@ export default function EditProfessional({ ProfessionalId, hideHeader }: { Profe
           <SocialAndSEOTab professional={professional} />
         </TabsContent>
       </Tabs>
+
+      {authUserId && profileOpen && (
+        <CommonDrawer
+          isOpen={profileOpen}
+          onClose={() => setProfileOpen(false)}
+          side="right"
+          size="lg"
+        >
+          <Profile userId={authUserId} />
+        </CommonDrawer>
+      )}
     </>
   );
 }
