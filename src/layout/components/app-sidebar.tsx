@@ -247,7 +247,7 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
           items: [
             {
               title: "Profile",
-              url: "/professionals",
+              url: "/profile",
             },
             {
               title: "Billing",

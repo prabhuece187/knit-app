@@ -45,6 +45,7 @@ import City from "./pages/city/City";
 import EditProfessional from "./pages/professional/EditProfessional";
 import Professional from "./pages/professional/Professional";
 import ProfileParent from "./pages/professional/ProfileParent";
+import Reviews from "./pages/reviews/Reviews";
 
 function App() {
 
@@ -141,6 +142,9 @@ function App() {
           <Route path="professionals/:id" element={<EditProfessional />} />
           <Route path="professionals" element={<Professional />} />
           <Route path="profile" element={<ProfileParent />} />
+
+          {/* Reviews */}
+          <Route path="reviews" element={<Reviews />} />
 
           {/* Add-on Service */}
           <Route path="customers/:id" element={<IndividualData />} />

@@ -37,6 +37,7 @@ import { SubCategoryApi } from "@/api/SubCategoryApi";
 import { DistrictApi } from "@/pages/district/api/DistrictApi";
 import { CityApi } from "@/pages/city/api/CityApi";
 import { ProfessionalApi } from "@/pages/professional/api/ProfessionalApi";
+import { ReviewApi } from "@/pages/reviews/api/ReviewsApi";
 
 
 const persistConfig = {
@@ -60,6 +61,7 @@ const rootReducer = combineReducers({
   [DistrictApi.reducerPath]: DistrictApi.reducer,
   [CityApi.reducerPath]: CityApi.reducer,
   [ProfessionalApi.reducerPath]: ProfessionalApi.reducer,
+  [ReviewApi.reducerPath]: ReviewApi.reducer,
   [YarnTypeApi.reducerPath]: YarnTypeApi.reducer,
   [InwardApi.reducerPath]: InwardApi.reducer,
   [OutwardApi.reducerPath]: OutwardApi.reducer,
@@ -94,6 +96,7 @@ export const store = configureStore({
       DistrictApi.middleware,
       CityApi.middleware,
       ProfessionalApi.middleware,
+      ReviewApi.middleware,
       YarnTypeApi.middleware,
       InwardApi.middleware,
       OutwardApi.middleware,
