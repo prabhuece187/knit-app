@@ -87,9 +87,8 @@ export function InvoiceSettlementTable({
                 return (
                   <tr
                     key={inv.id}
-                    className={`border-b border-gray-100 ${
-                      inv.is_selected ? "bg-blue-50/50" : "bg-white"
-                    }`}
+                    className={`border-b border-gray-100 ${inv.is_selected ? "bg-blue-50/50" : "bg-white"
+                      }`}
                   >
                     <td className="py-2 px-3 text-center">
                       <Checkbox
@@ -117,9 +116,8 @@ export function InvoiceSettlementTable({
                     <td className="py-2 px-3 text-right font-mono">
                       <Input
                         type="number"
-                        className={`text-right ${
-                          overApplied ? "bg-red-100" : ""
-                        }`}
+                        className={`text-right ${overApplied ? "bg-red-100" : ""
+                          }`}
                         value={inv.apply_amount ?? 0}
                         onChange={(e) =>
                           onAmountChange(inv.id, Number(e.target.value))
@@ -128,11 +126,10 @@ export function InvoiceSettlementTable({
                     </td>
 
                     <td
-                      className={`py-2 px-3 text-right font-mono ${
-                        remaining < 0
-                          ? "text-red-600 font-bold"
-                          : "text-gray-700"
-                      }`}
+                      className={`py-2 px-3 text-right font-mono ${remaining < 0
+                        ? "text-red-600 font-bold"
+                        : "text-gray-700"
+                        }`}
                     >
                       ₹{remaining}
                     </td>

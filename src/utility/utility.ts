@@ -72,3 +72,56 @@ export function generateBarcode(prefix = "ITM"): string {
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
   return `${prefix}-${ts}-${rand}`;
 }
+
+/** Call before opening a dialog/drawer from the app shell so focus is not left on a control that Radix will mark aria-hidden. */
+export function blurActiveElement(): void {
+  const ae = document.activeElement;
+  if (ae instanceof HTMLElement) ae.blur();
+}
+
+/** Maps common workflow status strings to Badge variants (shadcn/ui). */
+export type StatusBadgeVariant =
+  | "default"
+  | "secondary"
+  | "destructive"
+  | "outline";
+
+export function statusBadgeVariant(status: string): StatusBadgeVariant {
+  switch (status) {
+    case "APPROVED":
+      return "secondary";
+    case "REJECTED":
+      return "destructive";
+    case "COMPLETE":
+      return "outline";
+    default:
+      return "default";
+  }
+}
+
+const COMMON_STATUS_LABELS: Record<string, string> = {
+  PENDING: "Pending",
+  APPROVED: "Approved",
+  REJECTED: "Rejected",
+  COMPLETE: "Complete",
+};
+
+/**
+ * Human-readable label for a status string. Uses built-in labels for common keys;
+ * pass `labelMap` to override or supply domain-specific statuses.
+ */
+export function statusLabel(
+  status: string,
+  labelMap?: Record<string, string>
+): string {
+  if (labelMap) return labelMap[status] ?? status;
+  return COMMON_STATUS_LABELS[status] ?? status;
+}
+
+
+export function initialsFromName(name: string | undefined | null): string {
+  if (!name?.trim()) return '?';
+  const parts = name.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
+}

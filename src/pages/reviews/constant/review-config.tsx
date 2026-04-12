@@ -2,13 +2,14 @@ import { DataTableRowActions } from "@/components/common/DataTableRowAction";
 import type { ColumnDef } from "@tanstack/react-table";
 import { ServerDataTableColumnHeader } from "@/components/custom/ServerDataTableColumnHeader";
 import { reviewSchema, type Review } from "../schema-types/review.schema";
-import { DataTableColumnHeader } from "@/components/common/DataTableColumnHeader";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/utility/utility";
-
+import { formatDate, statusBadgeVariant, statusLabel } from "@/utility/utility";
+import { Button } from "@/components/ui/button";
+import { EyeIcon } from "lucide-react";
 
 interface GetReviewColumnsProps {
   onEdit: (review: Review) => void;
+  onView: (review: Review) => void;
   onDelete: (id: number) => void;
   currentSortBy?: string;
   currentSortOrder?: "asc" | "desc";
@@ -17,6 +18,7 @@ interface GetReviewColumnsProps {
 
 export function getReviewColumns({
   onEdit,
+  onView,
   onDelete,
   currentSortBy,
   currentSortOrder,
@@ -38,32 +40,6 @@ export function getReviewColumns({
       cell: ({ row }) => <div className="w-[50px]" > {row.getValue("id")} </div>,
     },
     {
-      accessorKey: "title",
-      header: ({ column }) => (
-        <ServerDataTableColumnHeader
-          column={column}
-          title="Review Title"
-          sortable={false}
-          currentSortBy={currentSortBy}
-          currentSortOrder={currentSortOrder}
-          onSortChange={onSortChange}
-        />
-      ),
-    },
-    {
-      accessorKey: "rating",
-      header: ({ column }) => (
-        <ServerDataTableColumnHeader
-          column={column}
-          title="Rating"
-          sortable={true}
-          currentSortBy={currentSortBy}
-          currentSortOrder={currentSortOrder}
-          onSortChange={onSortChange}
-        />
-      ),
-    },
-    {
       accessorKey: "message",
       header: ({ column }) => (
         <ServerDataTableColumnHeader
@@ -82,10 +58,28 @@ export function getReviewColumns({
         const status = row.getValue("status") as string;
         return (
           <Badge
-            variant={status === "PENDING" ? "default" : "outline"}
             className="capitalize"
+            variant={statusBadgeVariant(status)}
           >
-            {status === "PENDING" ? "Pending" : status === "APPROVED" ? "Approved" : status === "REJECTED" ? "Rejected" : status === "COMPLETE" ? "Complete" : status}
+            {statusLabel(status)}
+          </Badge>
+        );
+      },
+    },
+
+    {
+      accessorKey: "isTestimonial",
+      header: ({ column }) => (
+        <ServerDataTableColumnHeader column={column} title="Is Testimonial" sortable={false} />
+      ),
+      cell: ({ row }) => {
+        const isTestimonial = row.getValue("isTestimonial") as boolean;
+        return (
+          <Badge
+            className="capitalize"
+            variant={isTestimonial ? "default" : "outline"}
+          >
+            {isTestimonial ? "Yes" : "No"}
           </Badge>
         );
       },
@@ -117,18 +111,26 @@ export function getReviewColumns({
         <div className="font-medium" > Actions </div>
       ),
       cell: ({ row }) => (
-        <DataTableRowActions<Review>
-          row={row}
-          onEdit={(item) => {
-            onEdit(item);
-          }
-          }
-          onDelete={(item) => {
-            if (item.id) {
-              onDelete(Number(item.id));
-            }
-          }}
-        />
+        <div className="flex items-center gap-2">
+
+          <DataTableRowActions<Review>
+            row={row}
+            onEdit={(item) => {
+              onEdit(item);
+            }}
+
+            onDelete={(item) => {
+              if (item.id) {
+                onDelete(Number(item.id));
+              }
+            }}
+          />
+          <div>
+            <Button variant="outline" size="sm" onClick={() => onView(row.original)}>
+              <EyeIcon className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
       ),
     },
   ];

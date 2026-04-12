@@ -12,13 +12,14 @@ import CommonHeader from "@/components/common/CommonHeader";
 import { CommonDrawer } from "@/components/common/CommonDrawer";
 import Profile from "./Profile";
 import { useAppSelector } from "@/store/Store";
+import type { RootState } from "@/store/Store";
 
 
 export default function EditProfessional({ ProfessionalId, hideHeader }: { ProfessionalId?: number, hideHeader?: boolean }) {
   const navigate = useNavigate();
 
   const { id } = useParams<{ id: string }>();
-  const authUserId = useAppSelector((state) => state.auth.user?.id)
+  const authUserId = useAppSelector((state: RootState) => state.auth.user?.id)
 
   const [activeTab, setActiveTab] = useState("basic");
   const [profileOpen, setProfileOpen] = useState(false);
@@ -106,8 +107,6 @@ export default function EditProfessional({ ProfessionalId, hideHeader }: { Profe
         <TabsContent value="basic" className="space-y-6 pt-3">
           <BasicInfoTab professional={professional} />
         </TabsContent>
-
-
 
         <TabsContent value="social" className="space-y-6 pt-3">
           <SocialAndSEOTab professional={professional} />

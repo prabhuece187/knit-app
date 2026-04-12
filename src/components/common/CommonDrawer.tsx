@@ -69,15 +69,22 @@ export function CommonDrawer({
                 )}
                 style={panelStyle}
             >
-                {title || description && (
+                {title || description ? (
                     <DrawerHeader>
-                        {title && <DrawerTitle>{title}</DrawerTitle>}
-                        {description &&
-                            <DrawerDescription>
-                                {description}
-                            </DrawerDescription>
-                        }
+                        {title && (
+                            <DrawerTitle>{title}</DrawerTitle>
+                        )}
+                        {description && (
+                            <DrawerDescription>{description}</DrawerDescription>
+                        )}
                     </DrawerHeader>
+                ) : (
+                    <>
+                        <DrawerTitle className="sr-only">Panel</DrawerTitle>
+                        <DrawerDescription className="sr-only">
+                            Panel content
+                        </DrawerDescription>
+                    </>
                 )}
                 <div className="no-scrollbar overflow-y-auto p-4">
                     {children}

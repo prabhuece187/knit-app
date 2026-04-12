@@ -285,6 +285,7 @@ export const professionalQuerySchema = z.object({
     // search: z.string().optional(),
 });
 
+
 // Premium status update schema
 export const premiumStatusSchema = z.object({
     isPremium: z.boolean(),

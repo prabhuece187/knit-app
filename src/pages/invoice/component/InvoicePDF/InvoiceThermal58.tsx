@@ -137,24 +137,24 @@ export const InvoiceThermal58 = ({
           invoice.gauge ||
           invoice.remarks ||
           invoice.goods_description) && (
-          <>
-            <View style={styles.divider} />
-            <View>
-              <Text style={styles.bold}>Goods Details:</Text>
-              {invoice.design_name && (
-                <Text>Design: {invoice.design_name}</Text>
-              )}
-              {invoice.color && <Text>Color: {invoice.color}</Text>}
-              {invoice.lot_no && <Text>Lot No: {invoice.lot_no}</Text>}
-              {invoice.dia && <Text>Dia: {invoice.dia}</Text>}
-              {invoice.gauge && <Text>Gauge: {invoice.gauge}</Text>}
-              {invoice.remarks && <Text>Remarks: {invoice.remarks}</Text>}
-              {invoice.goods_description && (
-                <Text>{invoice.goods_description}</Text>
-              )}
-            </View>
-          </>
-        )}
+            <>
+              <View style={styles.divider} />
+              <View>
+                <Text style={styles.bold}>Goods Details:</Text>
+                {invoice.design_name && (
+                  <Text>Design: {invoice.design_name}</Text>
+                )}
+                {invoice.color && <Text>Color: {invoice.color}</Text>}
+                {invoice.lot_no && <Text>Lot No: {invoice.lot_no}</Text>}
+                {invoice.dia && <Text>Dia: {invoice.dia}</Text>}
+                {invoice.gauge && <Text>Gauge: {invoice.gauge}</Text>}
+                {invoice.remarks && <Text>Remarks: {invoice.remarks}</Text>}
+                {invoice.goods_description && (
+                  <Text>{invoice.goods_description}</Text>
+                )}
+              </View>
+            </>
+          )}
 
         <View style={styles.divider} />
 

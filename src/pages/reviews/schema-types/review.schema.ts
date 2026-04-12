@@ -50,6 +50,21 @@ export const reviewSchema = z.object({
 export type Review = z.infer<typeof reviewSchema>;
 export type ReviewStatus = z.infer<typeof reviewStatusSchema>;
 
+/** Fields editable from the admin review edit dialog */
+export const editReviewSchema = z.object({
+    title: z.string(),
+    message: z.string(),
+    rating: z.number().int().min(1).max(5),
+});
+
+export type EditReviewFormValues = z.infer<typeof editReviewSchema>;
+
+export type UpdateReviewPayload = {
+    title: string | null;
+    message: string | null;
+    rating: number;
+};
+
 export const reviewQuerySchema = baseQuerySchema.extend({
     professionalId: z.number().int().optional(),
     visitorId: z.number().int().optional(),

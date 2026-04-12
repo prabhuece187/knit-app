@@ -30,6 +30,43 @@ export interface TableModuleConfig {
 // Predefined configurations for different modules
 export const TABLE_MODULE_CONFIGS: Record<string, TableModuleConfig> = {
   // State module configuration
+
+  professional: {
+    enableSearch: true,
+    enableFilters: true,
+    enablePagination: true,
+    enableSorting: true,
+    enableColumnVisibility: true,
+    enableHorizontalScroll: false,
+    enableRowSelection: false,
+    enableExport: false,
+    fixedColumns: {
+      left: ["id", "name"],
+      right: ["actions"],
+    },
+    searchPlaceholder: "Search professionals by name...",
+    showRowCount: true,
+    compactMode: false,
+    module: "professional",
+  },
+  review: {
+    enableSearch: true,
+    enableFilters: true,
+    enablePagination: true,
+    enableSorting: true,
+    enableColumnVisibility: true,
+    enableHorizontalScroll: false,
+    enableRowSelection: false,
+    enableExport: false,
+    fixedColumns: {
+      left: ["id", "message"],
+      right: ["actions"],
+    },
+    searchPlaceholder: "Search reviews by message...",
+    showRowCount: true,
+    compactMode: false,
+    module: "review",
+  },
   state: {
     enableSearch: true,
     enableFilters: true,
