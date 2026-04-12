@@ -13,9 +13,9 @@ import type {
 import { useDataTable } from "@/hooks/useDataTable";
 import { useGetProfessionalsQuery, useDeleteProfessionalMutation } from "@/pages/professional/api/ProfessionalApi";
 import { toast } from "sonner";
-import { ServerFacetedFilter } from "@/components/custom/ServerFacetedFilter";
 import { CommonDrawer } from "@/components/common/CommonDrawer";
 import Profile from "./Profile";
+import ProfessionalFilter from "./component/ProfessionalFilter";
 
 export default function Professional() {
   const [open, setOpen] = useState(false);
@@ -125,23 +125,10 @@ export default function Professional() {
     [filters, handleFilterChange]
   );
 
+
   const filterComponents = useMemo(
     () => (
-      <ServerFacetedFilter
-        title="Type"
-        options={stateTypeFilterOptions}
-        selectedValues={
-          isSingleSelect
-            ? filters.type
-              ? [filters.type]
-              : []
-            : filters.type
-              ? filters.type.split(",").filter(Boolean)
-              : []
-        }
-        onValueChange={handleTypeFilterChange}
-        singleSelect={isSingleSelect}
-      />
+      <ProfessionalFilter filters={filters} onFilterChange={handleFilterChange} />
     ),
     [stateTypeFilterOptions, filters.type, handleTypeFilterChange]
   );
