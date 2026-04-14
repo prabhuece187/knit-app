@@ -46,6 +46,7 @@ import EditProfessional from "./pages/professional/EditProfessional";
 import Professional from "./pages/professional/Professional";
 import ProfileParent from "./pages/professional/ProfileParent";
 import Reviews from "./pages/reviews/Reviews";
+import Faqs from "./pages/faq/Faqs";
 
 function App() {
 
@@ -145,6 +146,9 @@ function App() {
 
           {/* Reviews */}
           <Route path="reviews" element={<Reviews />} />
+
+          {/* FAQ */}
+          <Route path="faq" element={<Faqs />} />
 
           {/* Add-on Service */}
           <Route path="customers/:id" element={<IndividualData />} />

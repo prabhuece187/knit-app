@@ -265,6 +265,10 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
               title: "Clients",
               url: "/clients",
             },
+            {
+              title: "FAQ",
+              url: "/faq",
+            },
           ],
         },
 
