@@ -47,6 +47,7 @@ import Professional from "./pages/professional/Professional";
 import ProfileParent from "./pages/professional/ProfileParent";
 import Reviews from "./pages/reviews/Reviews";
 import Faqs from "./pages/faq/Faqs";
+import Appointments from "./pages/appoinment/Appointments";
 
 function App() {
 
@@ -149,6 +150,9 @@ function App() {
 
           {/* FAQ */}
           <Route path="faq" element={<Faqs />} />
+
+          {/* Appointments */}
+          <Route path="appointments" element={<Appointments />} />
 
           {/* Add-on Service */}
           <Route path="customers/:id" element={<IndividualData />} />

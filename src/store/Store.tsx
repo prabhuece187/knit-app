@@ -39,6 +39,7 @@ import { CityApi } from "@/pages/city/api/CityApi";
 import { ProfessionalApi } from "@/pages/professional/api/ProfessionalApi";
 import { ReviewApi } from "@/pages/reviews/api/ReviewsApi";
 import { FaqApi } from "@/pages/faq/api/FaqApi";
+import { AppointmentApi } from "@/pages/appoinment/api/AppointmentApi";
 
 
 const persistConfig = {
@@ -64,6 +65,7 @@ const rootReducer = combineReducers({
   [ProfessionalApi.reducerPath]: ProfessionalApi.reducer,
   [ReviewApi.reducerPath]: ReviewApi.reducer,
   [FaqApi.reducerPath]: FaqApi.reducer,
+  [AppointmentApi.reducerPath]: AppointmentApi.reducer,
   [YarnTypeApi.reducerPath]: YarnTypeApi.reducer,
   [InwardApi.reducerPath]: InwardApi.reducer,
   [OutwardApi.reducerPath]: OutwardApi.reducer,
@@ -100,6 +102,7 @@ export const store = configureStore({
       ProfessionalApi.middleware,
       ReviewApi.middleware,
       FaqApi.middleware,
+      AppointmentApi.middleware,
       YarnTypeApi.middleware,
       InwardApi.middleware,
       OutwardApi.middleware,
