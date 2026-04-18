@@ -48,6 +48,7 @@ import ProfileParent from "./pages/professional/ProfileParent";
 import Reviews from "./pages/reviews/Reviews";
 import Faqs from "./pages/faq/Faqs";
 import Appointments from "./pages/appoinment/Appointments";
+import ProfessionalCalendar from "./pages/appoinment/component/ProfessionalCalendar";
 
 function App() {
 
@@ -153,6 +154,7 @@ function App() {
 
           {/* Appointments */}
           <Route path="appointments" element={<Appointments />} />
+          <Route path="professional-calendar" element={<ProfessionalCalendar />} />
 
           {/* Add-on Service */}
           <Route path="customers/:id" element={<IndividualData />} />

@@ -106,31 +106,37 @@ export default function DateRangePicker({
   className,
   value,
   onChange,
+  noInitialDate = false,
 }: {
   className?: string;
   value?: DateRange;
   onChange?: (range: DateRange | undefined) => void;
+  noInitialDate?: boolean;
 }) {
   const today = new Date();
   const defaultTodayRange: DateRange = { from: today, to: today };
 
   const [open, setOpen] = React.useState(false);
   const [showCalendar, setShowCalendar] = React.useState(false);
-  const [tempRange, setTempRange] = React.useState<DateRange | undefined>(
-    value ?? defaultTodayRange
+  const [tempRange, setTempRange] = React.useState<DateRange | undefined>(() =>
+    noInitialDate ? value : (value ?? defaultTodayRange),
   );
 
-  // Set initial value on mount if not provided
+  // Prefill today on mount (appointments list) only if parent did not already pass a range
   React.useEffect(() => {
-    if (!value && onChange) {
-      onChange(defaultTodayRange);
-    }
+    if (noInitialDate || !onChange) return;
+    if (value?.from && value?.to) return;
+    onChange(defaultTodayRange);
   }, []);
 
   // Update tempRange when value changes
   React.useEffect(() => {
-    if (value) setTempRange(value);
-  }, [value]);
+    if (value) {
+      setTempRange(value);
+    } else if (noInitialDate) {
+      setTempRange(undefined);
+    }
+  }, [value, noInitialDate]);
 
   const handleConfirm = () => {
     if (tempRange?.from && tempRange?.to) {
@@ -145,6 +151,15 @@ export default function DateRangePicker({
   };
 
   const renderLabel = () => {
+    if (noInitialDate) {
+      if (value?.from && value?.to) {
+        return `${format(value.from, "LLL dd, y")} - ${format(
+          value.to,
+          "LLL dd, y",
+        )}`;
+      }
+      return "Pick a date range";
+    }
     const current = value ?? defaultTodayRange;
     if (current?.from && current?.to) {
       return `${format(current.from, "LLL dd, y")} - ${format(
@@ -162,12 +177,10 @@ export default function DateRangePicker({
           <Button
             id="date"
             variant="outline"
-            className={cn(
-              "w-full justify-start text-left font-normal text-xs",
-              !value && "text-muted-foreground"
-            )}
+            size="sm"
+            className={"w-full justify-start text-left font-normal border-dashed"}
           >
-            <CalendarIcon className="mr-2 h-4 w-4" />
+            <CalendarIcon className="size-3.5" />
             {renderLabel()}
           </Button>
         </PopoverTrigger>
@@ -215,8 +228,8 @@ export default function DateRangePicker({
                     {tempRange?.from && !tempRange?.to
                       ? "Select End Date"
                       : tempRange?.to
-                      ? format(tempRange.to, "dd MMM yyyy")
-                      : "End Date"}
+                        ? format(tempRange.to, "dd MMM yyyy")
+                        : "End Date"}
                   </div>
                 </div>
               </div>

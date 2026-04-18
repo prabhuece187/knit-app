@@ -1,0 +1,87 @@
+/* FullCalendar — align with app theme (oklch CSS variables) */
+
+.professional-calendar .fc {
+  --fc-border-color: var(--border);
+  --fc-button-bg-color: var(--secondary);
+  --fc-button-border-color: var(--border);
+  --fc-button-text-color: var(--secondary-foreground);
+  --fc-button-hover-bg-color: var(--accent);
+  --fc-button-hover-border-color: var(--border);
+  --fc-button-active-bg-color: var(--accent);
+  --fc-today-bg-color: color-mix(in oklch, var(--accent) 35%, transparent);
+  --fc-page-bg-color: var(--card);
+  --fc-neutral-bg-color: var(--muted);
+  --fc-list-event-hover-bg-color: var(--accent);
+  --fc-highlight-color: color-mix(in oklch, var(--primary) 12%, transparent);
+  --fc-event-border-color: transparent;
+  font-family: inherit;
+  font-size: 0.875rem;
+}
+
+.professional-calendar .fc .fc-toolbar-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.professional-calendar .fc .fc-col-header-cell {
+  font-weight: 500;
+  color: var(--muted-foreground);
+  padding: 0.5rem 0;
+}
+
+.professional-calendar .fc .fc-daygrid-day-number,
+.professional-calendar .fc .fc-timegrid-slot-label {
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+}
+
+.professional-calendar .fc .fc-scrollgrid {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.professional-calendar .fc .fc-event {
+  border-radius: calc(var(--radius-sm));
+  font-weight: 500;
+  padding: 1px 2px;
+}
+
+.professional-calendar .fc .fc-event.fc-event-status-pending {
+  background-color: color-mix(in oklch, var(--chart-4) 85%, var(--card));
+  color: var(--card-foreground);
+}
+
+.professional-calendar .fc .fc-event.fc-event-status-confirmed {
+  background-color: color-mix(in oklch, var(--chart-2) 80%, var(--card));
+  color: var(--card-foreground);
+}
+
+.professional-calendar .fc .fc-event.fc-event-status-completed {
+  background-color: color-mix(in oklch, var(--muted-foreground) 35%, var(--muted));
+  color: var(--foreground);
+}
+
+.professional-calendar .fc .fc-event.fc-event-status-cancelled {
+  background-color: color-mix(in oklch, var(--destructive) 55%, var(--card));
+  color: var(--destructive-foreground, var(--primary-foreground));
+  text-decoration: line-through;
+}
+
+.professional-calendar .fc .fc-button {
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.professional-calendar .fc .fc-button-primary:not(:disabled).fc-button-active,
+.professional-calendar .fc .fc-button-primary:not(:disabled):active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.professional-calendar .fc .fc-more-link {
+  color: var(--primary);
+  font-weight: 500;
+}

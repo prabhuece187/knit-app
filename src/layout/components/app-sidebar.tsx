@@ -31,7 +31,7 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
 
   const { user } = useAppSelector((state) => state.auth);
   const isAdmin = user?.role === "SUPER_ADMIN" || user?.role === "ADMIN";
-  const isUser = !user?.role;
+  const isUser = user?.role === "PROFESSIONAL";
 
   // This is sample data.
   const data = {
@@ -256,6 +256,10 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
             {
               title: "Appointments  ",
               url: "/appointments",
+            },
+            {
+              title: "Professional Calendar",
+              url: "/professional-calendar",
             },
             {
               title: "Reviews",

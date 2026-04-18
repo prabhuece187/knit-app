@@ -33,7 +33,7 @@ export default function AppointmentFilter({
 }: AppointmentFilterProps) {
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [range, setRange] = useState<DateRange | undefined>();
+  const [range, setRange] = useState<DateRange | undefined>(undefined);
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const handleStatusChange = useCallback(
@@ -106,7 +106,7 @@ export default function AppointmentFilter({
   const showReset = !!(filters.status || filters.meetingType || filters.professionalId || filters.dateFrom || filters.dateTo);
 
   return (
-    <>
+    <div className="flex gap-2">
       <ServerFacetedFilter
         title="Status"
         options={STATUS_OPTIONS}
@@ -147,11 +147,16 @@ export default function AppointmentFilter({
         singleSelect={true}
       />
 
-      <DateRangePicker value={range} onChange={handleDateRangeChange} />
+      <DateRangePicker
+        value={range}
+        onChange={handleDateRangeChange}
+        noInitialDate
+      />
 
       <ResetFiltersButton
         show={showReset}
-        onReset={() =>
+        onReset={() => {
+          setRange(undefined);
           onFilterChange({
             ...filters,
             status: "",
@@ -159,9 +164,9 @@ export default function AppointmentFilter({
             professionalId: "",
             dateFrom: "",
             dateTo: "",
-          })
-        }
+          });
+        }}
       />
-    </>
+    </div>
   );
 }
