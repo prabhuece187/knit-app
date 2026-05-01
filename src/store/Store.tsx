@@ -40,7 +40,7 @@ import { ProfessionalApi } from "@/pages/professional/api/ProfessionalApi";
 import { ReviewApi } from "@/pages/reviews/api/ReviewsApi";
 import { FaqApi } from "@/pages/faq/api/FaqApi";
 import { AppointmentApi } from "@/pages/appoinment/api/AppointmentApi";
-
+import { subscriptionApi } from "@/pages/subscription/api/subscriptionApi";
 
 const persistConfig = {
   key: "root",
@@ -78,6 +78,7 @@ const rootReducer = combineReducers({
   [KnittingMachineApi.reducerPath]: KnittingMachineApi.reducer,
   [KnittingProductionApi.reducerPath]: KnittingProductionApi.reducer,
   [KnittingReworkApi.reducerPath]: KnittingReworkApi.reducer,
+  [subscriptionApi.reducerPath]: subscriptionApi.reducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -114,7 +115,8 @@ export const store = configureStore({
       JobMasterApi.middleware,
       KnittingMachineApi.middleware,
       KnittingProductionApi.middleware,
-      KnittingReworkApi.middleware
+      KnittingReworkApi.middleware,
+      subscriptionApi.middleware,
     ),
 });
 

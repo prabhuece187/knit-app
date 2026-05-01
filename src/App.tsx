@@ -49,6 +49,7 @@ import Reviews from "./pages/reviews/Reviews";
 import Faqs from "./pages/faq/Faqs";
 import Appointments from "./pages/appoinment/Appointments";
 import ProfessionalCalendar from "./pages/appoinment/component/ProfessionalCalendar";
+import SubscriptionPage from "./pages/subscription/SubscriptionPage";
 
 function App() {
 
@@ -162,6 +163,9 @@ function App() {
           <Route path="mills/:id" element={<IndividualData />} />
           <Route path="yarn_types/:id" element={<IndividualData />} />
           <Route path="banks/:id" element={<IndividualData />} />
+          <Route path="subscription/" element={<SubscriptionPage />} />
+
+
         </Route>
 
         <Route path="*" element={<NotFound />} />

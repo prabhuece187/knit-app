@@ -1,20 +1,21 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { useVerifyPaymentMutation } from "@/api/subscriptionApi";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { updateUserSubscription } from "@/slice/authSlice";
+import { useVerifyPaymentMutation } from "../api/subscriptionApi";
+import { useAppSelector, useAppDispatch } from "../../../store/Store";
+import { updateUserSubscription } from "../../../slice/AuthSlice";
 import { RazorpayService } from "../services/razorpay.service";
 import { SubscriptionService } from "../services/subscription.service";
 import { razorpayKey } from "../config/plans.config";
 import { ERROR_MESSAGES, SUCCESS_MESSAGES } from "../utils/constants";
 import type { UsePaymentResult, Plan, RazorpayPaymentResponse } from "../types";
+import type { RootState } from "../../../store/Store";
 
 /**
  * Hook for payment operations
  */
 export const usePayment = (): UsePaymentResult => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth);
   const [verifyMutation, { isLoading: isVerifying }] =
     useVerifyPaymentMutation();
 
@@ -99,7 +100,11 @@ export const usePayment = (): UsePaymentResult => {
         );
       } catch (error) {
         console.error("Error launching payment:", error);
-        toast.error("Failed to launch payment. Please try again.");
+        const message =
+          error instanceof Error
+            ? error.message
+            : "Failed to launch payment. Please try again.";
+        toast.error(message);
       }
     },
     [user, razorpayService, verifyPayment, dispatch]

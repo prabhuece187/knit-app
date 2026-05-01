@@ -8,9 +8,9 @@ import {
   useCancelSubscriptionMutation,
   usePauseSubscriptionMutation,
   useResumeSubscriptionMutation,
-} from "@/api/subscriptionApi";
-import { useAppSelector, useAppDispatch } from "@/store/hooks";
-import { updateUserSubscription } from "@/slice/authSlice";
+} from "../api/subscriptionApi";
+import { useAppSelector, useAppDispatch } from "../../../store/Store";
+import { updateUserSubscription } from "../../../slice/AuthSlice";
 import { SubscriptionValidationService } from "../services/validation.service";
 import { SubscriptionService } from "../services/subscription.service";
 import { getPlanById } from "../utils/helpers";
@@ -21,6 +21,7 @@ import type {
   UseSubscriptionActionsResult,
   CreateSubscriptionRequest,
 } from "../types";
+import type { RootState } from "../../../store/Store";
 
 /**
  * Hook for subscription CRUD operations
@@ -29,7 +30,7 @@ export const useSubscriptionActions = (
   currentSubscription: ReturnType<typeof useSubscription>["subscription"]
 ): UseSubscriptionActionsResult => {
   const dispatch = useAppDispatch();
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const [createMutation, { isLoading: isCreating }] =
     useCreateSubscriptionMutation();

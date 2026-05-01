@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowLeft, CreditCard, Settings } from "lucide-react";
 import { toast } from "sonner";
-import { useAppSelector } from "@/store/hooks";
+import { useAppSelector } from "../../store/Store";
 import { useSubscription } from "./hooks/useSubscription";
 import { useSubscriptionActions } from "./hooks/useSubscriptionActions";
 import { usePayment } from "./hooks/usePayment";
@@ -16,9 +16,10 @@ import { getPlanById } from "./utils/helpers";
 import { plans } from "./config/plans.config";
 import { formatCurrency } from "./utils/formatters";
 import type { SubscriptionView } from "./types";
+import type { RootState } from "../../store/Store";
 
 const SubscriptionPage: React.FC = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth);
   const [currentView, setCurrentView] = useState<SubscriptionView>("dashboard");
   const [selectedPlanId, setSelectedPlanId] = useState<string>("");
   const [showConfirmation, setShowConfirmation] = useState(false);

@@ -58,124 +58,124 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
       },
     ],
     navMain: [
-      {
-        title: "Masters",
-        url: "#",
-        icon: SquareTerminal,
-        isActive: true,
-        items: [
-          {
-            title: "Banks",
-            url: "/banks",
-          },
-          {
-            title: "Customers",
-            url: "/customers",
-          },
-          {
-            title: "Items",
-            url: "/items",
-          },
-          {
-            title: "Mills",
-            url: "/mills",
-          },
-          {
-            title: "Knitting Machine",
-            url: "/knitting-machine",
-          },
+      // {
+      //   title: "Masters",
+      //   url: "#",
+      //   icon: SquareTerminal,
+      //   isActive: true,
+      //   items: [
+      //     // {
+      //     //   title: "Banks",
+      //     //   url: "/banks",
+      //     // },
+      //     // {
+      //     //   title: "Customers",
+      //     //   url: "/customers",
+      //     // },
+      //     // {
+      //     //   title: "Items",
+      //     //   url: "/items",
+      //     // },
+      //     // {
+      //     //   title: "Mills",
+      //     //   url: "/mills",
+      //     // },
+      //     // {
+      //     //   title: "Knitting Machine",
+      //     //   url: "/knitting-machine",
+      //     // },
 
-          {
-            title: "Yarn Types",
-            url: "/yarn_types",
-          },
-          {
-            title: "States",
-            url: "/states",
-          },
-          {
-            title: "District",
-            url: "/districts",
-          },
-          {
-            title: "Cities",
-            url: "/cities",
-          },
-          {
-            title: "Pincodes",
-            url: "/pincodes",
-          },
-        ],
-      },
-      {
-        title: "Process",
-        url: "#",
-        icon: Bot,
-        items: [
-          {
-            title: "Inward",
-            url: "/inward",
-          },
-          {
-            title: "Job Card",
-            url: "/job-master",
-          },
-          {
-            title: "Outward",
-            url: "/outward",
-          },
-          {
-            title: "Production",
-            url: "/knit-pro",
-          },
-          {
-            title: "Production Return",
-            url: "/pro-return",
-          },
-          {
-            title: "Production Rework",
-            url: "/pro-rework",
-          },
-        ],
-      },
-      {
-        title: "Billing",
-        url: "#",
-        icon: Bot,
-        items: [
-          {
-            title: "Invoice",
-            url: "/invoice",
-          },
-          {
-            title: "Payment",
-            url: "/payment",
-          },
-        ],
-      },
-      {
-        title: "Reports",
-        url: "#",
-        icon: Frame,
-        items: [
-          {
-            title: "Overall Report",
-            url: "/over-all-report",
-          },
-          {
-            title: "Detail Report",
-            url: "/over-all-detail-report",
-          },
-          {
-            title: "JobLedger Report",
-            url: "/job-ledger",
-          },
-          {
-            title: "Wastage Report",
-            url: "/Wastage",
-          },
-        ],
-      },
+      //     // {
+      //     //   title: "Yarn Types",
+      //     //   url: "/yarn_types",
+      //     // },
+      //     {
+      //       title: "States",
+      //       url: "/states",
+      //     },
+      //     {
+      //       title: "District",
+      //       url: "/districts",
+      //     },
+      //     {
+      //       title: "Cities",
+      //       url: "/cities",
+      //     },
+      //     {
+      //       title: "Pincodes",
+      //       url: "/pincodes",
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Process",
+      //   url: "#",
+      //   icon: Bot,
+      //   items: [
+      //     {
+      //       title: "Inward",
+      //       url: "/inward",
+      //     },
+      //     {
+      //       title: "Job Card",
+      //       url: "/job-master",
+      //     },
+      //     {
+      //       title: "Outward",
+      //       url: "/outward",
+      //     },
+      //     {
+      //       title: "Production",
+      //       url: "/knit-pro",
+      //     },
+      //     {
+      //       title: "Production Return",
+      //       url: "/pro-return",
+      //     },
+      //     {
+      //       title: "Production Rework",
+      //       url: "/pro-rework",
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Billing",
+      //   url: "#",
+      //   icon: Bot,
+      //   items: [
+      //     {
+      //       title: "Invoice",
+      //       url: "/invoice",
+      //     },
+      //     {
+      //       title: "Payment",
+      //       url: "/payment",
+      //     },
+      //   ],
+      // },
+      // {
+      //   title: "Reports",
+      //   url: "#",
+      //   icon: Frame,
+      //   items: [
+      //     {
+      //       title: "Overall Report",
+      //       url: "/over-all-report",
+      //     },
+      //     {
+      //       title: "Detail Report",
+      //       url: "/over-all-detail-report",
+      //     },
+      //     {
+      //       title: "JobLedger Report",
+      //       url: "/job-ledger",
+      //     },
+      //     {
+      //       title: "Wastage Report",
+      //       url: "/Wastage",
+      //     },
+      //   ],
+      // },
       ...(isAdmin ? [
         {
           title: "ProMasters",
@@ -269,10 +269,6 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
               title: "Clients",
               url: "/clients",
             },
-            {
-              title: "FAQ",
-              url: "/faq",
-            },
           ],
         },
 
@@ -284,10 +280,6 @@ export function AppSidebar({ collapsed, ...props }: AppSidebarProps) {
             {
               title: "Subscription Plans",
               url: "/subscription",
-            },
-            {
-              title: "Feature Subscription",
-              url: "/features/subscription",
             },
           ],
         },

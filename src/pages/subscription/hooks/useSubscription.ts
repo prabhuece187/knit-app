@@ -3,14 +3,14 @@ import { useMemo } from "react";
 import { getPlanById } from "../utils/helpers";
 import { plans } from "../config/plans.config";
 import type { UseSubscriptionResult } from "../types";
-import { useAppSelector } from "@/store/hooks";
-import { useGetSubscriptionQuery } from "@/api/subscriptionApi";
+import { useAppSelector, type RootState } from "../../../store/Store";
+import { useGetSubscriptionQuery } from "../api/subscriptionApi";
 
 /**
  * Main hook for subscription data
  */
 export const useSubscription = (): UseSubscriptionResult => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { user } = useAppSelector((state: RootState) => state.auth);
 
   const {
     data: subscription,
