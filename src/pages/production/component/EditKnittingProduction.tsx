@@ -28,6 +28,7 @@ import { KnittingProductionDetailsTable } from "../common/KnittingProductioDetai
 
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function EditKnittingProduction() {
   const [putProduction] = usePutKnittingProductionMutation();
@@ -59,7 +60,7 @@ export default function EditKnittingProduction() {
     productionId,
     {
       skip: !id,
-    }
+    },
   );
 
   /**
@@ -78,7 +79,7 @@ export default function EditKnittingProduction() {
           dia: item.dia,
           gsm: item.gsm,
           user_id: item.user_id,
-        })
+        }),
       );
 
       form.reset({
@@ -102,7 +103,18 @@ export default function EditKnittingProduction() {
    * -------------------------------------------------
    */
   function onSubmit(values: z.infer<typeof fullKnittingProductionSchema>) {
-    putProduction(values);
+    try {
+      putProduction(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Update Production");
+        });
+    } catch (error) {
+      toast.error(error+"Failed to Update Production");
+    }
   }
 
   return (

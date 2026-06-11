@@ -3,6 +3,11 @@ import type { Bank, BankQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { baseQuery } from "@/helper/ApiFetchBase";
 
+type BankResponse = {
+  message: string;
+  data: Bank;
+};
+
 export const BankApi = createApi({
   reducerPath: "BankApi",
   baseQuery: baseQuery,
@@ -23,7 +28,7 @@ export const BankApi = createApi({
       }),
       providesTags: ["BankTag"],
     }),
-    postBank: build.mutation<Bank, Partial<Bank>>({
+    postBank: build.mutation<BankResponse, Partial<Bank>>({
       query: (data) => ({
         url: "banks",
         method: "POST",
@@ -34,7 +39,7 @@ export const BankApi = createApi({
       }),
       invalidatesTags: ["BankTag"],
     }),
-    putBank: build.mutation<Bank, Bank>({
+    putBank: build.mutation<BankResponse, Bank>({
       query: (data) => ({
         url: `banks/${data.id}`,
         method: "PUT",

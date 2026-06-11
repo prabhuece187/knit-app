@@ -129,7 +129,10 @@ export function OutwardDetailsTable<TFormValues extends FieldValues>({
                 <SelectPopover
                   label="Item"
                   placeholder="Select Item..."
-                  options={items}
+                  options={items.map((item) => ({
+                    id: item.id ?? 0,
+                    item_name: item.item_name,
+                  }))}
                   valueKey="id"
                   labelKey="item_name"
                   value={watch(buildPath(index, "item_id"))}
@@ -138,7 +141,7 @@ export function OutwardDetailsTable<TFormValues extends FieldValues>({
                     if (!val) return;
                     setValue(
                       buildPath(index, "item_id"),
-                      val as RowType["item_id"]
+                      val as RowType["item_id"],
                     );
 
                     const selectedItem = items.find((i) => i.id === val);
@@ -161,7 +164,7 @@ export function OutwardDetailsTable<TFormValues extends FieldValues>({
                     if (!val) return;
                     setValue(
                       buildPath(index, "yarn_type_id"),
-                      val as RowType["yarn_type_id"]
+                      val as RowType["yarn_type_id"],
                     );
                     const yt = yarntypes.find((x) => x.id === val);
                     if (yt) typeChange(yt, index);

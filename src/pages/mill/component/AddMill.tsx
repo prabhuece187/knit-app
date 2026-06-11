@@ -21,6 +21,7 @@ import {
 import CommonHeader from "@/components/common/CommonHeader";
 import { millSchema } from "@/schema-types/master-schema";
 import { usePostMillMutation } from "@/api/MillApi";
+import { toast } from "sonner";
 
 export default function AddMill({
   open,
@@ -33,17 +34,24 @@ export default function AddMill({
 
   const form = useForm<z.infer<typeof millSchema>>({
     resolver: zodResolver(millSchema),
-    defaultValues: {
-      mill_name: "",
-      mobile_number: "",
-      address: "",
-      description: "",
-    },
   });
 
+
   function onSubmit(values: z.infer<typeof millSchema>) {
-    postMill(values);
-    setOpen(false);
+    try {
+      postMill(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Add Mill");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Add Mill");
+    }
   }
 
   return (

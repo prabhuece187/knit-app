@@ -20,6 +20,7 @@ import {
 import CommonHeader from "@/components/common/CommonHeader";
 import { stateSchema } from "@/schema-types/master-schema";
 import { usePostStateMutation } from "@/api/StateApi";
+import { toast } from "sonner";
 
 export default function AddState({
   open,
@@ -34,10 +35,22 @@ export default function AddState({
     resolver: zodResolver(stateSchema),
   });
 
-  function onSubmit(values: z.infer<typeof stateSchema>) {
-    postState(values);
-    setOpen(false);
+function onSubmit(values: z.infer<typeof stateSchema>) {
+  try {
+    postState(values)
+      .unwrap()
+      .then((response) => {
+        toast.success(response.message);
+        form.reset();
+        setOpen(false);
+      })
+      .catch((error) => {
+        toast.error(error?.data?.message || "Failed to Add State");
+      });
+  } catch (error) {
+    toast.error(error + "Failed to Add State");
   }
+}
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

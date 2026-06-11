@@ -28,6 +28,7 @@ import {
 import CommonHeader from "@/components/common/CommonHeader";
 import { knittingMachineSchema } from "@/schema-types/master-schema";
 import { usePostKnittingMachineMutation } from "@/api/KnittingMachineApi";
+import { toast } from "sonner";
 
 export default function AddKnittingMachine({
   open,
@@ -53,8 +54,20 @@ export default function AddKnittingMachine({
   });
 
   function onSubmit(values: z.infer<typeof knittingMachineSchema>) {
-    postMachine(values);
-    setOpen(false);
+    try {
+      postMachine(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error?.data?.message || "Failed to Add Machine");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Add Machine");
+    }
   }
 
   return (

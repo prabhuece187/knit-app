@@ -9,6 +9,7 @@ import {
 } from "../components/ui/sidebar";
 // import { SidebarRight } from "@/components/sidebar-right";
 import { useState } from "react";
+import { Toaster } from "sonner";
 
 export default function Layout() {
   // const [sidebarContent, setSidebarContent] = useState<React.ReactNode>(null);
@@ -40,6 +41,8 @@ export default function Layout() {
           </div>
         </SidebarInset>
       </div>
+      {/* ✅ ADD THIS */}
+      <Toaster richColors position="top-right" />
     </SidebarProvider>
   );
 }

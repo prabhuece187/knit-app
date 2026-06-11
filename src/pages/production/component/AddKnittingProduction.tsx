@@ -20,6 +20,7 @@ import { useGetMachineSelectListQuery } from "@/api/KnittingMachineApi";
 import { useGetJobListQuery } from "@/api/JobMasterApi";
 import { KnittingProductionDetailsTable } from "../common/KnittingProductioDetails";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function AddKnittingProduction() {
   const [postProduction] = usePostKnittingProductionMutation();
@@ -58,7 +59,18 @@ export default function AddKnittingProduction() {
   const { control, setValue, watch } = form;
 
   function onSubmit(values: z.infer<typeof knittingProductionSchema>) {
-    postProduction(values);
+    try {
+      postProduction(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Add Production");
+        });
+    } catch (error) {
+      toast.error(error+"Failed to Add Production");
+    }
   }
 
   return (

@@ -22,6 +22,7 @@ import { useGetCustomerListQuery } from "@/api/CustomerApi";
 import { useGetMillListQuery } from "@/api/MillApi";
 import { InwardHeader } from "../common/InwardHeader";
 import { InwardDetailsTable } from "../common/InwardDetailsTable";
+import { toast } from "sonner";
 
 export default function AddInward() {
   const [postInward] = usePostInwardMutation();
@@ -44,7 +45,18 @@ export default function AddInward() {
   const { control, setValue, watch } = form;
 
   function onSubmit(values: z.infer<typeof inwardSchema>) {
-    postInward(values);
+    try {
+      postInward(values)
+        .unwrap()
+        .then(() => {
+          toast.success("Inward Created Successfully");
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Add Inward");
+        });
+    } catch (error) {
+      toast.error(error + "Something Went Wrong");
+    }
   }
 
   return (
@@ -53,12 +65,11 @@ export default function AddInward() {
       <Form {...form}>
         <form
           id="inward-form"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(onSubmit, (errors) =>
+            console.log(errors),
+          )}
           className="space-y-8"
         >
-
-
-
           <InwardHeader
             control={control}
             customers={customers}

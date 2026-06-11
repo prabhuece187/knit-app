@@ -7,26 +7,19 @@ import { z } from "zod";
 /* ---------- Base Schema (Used for Create Form) ---------- */
 
 export const productionReturnBaseSchema = z.object({
+  id: z.number().optional().nullable(),
   user_id: z.number().optional(),
-
   return_no: z.string().min(1, "Return No is required"),
-
   job_card_id: z.number().min(1, "Job Card is required"),
-
   production_id: z.number().optional(),
-
   return_date: z
     .string()
     .regex(/^\d{4}-\d{2}-\d{2}$/, "Invalid date format (YYYY-MM-DD)"),
-
   return_weight: z.number().positive("Return weight must be greater than 0"),
-
   return_reason: z
     .enum(["hole", "oil_stain", "gsm_issue", "dia_issue", "other"])
     .optional(),
-
   rework_required: z.boolean().optional(),
-
   remarks: z.string().optional(),
 });
 

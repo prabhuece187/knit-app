@@ -112,6 +112,25 @@ export function InwardHeader({
               )}
             />
           </div>
+
+          {/* Lot No */}
+          <div>
+            <label className="block text-sm font-medium mb-1 text-center">
+              Lot No
+            </label>
+            <FormField
+              control={control}
+              name="lot_no"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Lot No" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
         </div>
       </div>
 
@@ -159,15 +178,19 @@ export function InwardHeader({
           {/* Lot No */}
           <div>
             <label className="block text-sm font-medium mb-1 text-center">
-              Lot No
+              Description
             </label>
             <FormField
               control={control}
-              name="lot_no"
+              name="remarks"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <Input placeholder="Lot No" {...field} />
+                    <Input
+                      placeholder="remarks"
+                      {...field}
+                      value={field.value ?? ""}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -4,10 +4,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  Dialog,
-  DialogContent,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 import {
   Form,
@@ -35,6 +32,7 @@ import { SelectPopover } from "@/components/custom/CustomPopover";
 import { useGetJobListQuery } from "@/api/JobMasterApi";
 import { useGetProductionReturnListQuery } from "@/api/ProductionReturnApi";
 import type { JobMaster } from "@/schema-types/master-schema";
+import { toast } from "sonner";
 
 export default function EditProductionRework({
   open,
@@ -77,11 +75,19 @@ export default function EditProductionRework({
   if (!data) return null;
 
   const onSubmit = async (values: KnittingRework) => {
-    await updateRework({
-      ...values,
-      id: data.id!,
-    });
-    setOpen(false);
+    if (!data?.id) return;
+
+    try {
+      const response = await updateRework({
+        ...values,
+        id: data.id, // ✅ safe (no ! needed)
+      }).unwrap();
+
+      toast.success(response.message || "Rework Updated Successfully");
+      setOpen(false);
+    } catch (error) {
+      toast.error(error + "Failed to Update Rework");
+    }
   };
 
   return (

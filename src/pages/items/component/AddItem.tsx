@@ -26,6 +26,7 @@ import { usePostItemMutation } from "@/api/ItemApi";
 
 import { QRCodeSVG } from "qrcode.react";
 import JsBarcode from "jsbarcode";
+import { toast } from "sonner";
 
 export default function AddItem({
   open,
@@ -67,15 +68,27 @@ export default function AddItem({
   }, [itemName, itemCode]);
 
   function onSubmit(values: z.infer<typeof itemSchema>) {
-    postItem(values);
-    setOpen(false);
+    try {
+      postItem(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Add Item");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Add Item");
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className="
-          w-full max-w-3xl sm:max-w-3xl overflow-y-auto rounded-xl p-0
+          w-full max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0
           [&>button]:top-[5%]
           [&>button]:-translate-y-1/2
           [&>button]:right-4
@@ -141,6 +154,23 @@ export default function AddItem({
 
               <FormField
                 control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-10"
+                        placeholder="Enter Price"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="unit"
                 render={({ field }) => (
                   <FormItem>
@@ -170,6 +200,7 @@ export default function AddItem({
                           className="resize-none"
                           placeholder="Enter Description"
                           {...field}
+                          value={field.value ?? ""}
                         />
                       </FormControl>
                     </FormItem>

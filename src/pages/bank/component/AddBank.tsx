@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/button";
 import CommonHeader from "@/components/common/CommonHeader";
 import { usePostBankMutation } from "@/api/BankApi";
 import { Checkbox } from "@/components/ui/checkbox";
+import { toast } from "sonner";
 
 export default function AddBank({
   open,
@@ -31,26 +32,24 @@ export default function AddBank({
 
   const form = useForm({
     resolver: zodResolver(bankSchema),
-    defaultValues: {
-      id: undefined,
-      bank_name: "",
-      branch_name: "",
-      account_holder_name: "",
-      account_number: "",
-      ifsc_code: "",
-      bank_city: "",
-      bank_state: "",
-      bank_email: "",
-      bank_mobile: "",
-      bank_address: "",
-      is_default: false,
-    },
   });
 
-  function onSubmit(values: z.infer<typeof bankSchema>) {
-    postBank(values);
-    setOpen(false);
-  }
+ function onSubmit(values: z.infer<typeof bankSchema>) {
+   try {
+     postBank(values)
+       .unwrap()
+       .then((response) => {
+         toast.success(response.message);
+         form.reset();
+         setOpen(false);
+       })
+       .catch((error) => {
+         toast.error(error.data?.message || "Failed to Add Bank");
+       });
+   } catch (error) {
+     toast.error(error + " Failed to Add Bank");
+   }
+ }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

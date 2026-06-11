@@ -3,6 +3,10 @@ import type { KnittingMachine, KnittingMachineQuery } from "@/schema-types/maste
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { baseQuery } from "@/helper/ApiFetchBase";
 
+type KnittingMachineResponse = {
+  message: string;
+  data: KnittingMachine;
+};
 
 export const KnittingMachineApi = createApi({
   reducerPath: "KnittingMachineApi",
@@ -30,7 +34,7 @@ export const KnittingMachineApi = createApi({
     }),
 
     postKnittingMachine: build.mutation<
-      KnittingMachine,
+      KnittingMachineResponse,
       Partial<KnittingMachine>
     >({
       query: (data) => ({
@@ -42,7 +46,10 @@ export const KnittingMachineApi = createApi({
       invalidatesTags: ["KnittingMachineTag"],
     }),
 
-    putKnittingMachine: build.mutation<KnittingMachine, KnittingMachine>({
+    putKnittingMachine: build.mutation<
+      KnittingMachineResponse,
+      KnittingMachine
+    >({
       query: (data) => ({
         url: `knitting-machines/${data.id}`,
         method: "PUT",

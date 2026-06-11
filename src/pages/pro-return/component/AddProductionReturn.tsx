@@ -38,6 +38,7 @@ import type { JobMaster } from "@/schema-types/master-schema";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import { useGetKnittingProductionListQuery } from "@/api/KnittingProductionApi";
 import type { KnittingProduction } from "@/schema-types/production-schema";
+import { toast } from "sonner";
 
 
 export default function AddProductionReturn({
@@ -83,10 +84,16 @@ export default function AddProductionReturn({
     }
   }, [nextNoData]);
 
-  const onSubmit = async (values: ProductionReturn) => {
-    await postReturn(values);
+const onSubmit = async (values: ProductionReturn) => {
+  try {
+    const response = await postReturn(values).unwrap();
+    toast.success(response.message || "Return Created Successfully");
+    form.reset();
     setOpen(false);
-  };
+  } catch (error) {
+    toast.error(error+ "Failed to Create Return");
+  }
+};
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

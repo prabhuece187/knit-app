@@ -14,6 +14,7 @@ import { useGetJobListQuery } from "@/api/JobMasterApi";
 import { usePostlinkJobCardMutation } from "@/api/InwardApi";
 
 import type { JobMaster } from "@/schema-types/master-schema";
+import { toast } from "sonner";
 
 export interface LinkJobCardResponse {
   message: string;
@@ -28,7 +29,7 @@ interface JobCardSelectModalProps {
   inwardDetailId: number; // ✅ REQUIRED
   defaultValue?: number;
   onClose: () => void;
-  onSuccess?: (jobCardId: number) => void;
+  onSuccess?: (jobCardId: number, jobCardNo: string) => void;
 }
 
 export function JobCardSelectModal({
@@ -51,21 +52,28 @@ export function JobCardSelectModal({
     setJobCardId(defaultValue);
   }, [defaultValue]);
 
-  const handleSave = async () => {
-    if (!jobCardId) return;
+const handleSave = async () => {
+  if (!jobCardId || !inwardDetailId) {
+    toast.error("Please select Job Card");
+    return;
+  }
 
-    try {
-      await postlinkJobCard({
-        inwardDetailId,
-        job_card_id: jobCardId,
-      }).unwrap();
+  try {
+    const res = await postlinkJobCard({
+      inwardDetailId,
+      job_card_id: jobCardId,
+    }).unwrap();
+    
+    const selectedJob = jobCards.find((j) => j.id === jobCardId);
 
-      onSuccess?.(jobCardId);
-      onClose();
-    } catch (err) {
-      console.error("Failed to link job card", err);
-    }
-  };
+    toast.success(res?.message || "Job Card Linked Successfully");
+
+    onSuccess?.(jobCardId, selectedJob?.job_card_no || "");
+    onClose();
+  } catch (err) {
+    toast.error(err+ "Failed to link job card");
+  }
+};
 
   return (
     <Dialog open={open} onOpenChange={onClose}>

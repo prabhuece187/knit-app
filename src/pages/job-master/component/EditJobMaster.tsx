@@ -31,6 +31,7 @@ import {
 
 import type { Inward } from "@/schema-types/inward-schema";
 import { useGetJobByIdQuery, usePutJobMutation } from "@/api/JobMasterApi";
+import { toast } from "sonner";
 
 interface Props {
   id: number;
@@ -100,28 +101,34 @@ export default function EditJobMaster({
   /* ----------------------------------
      SUBMIT
   ---------------------------------- */
-  const onSubmit = async (values: JobMaster) => {
-    const { id: _id, ...payload } = values; // remove id from form values
+  function onSubmit(values: JobMaster) {
+    const { id: _id, ...payload } = values;
     console.log(_id);
-
     try {
-      await updateJob({
-        id, // ONLY id from prop
+      updateJob({
+        id,
         ...payload,
-      }).unwrap();
-
-      setOpen(false);
+      })
+        .unwrap()
+        .then(() => {
+          toast.success("Job Updated Successfully");
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Update Job Card");
+        });
     } catch (error) {
-      console.error(error);
+      toast.error(error + "Something went Wrong");
     }
-  };
+  }
+
   if (isLoading) return null;
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className="
-      w-full max-w-5xl sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0
+      w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-0
       [&>button]:top-[6%]
       [&>button]:-translate-y-1/2
       [&>button]:right-4
@@ -182,7 +189,10 @@ export default function EditJobMaster({
                   <SelectPopover
                     label=""
                     placeholder="Select Inward..."
-                    options={inwards}
+                    options={inwards.map((item) => ({
+                      id: item.id ?? 0,
+                      inward_no: item.inward_no,
+                    }))}
                     valueKey="id"
                     labelKey="inward_no"
                     value={form.watch("inward_id")}
@@ -318,7 +328,7 @@ export default function EditJobMaster({
                 Cancel
               </Button>
               <Button type="submit" className="px-6">
-                Create Job
+                Update Job
               </Button>
             </div>
           </form>

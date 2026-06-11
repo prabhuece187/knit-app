@@ -22,6 +22,7 @@ import CommonHeader from "@/components/common/CommonHeader";
 import { stateSchema } from "@/schema-types/master-schema";
 
 import { useGetStateByIdQuery, usePutStateMutation } from "@/api/StateApi";
+import { toast } from "sonner";
 
 export default function EditState({
   open,
@@ -49,8 +50,20 @@ export default function EditState({
   }, [isSuccess, member, form]);
 
   function onSubmit(values: z.infer<typeof stateSchema>) {
-    putState(values);
-    setOpen(false);
+    try {
+      putState(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error?.data?.message || "Failed to Update State");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Update State");
+    }
   }
 
   return (

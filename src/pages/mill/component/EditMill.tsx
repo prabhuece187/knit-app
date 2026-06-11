@@ -23,6 +23,7 @@ import CommonHeader from "@/components/common/CommonHeader";
 import { millSchema } from "@/schema-types/master-schema";
 
 import { useGetMillByIdQuery, usePutMillMutation } from "@/api/MillApi";
+import { toast } from "sonner";
 
 export default function EditMill({
   open,
@@ -49,10 +50,22 @@ export default function EditMill({
     }
   }, [isSuccess, mill, form]);
 
-  function onSubmit(values: z.infer<typeof millSchema>) {
-    putMill(values);
-    setOpen(false);
-  }
+    function onSubmit(values: z.infer<typeof millSchema>) {
+      try {
+        putMill(values)
+          .unwrap()
+          .then((response) => {
+            toast.success(response.message);
+            form.reset();
+            setOpen(false);
+          })
+          .catch((error) => {
+            toast.error(error?.data?.message || "Failed to Update customer");
+          });
+      } catch (error) {
+        toast.error(error + "Failed to Update Customer");
+      }
+    }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

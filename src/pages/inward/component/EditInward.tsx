@@ -24,6 +24,7 @@ import { InwardHeader } from "../common/InwardHeader";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { InwardDetailsTable } from "../common/InwardDetailsTable";
+import { toast } from "sonner";
 
 type InwardDetailWithJob = InwardDetail & {
   job_master?: {
@@ -55,7 +56,11 @@ export default function EditInward() {
 
   const { inwardId } = useParams();
 
-  const { data: inward, isSuccess } = useGetInwardByIdQuery(inwardId, {
+  const {
+    data: inward,
+    isSuccess,
+    refetch,
+  } = useGetInwardByIdQuery(inwardId, {
     skip: inwardId === undefined,
   });
 
@@ -71,7 +76,7 @@ export default function EditInward() {
         inward_id: item.inward_id,
         item_id: item.item_id,
         yarn_type_id: item.yarn_type_id,
-        shade: item.shade ?? "",
+        yarn_colour: item.yarn_colour ?? "",
         bag_no: item.bag_no ?? "",
         gross_weight: item.gross_weight,
         tare_weight: item.tare_weight,
@@ -98,7 +103,18 @@ export default function EditInward() {
    * -------------------------------------------------
    */
   function onSubmit(values: z.infer<typeof fullInwardSchema>) {
-    putInward(values);
+    try {
+      putInward(values)
+        .unwrap()
+        .then(() => {
+          toast.success("Inward updated successfully");
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to update inward");
+        });
+    } catch (error) {
+      toast.error(error + "Something went wrong");
+    }
   }
 
   return (
@@ -108,7 +124,16 @@ export default function EditInward() {
       <Form {...form}>
         <form
           id="inward-form"
-          onSubmit={form.handleSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(
+            (values) => {
+              console.log("VALID ✅", values);
+              onSubmit(values);
+            },
+            (errors) => {
+              console.log("ERROR ❌", errors);
+              toast.error("Please fill all required fields");
+            },
+          )}
           className="space-y-8"
         >
           {/*  Header (same as add page) */}
@@ -127,6 +152,7 @@ export default function EditInward() {
             setValue={setValue}
             watch={watch}
             isEdit={true}
+            refetchInward={refetch}
           />
 
           {/* Buttons */}

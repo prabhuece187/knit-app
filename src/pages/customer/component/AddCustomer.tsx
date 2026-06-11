@@ -25,6 +25,7 @@ import { useGetStateListQuery } from "@/api/StateApi";
 import { customerSchema, type State } from "@/schema-types/master-schema";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import CommonHeader from "@/components/common/CommonHeader";
+import { toast } from "sonner";
 
 export default function AddCustomer({
   open,
@@ -40,8 +41,20 @@ export default function AddCustomer({
   });
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
-    postCustomer(values);
-    setOpen(false);
+    try {
+      postCustomer(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to add customer");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Add Customer");
+    }
   }
 
   const { data: states = [] } = useGetStateListQuery("") as { data: State[] };

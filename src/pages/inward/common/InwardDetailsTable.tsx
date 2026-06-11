@@ -41,6 +41,7 @@ interface InwardDetailsProps<TFormValues extends FieldValues> {
   setValue: UseFormSetValue<TFormValues>;
   watch: UseFormWatch<TFormValues>;
   isEdit?: boolean;
+  refetchInward?: () => void;
 }
 
 export function InwardDetailsTable<TFormValues extends FieldValues>({
@@ -49,6 +50,7 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
   setValue,
   watch,
   isEdit = true,
+  refetchInward,
 }: InwardDetailsProps<TFormValues>) {
   const { data: items = [] } = useGetItemListQuery("") as { data: Item[] };
   const { data: yarntypes = [] } = useGetYarnTypeListQuery("") as {
@@ -67,26 +69,37 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
     `${name}.${index}.${String(key)}` as Path<TFormValues>;
 
   const defaultRow: RowType = {
-    item_id: 0,
-    yarn_type_id: 0,
-    shade: "",
-    bag_no: "",
     remarks: "",
   };
 
   const recalc = (rows: RowType[]) => {
-    const totalWeight = rows.reduce((sum, r) => sum + (r.net_weight || 0), 0);
+    let totalWeight = 0;
 
+    rows.forEach((r, i) => {
+      const gross = r.gross_weight || 0;
+      const tare = r.tare_weight || 0;
+      const net = gross - tare;
+
+      // ✅ set net_weight automatically
+      setValue(
+        buildPath(i, "net_weight"),
+        net as PathValue<TFormValues, Path<TFormValues>>,
+      );
+
+      totalWeight += net;
+    });
+
+    // ✅ total
     setValue(
       "total_weight" as Path<TFormValues>,
-      totalWeight as PathValue<TFormValues, Path<TFormValues>>
+      totalWeight as PathValue<TFormValues, Path<TFormValues>>,
     );
   };
 
   const itemChange = (selected: Item, index: number) => {
     setValue(
       buildPath(index, "item_id"),
-      (selected.id ?? 0) as RowType["item_id"]
+      (selected.id ?? 0) as RowType["item_id"],
     );
     // amountCalculation(watchItems);
   };
@@ -94,15 +107,12 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
   const typeChange = (selected: YarnType, index: number) => {
     setValue(
       buildPath(index, "yarn_type_id"),
-      (selected.id ?? 0) as RowType["yarn_type_id"]
+      (selected.id ?? 0) as RowType["yarn_type_id"],
     );
   };
 
   const [jobCardModalOpen, setJobCardModalOpen] = useState(false);
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
-  console.log(jobCardModalOpen);
-  console.log(selectedRowIndex);
-  console.log(isEdit);
 
   if (fields.length === 0) append(defaultRow);
 
@@ -115,10 +125,11 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
               <TableHead>Item Name Select</TableHead>
               <TableHead>Yarn</TableHead>
               {isEdit && <TableHead>Job Card</TableHead>}
-              <TableHead>Weight</TableHead>
-              <TableHead>Specs</TableHead>
-              <TableHead>UOM</TableHead>
+              <TableHead>Colour</TableHead>
+              <TableHead> Weight</TableHead>
+              <TableHead>Spec</TableHead>
               <TableHead>Remarks</TableHead>
+              <TableHead>UOM</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -130,7 +141,10 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
                 <TableCell>
                   <SelectPopover
                     placeholder="Item"
-                    options={items}
+                    options={items.map((item) => ({
+                      id: item.id ?? 0,
+                      item_name: item.item_name,
+                    }))}
                     valueKey="id"
                     labelKey="item_name"
                     label=""
@@ -140,7 +154,7 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
                       if (!val) return;
                       setValue(
                         buildPath(index, "item_id"),
-                        val as RowType["item_id"]
+                        val as RowType["item_id"],
                       );
                       const selectedItem = items.find((i) => i.id === val);
                       if (selectedItem) itemChange(selectedItem, index);
@@ -162,10 +176,10 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
                       if (!val) return;
                       setValue(
                         buildPath(index, "yarn_type_id"),
-                        val as RowType["yarn_type_id"]
+                        val as RowType["yarn_type_id"],
                       );
                       const selectedType = yarntypes.find(
-                        (yt) => yt.id === val
+                        (yt) => yt.id === val,
                       );
                       if (selectedType) typeChange(selectedType, index);
                     }}
@@ -184,9 +198,9 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
                   <div className="flex flex-col gap-1 min-w-[160px]">
                     <FormField
                       control={control}
-                      name={buildPath(index, "shade")}
+                      name={buildPath(index, "yarn_colour")}
                       render={({ field }) => (
-                        <Input placeholder="Shade" {...field} />
+                        <Input placeholder="colour shade" {...field} />
                       )}
                     />
                     <FormField
@@ -352,13 +366,28 @@ export function InwardDetailsTable<TFormValues extends FieldValues>({
               | number
               | undefined
           }
-          onSuccess={(jobCardId) => {
-            const path = buildPath(selectedRowIndex, "job_card_id");
+          onSuccess={(jobCardId, jobCardNo) => {
+            const idPath = buildPath(selectedRowIndex, "job_card_id");
+            const noPath = buildPath(selectedRowIndex, "job_card_no");
 
-            setValue(path, jobCardId as PathValue<TFormValues, typeof path>, {
-              shouldDirty: true,
-              shouldValidate: true,
-            });
+            // ✅ update id
+            setValue(
+              idPath,
+              jobCardId as PathValue<TFormValues, typeof idPath>,
+              {
+                shouldDirty: true,
+                shouldValidate: true,
+              },
+            );
+
+            // ✅ update UI instantly
+            setValue(
+              noPath,
+              jobCardNo as PathValue<TFormValues, typeof noPath>,
+            );
+
+            // ✅ optional (sync with backend)
+            refetchInward?.();
           }}
         />
       )}

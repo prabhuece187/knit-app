@@ -3,6 +3,11 @@ import type { ProductionReturn, ProductionReturnQuery } from "@/schema-types/pro
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { baseQuery } from "@/helper/ApiFetchBase";
 
+type ProResponse = {
+  message: string;
+  data: ProductionReturn;
+};
+
 export const ProductionReturnApi = createApi({
   reducerPath: "ProductionReturnApi",
   baseQuery: baseQuery,
@@ -25,7 +30,7 @@ export const ProductionReturnApi = createApi({
       providesTags: ["KPRTag"],
     }),
 
-    postReturn: build.mutation<ProductionReturn, Partial<ProductionReturn>>({
+    postReturn: build.mutation<ProResponse, Partial<ProductionReturn>>({
       query: (body) => ({
         url: "knitting_production_return_add",
         method: "POST",
@@ -35,7 +40,7 @@ export const ProductionReturnApi = createApi({
       invalidatesTags: ["KPRTag"],
     }),
 
-    putReturn: build.mutation<ProductionReturn, ProductionReturn>({
+    putReturn: build.mutation<ProResponse, ProductionReturn>({
       query: (body) => ({
         url: `knitting_production_return_update/${body.id}`,
         method: "PUT",

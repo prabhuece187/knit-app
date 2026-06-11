@@ -32,6 +32,7 @@ import { useGetNextJobNoQuery, usePostJobMutation } from "@/api/JobMasterApi";
 import type { Inward } from "@/schema-types/inward-schema";
 import type { Customer, Mill } from "@/schema-types/master-schema";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 interface Props {
   open: boolean;
@@ -88,15 +89,22 @@ export default function AddJobMaster({
     }
   }, [open, nextJobNo, form]);
 
-  const onSubmit = async (values: JobMaster) => {
+  function onSubmit(values: JobMaster) {
     try {
-      await postJob(values).unwrap();
-      setOpen(false);
-      form.reset();
+      postJob(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message || "Job Created Successfully");
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error.data?.message || "Failed to Add Job Card");
+        });
     } catch (error) {
-      console.error(error);
+      toast.error(error + " Failed to Add Job Card");
     }
-  };
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -121,7 +129,9 @@ export default function AddJobMaster({
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit, (errors) =>
+              console.log(errors),
+            )}
             className="p-6 space-y-6"
           >
             {/* 🔥 FIXED GRID SPACING */}
@@ -163,7 +173,10 @@ export default function AddJobMaster({
                   <SelectPopover
                     label=""
                     placeholder="Select Inward..."
-                    options={inwards}
+                    options={inwards.map((item) => ({
+                      id: item.id ?? 0,
+                      inward_no: item.inward_no,
+                    }))}
                     valueKey="id"
                     labelKey="inward_no"
                     value={form.watch("inward_id")}

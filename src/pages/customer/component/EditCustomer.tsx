@@ -29,6 +29,7 @@ import { customerSchema, stateSchema } from "@/schema-types/master-schema";
 
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import CommonHeader from "@/components/common/CommonHeader";
+import { toast } from "sonner";
 
 export default function EditCustomer({
   open,
@@ -56,8 +57,20 @@ export default function EditCustomer({
   }, [id, isSuccess, member, form]);
 
   function onSubmit(values: z.infer<typeof customerSchema>) {
-    putCustomer(values);
-    setOpen(false);
+    try {
+      putCustomer(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error?.data?.message || "Failed to Update customer");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Update Customer");
+    }
   }
 
   type State = z.infer<typeof stateSchema>;

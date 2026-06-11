@@ -37,6 +37,7 @@ import {
   useGetKnittingMachineByIdQuery,
   usePutKnittingMachineMutation,
 } from "@/api/KnittingMachineApi";
+import { toast } from "sonner";
 
 export default function EditKnittingMachine({
   open,
@@ -69,8 +70,20 @@ export default function EditKnittingMachine({
   }, [id, isSuccess, data, form]);
 
   function onSubmit(values: KnittingMachine) {
-    putMachine(values);
-    setOpen(false);
+    try {
+      putMachine(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error?.data?.message || "Failed to update machine");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Update Machine");
+    }
   }
 
   return (

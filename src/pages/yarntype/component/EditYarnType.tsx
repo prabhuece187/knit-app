@@ -25,6 +25,7 @@ import {
   useGetYarnTypeByIdQuery,
   usePutYarnTypeMutation,
 } from "@/api/YarnTypeApi";
+import { toast } from "sonner";
 
 export default function EditYarnType({
   open,
@@ -52,8 +53,20 @@ export default function EditYarnType({
   }, [isSuccess, member, form]);
 
   function onSubmit(values: z.infer<typeof yarnTypeSchema>) {
-    putYarnType(values);
-    setOpen(false);
+    try {
+      putYarnType(values)
+        .unwrap()
+        .then((response) => {
+          toast.success(response.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error?.data?.message || "Failed to Update Yarn Type");
+        });
+    } catch (error) {
+      toast.error(error + "Failed to Update Yarn Type");
+    }
   }
 
   return (
@@ -93,6 +106,59 @@ export default function EditYarnType({
                     </FormLabel>
                     <FormControl>
                       <Input className="h-10" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="yarn_gauge"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">Gauge</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Gauge (e.g. 24G)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Dia */}
+              <FormField
+                control={form.control}
+                name="yarn_dia"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">Dia</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter Dia"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* GSM */}
+              <FormField
+                control={form.control}
+                name="yarn_gsm"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="font-semibold">GSM</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="number"
+                        placeholder="Enter GSM"
+                        {...field}
+                        onChange={(e) => field.onChange(+e.target.value)}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

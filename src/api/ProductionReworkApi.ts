@@ -3,6 +3,12 @@ import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import type { KnittingRework, KnittingReworkQuery } from "@/schema-types/rework-schema";
 import { createApi } from "@reduxjs/toolkit/query/react";
 
+type ProReworkResponse = {
+  message: string;
+  data: KnittingRework;
+};
+
+
 export const KnittingReworkApi = createApi({
   reducerPath: "KnittingReworkApi",
   baseQuery: baseQuery,
@@ -28,7 +34,7 @@ export const KnittingReworkApi = createApi({
     }),
 
     // CREATE
-    postRework: build.mutation<KnittingRework, Partial<KnittingRework>>({
+    postRework: build.mutation<ProReworkResponse, Partial<KnittingRework>>({
       query: (body) => ({
         url: "knitting_rework_add",
         method: "POST",
@@ -39,7 +45,7 @@ export const KnittingReworkApi = createApi({
     }),
 
     // UPDATE
-    putRework: build.mutation<KnittingRework, KnittingRework>({
+    putRework: build.mutation<ProReworkResponse, KnittingRework>({
       query: (body) => ({
         url: `knitting_rework_update/${body.id}`,
         method: "PUT",

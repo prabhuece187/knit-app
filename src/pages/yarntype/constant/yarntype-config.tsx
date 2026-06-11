@@ -37,6 +37,26 @@ export function getYarnTypeColumns(
       },
     },
     {
+      accessorKey: "yarn_gauge",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Gauge" />
+      ),
+    },
+
+    {
+      accessorKey: "yarn_dia",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="Dia" />
+      ),
+    },
+
+    {
+      accessorKey: "yarn_gsm",
+      header: ({ column }) => (
+        <DataTableColumnHeader column={column} title="GSM" />
+      ),
+    },
+    {
       id: "actions",
       cell: ({ row }) => (
         <DataTableRowActions<YarnType>

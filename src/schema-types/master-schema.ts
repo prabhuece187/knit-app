@@ -8,9 +8,7 @@ export const customerSchema = z.object({
   state_id: z.coerce
     .number()
     .min(1, { message: "Please Enter the State Name." }),
-  user_id: z.coerce
-    .number()
-    .min(1, { message: "Please Enter the User Name.." }),
+  user_id: z.coerce.number().optional(),
   customer_gst_no: z
     .string()
     .min(15, { message: "Please Enter the Gst Number." }),
@@ -39,7 +37,7 @@ export type CustomerQuery = z.infer<typeof customerQuerySchema>;
 
 export const stateSchema = z.object({
   id: z.number().optional(),
-  user_id: z.number().min(1, { message: "Please Enter User Name.." }),
+  user_id: z.number().optional(),
   state_name: z.string().min(2, {
     message: "Please Enter the State Name.",
   }),
@@ -66,14 +64,14 @@ export type StateQuery = z.infer<typeof stateQuerySchema>;
 
 export const itemSchema = z.object({
   id: z.number().optional(),
-  user_id: z.number().min(1, { message: "Please Enter the User Name." }),
+  user_id: z.number().optional(),
   item_name: z.string().min(2, {
     message: "Please Enter the Item Name.",
   }),
   hsn_code: z.string().optional(),
   unit: z.string().optional(),
-  description: z.string().optional(),
-  price: z.number().optional(),
+  description: z.string().optional().nullable(),
+  price: z.coerce.number().optional(),
   barcode: z.string().optional(),
   qrcode: z.string().optional(),
 });
@@ -99,7 +97,7 @@ export type ItemQuery = z.infer<typeof itemQuerySchema>;
 
 export const millSchema = z.object({
   id: z.number().optional(),
-  user_id: z.number().min(1, { message: "Please Enter the User Name." }),
+  user_id: z.number().optional(),
   mill_name: z.string().min(2, {
     message: "Please Enter the Mill Name.",
   }),
@@ -126,10 +124,13 @@ export type MillQuery = z.infer<typeof millQuerySchema>;
 
 export const yarnTypeSchema = z.object({
   id: z.number().optional(),
-  user_id: z.number().min(1, { message: "Please Enter the User Name." }),
+  user_id: z.number().optional(),
   yarn_type: z.string().min(2, {
     message: "Please Enter the Mill Name.",
   }),
+  yarn_gauge: z.string().optional(),
+  yarn_dia: z.number({ invalid_type_error: "Enter valid Dia" }).optional(),
+  yarn_gsm: z.number({ invalid_type_error: "Enter valid GSM" }).optional(),
 });
 
 export type YarnType = z.infer<typeof yarnTypeSchema>;
@@ -164,7 +165,7 @@ export type LabelType =
 // =======================  Bank ============================
 export const bankSchema = z.object({
   id: z.number().optional(), // optional if new record
-  user_id: z.number().min(1, { message: "Please select a User." }),
+  user_id: z.number().optional(),
   bank_name: z.string().min(2, { message: "Please enter the Bank Name." }),
   branch_name: z.string().optional(),
   account_holder_name: z.string().optional(),
@@ -210,7 +211,7 @@ export const jobMasterBaseSchema = z.object({
 
   mill_id: z.number().min(1, "Select Mill"),
 
-  approx_job_weight: z
+  approx_job_weight: z.coerce
     .number()
     .positive("Weight must be greater than 0")
     .optional(),
@@ -226,11 +227,10 @@ export const createJobMasterSchema = jobMasterBaseSchema;
 export type CreateJobMaster = z.infer<typeof createJobMasterSchema>;
 
 export const jobMasterSchema = jobMasterBaseSchema.extend({
-  id: z.number(), // ✅ REQUIRED
+  id: z.number().optional(), // ✅ REQUIRED
 });
 
 export type JobMaster = z.infer<typeof jobMasterSchema>;
-
 
 export const jobMasterQuerySchema = z.object({
   page: z.number().min(1).default(1),
@@ -283,7 +283,7 @@ export const knittingMachineQuerySchema = z.object({
   limit: z.number().min(1).max(100).default(10),
   sortBy: z.string().default("createdAt"),
   sortOrder: z.enum(["asc", "desc"]).default("desc"),
-  
+
   // Serch fields
   machine_no: z.string().optional(),
   brand: z.string().optional(),

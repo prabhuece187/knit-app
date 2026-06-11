@@ -3,6 +3,11 @@ import type { JobMaster, JobMasterQuery } from "@/schema-types/master-schema";
 import type { PaginatedResponse } from "@/schema-types/pagination-schema";
 import { baseQuery } from "@/helper/ApiFetchBase";
 
+type JobResponse = {
+  message: string;
+  data: JobMaster;
+};
+
 export const JobMasterApi = createApi({
   reducerPath: "JobMasterApi",
   baseQuery: baseQuery,
@@ -26,7 +31,7 @@ export const JobMasterApi = createApi({
       providesTags: ["JobTag"],
     }),
 
-    postJob: build.mutation<JobMaster, Partial<JobMaster>>({
+    postJob: build.mutation<JobResponse, Partial<JobMaster>>({
       query: (body) => ({
         url: "job-master/",
         method: "POST",
@@ -36,7 +41,7 @@ export const JobMasterApi = createApi({
       invalidatesTags: ["JobTag"],
     }),
 
-    putJob: build.mutation<JobMaster, JobMaster>({
+    putJob: build.mutation<JobResponse, JobMaster>({
       query: (body) => ({
         url: `job-master/${body.id}`,
         method: "PUT",

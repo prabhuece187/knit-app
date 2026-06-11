@@ -27,6 +27,7 @@ import { useGetItemByIdQuery, usePutItemMutation } from "@/api/ItemApi";
 
 import JsBarcode from "jsbarcode";
 import { QRCodeSVG } from "qrcode.react";
+import { toast } from "sonner";
 
 export default function EditItem({
   open,
@@ -75,16 +76,33 @@ export default function EditItem({
     }
   }, [form.watch("item_name"), form.watch("hsn_code")]);
 
+  // function onSubmit(values: z.infer<typeof itemSchema>) {
+  //   updateItem({ id, ...values });
+  //   setOpen(false);
+  // }
+
   function onSubmit(values: z.infer<typeof itemSchema>) {
-    updateItem({ id, ...values });
-    setOpen(false);
+    try {
+      updateItem({ id, ...values })
+        .unwrap()
+        .then((response) => {
+          toast.success(response?.message);
+          form.reset();
+          setOpen(false);
+        })
+        .catch((error) => {
+          toast.error(error?.data?.message || "Failed to Update Item");
+        });
+    } catch (error) {
+      toast.error(error + " Failed to Update Item");
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
         className="
-          w-full max-w-3xl sm:max-w-3xl overflow-y-auto rounded-xl p-0
+          w-full max-w-3xl sm:max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl p-0
           [&>button]:top-[5%]
           [&>button]:-translate-y-1/2
           [&>button]:right-4
@@ -103,7 +121,9 @@ export default function EditItem({
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit, (errors) => {
+              console.log("Validation Errors:", errors);
+            })}
             className="p-6 space-y-6"
           >
             <input type="hidden" {...form.register("barcode")} />
@@ -142,6 +162,23 @@ export default function EditItem({
 
               <FormField
                 control={form.control}
+                name="price"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Price</FormLabel>
+                    <FormControl>
+                      <Input
+                        className="h-10"
+                        placeholder="Enter Price"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="unit"
                 render={({ field }) => (
                   <FormItem>
@@ -163,7 +200,11 @@ export default function EditItem({
                     <FormItem>
                       <FormLabel>Description</FormLabel>
                       <FormControl>
-                        <Textarea className="resize-none" {...field} />
+                        <Textarea
+                          className="resize-none"
+                          {...field}
+                          value={field.value ?? ""}
+                        />
                       </FormControl>
                     </FormItem>
                   )}

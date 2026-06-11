@@ -24,9 +24,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 import { bankSchema } from "@/schema-types/master-schema";
 import { useGetBankByIdQuery, usePutBankMutation } from "@/api/BankApi";
+import { toast } from "sonner";
 
 // Type
-type Bank = z.infer<typeof bankSchema>;
+// type Bank = z.infer<typeof bankSchema>;
 
 export default function EditBank({
   open,
@@ -41,20 +42,6 @@ export default function EditBank({
 
   const form = useForm({
     resolver: zodResolver(bankSchema),
-    defaultValues: {
-      id: undefined,
-      bank_name: "",
-      branch_name: "",
-      account_holder_name: "",
-      account_number: "",
-      ifsc_code: "",
-      bank_city: "",
-      bank_state: "",
-      bank_email: "",
-      bank_mobile: "",
-      bank_address: "",
-      is_default: false,
-    },
   });
 
   const { handleSubmit, control, reset } = form;
@@ -73,15 +60,22 @@ export default function EditBank({
     }
   }, [isSuccess, bankData, reset]);
 
-  function onSubmit(values: Bank) {
-    const payload = {
-      ...values,
-      is_default: Boolean(values.is_default),
-    };
-
-    putBank(payload);
-    setOpen(false);
-  }
+ function onSubmit(values: z.infer<typeof bankSchema>) {
+   try {
+     putBank(values)
+       .unwrap()
+       .then((response) => {
+         toast.success(response.message);
+         form.reset();
+         setOpen(false);
+       })
+       .catch((error) => {
+         toast.error(error?.data?.message || "Failed to Update Bank");
+       });
+   } catch (error) {
+     toast.error(error + "Failed to Update Bank");
+   }
+ }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

@@ -35,6 +35,7 @@ import type { JobMaster } from "@/schema-types/master-schema";
 import { SelectPopover } from "@/components/custom/CustomPopover";
 import { useGetKnittingProductionListQuery } from "@/api/KnittingProductionApi";
 import type { KnittingProduction } from "@/schema-types/production-schema";
+import { toast } from "sonner";
 
 export default function EditProductionReturn({
   open,
@@ -59,23 +60,24 @@ export default function EditProductionReturn({
   };
 
   // Ensure form always has valid default values
-  const form = useForm<ProductionReturn>({
+  const form = useForm<ProductionReturn, "id">({
     resolver: zodResolver(productionReturnSchema),
     defaultValues: {
+      id: data?.id ?? 1,
       user_id: data?.user_id ?? 1,
       return_no: data?.return_no ?? "",
       job_card_id: data?.job_card_id ?? 0,
       production_id: data?.production_id ?? 0,
       return_date: data?.return_date ?? new Date().toISOString().slice(0, 10),
       return_weight: data?.return_weight
-        ? parseFloat(data.return_weight as unknown as string) // <-- convert string to number
+        ? parseFloat(data.return_weight as unknown as string)
         : 0,
       return_reason: data?.return_reason ?? "other",
       rework_required: !!data?.rework_required,
       remarks: data?.remarks ?? "",
     },
   });
-
+  console.log(data);
   // Auto-fill return_no only if adding new
   useEffect(() => {
     if (!data && nextNoData?.next_return_no) {
@@ -83,18 +85,21 @@ export default function EditProductionReturn({
     }
   }, [data, nextNoData, form]);
 
-  const onSubmit = async (values: ProductionReturn) => {
+  const onSubmit = async (values: Omit<ProductionReturn, "id">) => {
     if (!data?.id) return;
 
-    const { id, ...rest } = values;
-    console.log(id);
+    try {
+      const response = await updateReturn({
+        ...values,
+        id: data.id,
+      }).unwrap();
 
-    await updateReturn({
-      id: data.id,
-      ...rest,
-    });
-
-    setOpen(false);
+      toast.success(response.message || "Return Updated Successfully");
+      form.reset();
+      setOpen(false);
+    } catch (error) {
+      toast.error(error + "Failed to Update Return");
+    }
   };
 
   // If no data yet, you can render nothing or a loader
@@ -123,7 +128,9 @@ export default function EditProductionReturn({
 
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit, (errors) =>
+              console.log(errors),
+            )}
             className="p-6 space-y-6"
           >
             {/* 🔥 CLEAN GRID */}
